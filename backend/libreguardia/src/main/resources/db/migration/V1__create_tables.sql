@@ -142,5 +142,45 @@ CREATE TABLE tbl_service (
 	service_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 	service_is_signed BOOLEAN NOT NULL DEFAULT FALSE,
 	absence_fk UUID NOT NULL UNIQUE REFERENCES tbl_absence(absence_id) ON DELETE CASCADE,
-	user_fk UUID REFERENCES tbl_user(user_id) ON DELETE RESTRICT
+	user_fk UUID DEFAULT NULL REFERENCES tbl_user(user_id) ON DELETE RESTRICT
 );
+
+-- ========================
+-- FUNCTIONS
+-- ========================
+
+CREATE FUNCTION fun_absence_generate_service(schedule_fk UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	RETURN (
+		SELECT tbl_schedule_activity.schedule_activity_generates_service
+			FROM tbl_schedule
+			JOIN tbl_schedule_activity
+				ON tbl_schedule.schedule_activity_fk = tbl_schedule_activity.schedule_activity_id
+			WHERE schedule_id = schedule_fk
+	);
+END;
+$$;
+
+CREATE FUNCTION tfun_insert_service()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+	INSERT INTO tbl_service(absence_fk)
+	VALUES (NEW.absence_id);
+	RETURN NEW;
+END;
+$$;
+
+-- ========================
+-- TRIGGERS
+-- ========================
+
+CREATE TRIGGER trig_generate_service
+	AFTER INSERT ON tbl_absence
+	FOR EACH ROW
+	WHEN (fun_absence_generate_service(NEW.schedule_fk))
+	EXECUTE FUNCTION tfun_insert_service();
