@@ -74,8 +74,8 @@ CREATE TABLE tbl_time_range (
 CREATE TABLE tbl_place (
 	place_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 	place_name VARCHAR(50) NOT NULL,
-	place_floor VARCHAR(50),
-	building_fk UUID REFERENCES tbl_building(building_id) ON DELETE RESTRICT,
+	place_floor VARCHAR(50) DEFAULT NULL,
+	building_fk UUID DEFAULT NULL REFERENCES tbl_building(building_id) ON DELETE RESTRICT,
 	zone_fk UUID NOT NULL REFERENCES tbl_zone(zone_id) ON DELETE RESTRICT,
 	place_type_fk UUID NOT NULL REFERENCES tbl_place_type(place_type_id) ON DELETE RESTRICT,
 	CONSTRAINT uq_place UNIQUE (place_name, building_fk, zone_fk)
