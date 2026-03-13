@@ -17,6 +17,9 @@ class User : BaseEntity() {
     @Column(name = "surname", nullable = false, length = 50)
     lateinit var surname: String
 
+    @Column(name = "email", nullable = false, length = 50)
+    lateinit var email: String
+
     @Column(name = "phone_number", nullable = false, length = 20)
     lateinit var phoneNumber: String
 
