@@ -88,7 +88,7 @@ CREATE TABLE tbl_user (
 	email VARCHAR(50) NOT NULL UNIQUE,
 	phone_number VARCHAR(20) NOT NULL,
 	is_active BOOLEAN NOT NULL DEFAULT TRUE,
-	password CHAR(60) NOT NULL,
+	password VARCHAR(60) NOT NULL,
 	user_role_id UUID NOT NULL REFERENCES tbl_user_role(id) ON DELETE RESTRICT
 );
 

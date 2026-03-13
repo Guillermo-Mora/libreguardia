@@ -1,31 +1,28 @@
 package com.libreguardia.api.entity
 
 import jakarta.persistence.*
-import java.util.*
 
 @Entity
 @Table(name = "tbl_place")
-data class Place (
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "place_id")
-    val placeId: UUID? = null,
+class Place : BaseEntity() {
+    @Column(name = "name", nullable = false, length = 50)
+    lateinit var name: String
 
-    @Column(name = "place_name", nullable = false, length = 50)
-    val placeName: String = "",
-
-    @Column(name = "place_floor", length = 50)
-    val placeFloor: String? = null,
+    @Column(name = "floor", length = 50)
+    var floor: String? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "building_fk", referencedColumnName = "building_id")
-    val building: Building? = null,
+    @JoinColumn(name = "building_id", referencedColumnName = "id")
+    var building: Building? = null
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "zone_fk", referencedColumnName = "zone_id", nullable = false)
-    val zone: Zone,
+    @JoinColumn(name = "zone_id", referencedColumnName = "id", nullable = false)
+    lateinit var zone: Zone
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "place_type_fk", referencedColumnName = "place_type_id", nullable = false)
-    val placeType: PlaceType,
-)
+    @JoinColumn(name = "place_type_id", referencedColumnName = "id", nullable = false)
+    lateinit var placeType: PlaceType
+
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    var schedules: MutableSet<Schedule> = mutableSetOf()
+}
