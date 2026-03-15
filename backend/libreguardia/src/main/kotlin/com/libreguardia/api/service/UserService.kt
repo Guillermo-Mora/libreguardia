@@ -1,8 +1,11 @@
 package com.libreguardia.api.service
 
-import com.libreguardia.api.entity.User
-import com.libreguardia.api.entity.UserRole
 import com.libreguardia.api.repository.UserRepository
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -10,23 +13,22 @@ import org.springframework.stereotype.Service
 class UserService (
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder
-) {
-    fun createUser(
-        name: String,
-        surname: String,
-        email: String,
-        phoneNumber: String,
-        rawPassword: String,
-        userRole: UserRole
-    ): User {
-        val user = User().apply {
-            this.name = name
-            this.surname = surname
-            this.email = email
-            this.phoneNumber = phoneNumber
-            this.password = passwordEncoder.encode(rawPassword)!!
-            this.userRole = userRole
-        }
-        return userRepository.save(user)
+): UserDetailsService {
+    override fun loadUserByUsername(email: String): UserDetails {
+        return userRepository.findByEmail(email)
+            ?.let {
+                User(
+                    it.email,
+                    it.password,
+                    listOf(SimpleGrantedAuthority(it.userRole.name))
+                )
+            }
+            ?: throw UsernameNotFoundException("User not found with email: $email")
+    }
+
+    fun addUser(user: com.libreguardia.api.entity.User): String {
+        user.password = passwordEncoder.encode(user.password)!!
+        userRepository.save(user)
+        return "User added successfully!"
     }
 }

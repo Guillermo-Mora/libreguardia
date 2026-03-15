@@ -1,11 +1,13 @@
 package com.libreguardia.api
 
+import com.libreguardia.api.entity.User
 import com.libreguardia.api.repository.UserRoleRepository
 import com.libreguardia.api.service.UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.boot.test.context.SpringBootTest
+import kotlin.apply
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -19,15 +21,15 @@ class CreateUserTest {
 
     @Test
     fun `should create user`() {
-        val userRole = userRoleRepository.findByName("admin")!!
-
-        userService.createUser(
-            name = "admin",
-            surname = "admin",
-            email = "admin@admin.com",
-            phoneNumber = "000000000",
-            rawPassword = "admin",
-            userRole = userRole
+        userService.addUser(
+            User().apply {
+                this.name = "admin"
+                this.surname = "admin"
+                this.email = "admin@admin.com"
+                this.phoneNumber = "000000000"
+                this.password = "admin"
+                this.userRole = userRoleRepository.findByName("ROLE_ADMIN")!!
+            }
         )
     }
 }
