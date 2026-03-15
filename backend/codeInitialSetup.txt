@@ -1,0 +1,2 @@
+- postgresql database: sudo systemctl start postgresql.service
+- pgadmin4 client: sudo /usr/pgadmin4/venv/bin/python /usr/pgadmin4/web/pgAdmin4.py
