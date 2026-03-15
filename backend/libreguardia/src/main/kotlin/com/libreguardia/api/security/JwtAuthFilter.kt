@@ -1,4 +1,4 @@
-package com.libreguardia.api.filter
+package com.libreguardia.api.security
 
 import com.libreguardia.api.service.JwtService
 import jakarta.servlet.FilterChain

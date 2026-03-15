@@ -2,7 +2,7 @@ package com.libreguardia.api
 
 import com.libreguardia.api.entity.User
 import com.libreguardia.api.repository.UserRoleRepository
-import com.libreguardia.api.service.UserService
+import com.libreguardia.api.service.AuthenticationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
@@ -14,14 +14,14 @@ import kotlin.apply
 class CreateUserTest {
 
     @Autowired
-    private lateinit var userService: UserService
+    private lateinit var authenticationService: AuthenticationService
 
     @Autowired
     private lateinit var userRoleRepository: UserRoleRepository
 
     @Test
     fun `should create user`() {
-        userService.addUser(
+        authenticationService.addUser(
             User().apply {
                 this.name = "admin"
                 this.surname = "admin"

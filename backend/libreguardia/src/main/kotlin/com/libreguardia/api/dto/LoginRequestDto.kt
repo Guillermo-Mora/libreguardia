@@ -1,6 +1,6 @@
 package com.libreguardia.api.dto
 
-class AuthRequestDTO (
+class LoginRequestDto (
     val email: String,
     val password: String
 )

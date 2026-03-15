@@ -1,6 +1,6 @@
 package com.libreguardia.api.config
 
-import com.libreguardia.api.filter.JwtAuthFilter
+import com.libreguardia.api.security.JwtAuthFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
@@ -18,7 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfiguration (
     private val jwtAuthFilter: JwtAuthFilter,
     private val userDetailsService: UserDetailsService,
-    private val passwordEncoderConfiguration: PasswordEncoderConfiguration
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -33,16 +34,14 @@ class SecurityConfiguration (
                     )
                     .permitAll()
                     .requestMatchers(
-                        "/auth/welcome",
-                        "/auth/addNewUser",
-                        "/auth/generateToken"
+                        "/api/authentication/login"
                     )
                     .permitAll()
                     .requestMatchers("/auth/user/**")
                     .hasAuthority("ROLE_USER")
                     .requestMatchers("/auth/admin/**")
                     .hasAuthority("ROLE_ADMIN")
-                    .anyRequest().authenticated()
+                    .anyRequest().denyAll()
             }
             .sessionManagement {
                 it
@@ -58,9 +57,12 @@ class SecurityConfiguration (
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
         val provider = DaoAuthenticationProvider(userDetailsService)
-        provider.setPasswordEncoder(passwordEncoderConfiguration.passwordEncoder())
+        provider.setPasswordEncoder(passwordEncoder())
         return provider
     }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder(10)
 
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration) = config.authenticationManager

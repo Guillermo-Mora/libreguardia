@@ -1,23 +1,29 @@
 package com.libreguardia.api.security
 
-import com.libreguardia.api.entity.User
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserAppDetails(
-    val user: User
+    val userName: String,
+    val userSurname: String,
+    val userEmail: String,
+    val userPhoneNumber: String,
+    val userIsActive: Boolean,
+    val userPassword: String,
+    val userRoleName: String
 ) : UserDetails {
-    override fun getAuthorities(): Collection<GrantedAuthority> {
-        return listOf(SimpleGrantedAuthority(user.userRole.name))
-    }
+    override fun getAuthorities(): Collection<GrantedAuthority> = listOf(SimpleGrantedAuthority(userRoleName))
 
-    override fun getPassword() = user.password
+    override fun getUsername() = userEmail
 
-    override fun getUsername() = user.email
+    override fun getPassword() = userPassword
 
     override fun isAccountNonExpired() = true
+
     override fun isAccountNonLocked() = true
+
     override fun isCredentialsNonExpired() = true
-    override fun isEnabled() = true
+
+    override fun isEnabled() = userIsActive
 }

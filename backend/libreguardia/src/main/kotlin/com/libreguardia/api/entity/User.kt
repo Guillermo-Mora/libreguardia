@@ -29,8 +29,7 @@ class User : BaseEntity() {
     @Column(name = "password", nullable = false, length = 60)
     lateinit var password: String
 
-    //Temporary changed to eager for login to work
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_role_id", referencedColumnName = "id", nullable = false)
     lateinit var userRole: UserRole
 
