@@ -1,5 +1,6 @@
 package com.libreguardia.api.service
 
+import com.libreguardia.api.dto.LoginResponseDto
 import com.libreguardia.api.repository.UserRepository
 import com.libreguardia.api.security.UserAppDetails
 import org.springframework.security.core.userdetails.UserDetails
@@ -26,4 +27,10 @@ class AuthenticationService (
             }
             ?: throw UsernameNotFoundException("User not found with email: $email")
     }
+
+    fun loginResponse(token: String?) = LoginResponseDto(
+        success = token != null,
+        message = if (token == null) "Invalid credentials" else "Login succeded",
+        token = token
+    )
 }

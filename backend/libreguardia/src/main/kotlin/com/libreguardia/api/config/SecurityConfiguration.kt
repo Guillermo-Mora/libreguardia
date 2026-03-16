@@ -1,6 +1,6 @@
 package com.libreguardia.api.config
 
-import com.libreguardia.api.security.JwtAuthFilter
+import com.libreguardia.api.security.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 class SecurityConfiguration (
-    private val jwtAuthFilter: JwtAuthFilter,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
     private val userDetailsService: UserDetailsService,
 ) {
     @Bean
@@ -49,7 +49,7 @@ class SecurityConfiguration (
             }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(
-                jwtAuthFilter,
+                jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter::class.java
             ).build()
     }
