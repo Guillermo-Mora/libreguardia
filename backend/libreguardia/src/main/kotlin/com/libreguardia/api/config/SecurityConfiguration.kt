@@ -1,6 +1,7 @@
 package com.libreguardia.api.config
 
 import com.libreguardia.api.security.JwtAuthenticationFilter
+import com.libreguardia.api.service.UserAppDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -9,7 +10,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 class SecurityConfiguration (
     private val jwtAuthenticationFilter: JwtAuthenticationFilter,
-    private val userDetailsService: UserDetailsService,
+    private val userAppDetailsService: UserAppDetailsService,
 ) {
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
@@ -56,7 +56,7 @@ class SecurityConfiguration (
 
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
-        val provider = DaoAuthenticationProvider(userDetailsService)
+        val provider = DaoAuthenticationProvider(userAppDetailsService)
         provider.setPasswordEncoder(passwordEncoder())
         return provider
     }

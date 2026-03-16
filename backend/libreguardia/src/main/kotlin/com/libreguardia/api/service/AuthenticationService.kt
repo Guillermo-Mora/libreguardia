@@ -1,35 +1,31 @@
 package com.libreguardia.api.service
 
 import com.libreguardia.api.dto.LoginResponseDto
-import com.libreguardia.api.repository.UserRepository
-import com.libreguardia.api.security.UserAppDetails
-import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import com.libreguardia.api.dto.LogintRequestDto
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
 
 @Service
 class AuthenticationService (
-    private val userRepository: UserRepository
-): UserDetailsService {
-    override fun loadUserByUsername(email: String): UserDetails {
-        return userRepository.findByEmail(email)
-            ?.let {
-                UserAppDetails(
-                    userName = it.name,
-                    userSurname = it.surname,
-                    userEmail = it.email,
-                    userPhoneNumber = it.phoneNumber,
-                    userIsActive = it.isActive,
-                    userPassword = it.password,
-                    userRoleName = it.userRole.name,
-                )
-            }
-            ?: throw UsernameNotFoundException("User not found with email: $email")
+    private val jwtService: JwtService,
+    private val authenticationManager: AuthenticationManager,
+) {
+    fun login(
+        loginRequestDto: LogintRequestDto
+    ): LoginResponseDto {
+        val authentication = authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                loginRequestDto.email,
+                loginRequestDto.password
+            )
+        )
+        return if (authentication.isAuthenticated)
+            loginResponse(jwtService.generateToken(loginRequestDto.email))
+        else loginResponse(null)
     }
 
-    fun loginResponse(token: String?) = LoginResponseDto(
-        success = token != null,
+    private fun loginResponse(token: String?) = LoginResponseDto(
         message = if (token == null) "Invalid credentials" else "Login succeded",
         token = token
     )

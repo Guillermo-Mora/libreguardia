@@ -12,7 +12,6 @@ class AuthenticationExceptionHandler {
     @ExceptionHandler(BadCredentialsException::class)
     fun handleBadCredentials() = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
         LoginResponseDto(
-            success = false,
             message = "Invalid credentials",
             token = null
         )

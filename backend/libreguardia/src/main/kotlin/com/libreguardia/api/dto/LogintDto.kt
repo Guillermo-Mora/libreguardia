@@ -6,7 +6,6 @@ class LogintRequestDto (
 )
 
 class LoginResponseDto (
-    val success: Boolean,
     val message: String,
     val token: String?,
 )

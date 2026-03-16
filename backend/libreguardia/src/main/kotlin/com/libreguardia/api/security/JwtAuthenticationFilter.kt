@@ -1,19 +1,19 @@
 package com.libreguardia.api.security
 
+import com.libreguardia.api.service.UserAppDetailsService
 import com.libreguardia.api.service.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 
 @Component
 class JwtAuthenticationFilter(
-    private val userDetailsService: UserDetailsService,
+    private val userAppDetailsService: UserAppDetailsService,
     private val jwtService: JwtService
 ): OncePerRequestFilter() {
     override fun doFilterInternal(
@@ -31,7 +31,7 @@ class JwtAuthenticationFilter(
         }
 
         if (username != null && SecurityContextHolder.getContext().authentication == null) {
-            val userDetails = userDetailsService.loadUserByUsername(username)
+            val userDetails = userAppDetailsService.loadUserByUsername(username)
             if (jwtService.validateToken(token!!, userDetails)) {
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,
