@@ -1,4 +1,4 @@
-package com.libreguardia.api.exception
+package com.libreguardia.api.exception.handler
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class AuthenticationExceptionHandler {
+class AuthenticationExceptionHandler : BaseExceptionHandler() {
     @ExceptionHandler(BadCredentialsException::class)
     fun handleBadCredentials() = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
         createResponseEntity("Invalid credentials")
@@ -24,6 +24,4 @@ class AuthenticationExceptionHandler {
     fun handleLocked() = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
         createResponseEntity("Account locked")
     )
-
-    private fun createResponseEntity(message: String) = mapOf("message" to message)
 }

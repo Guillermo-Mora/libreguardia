@@ -1,8 +1,10 @@
 package com.libreguardia.api
 
+import com.libreguardia.api.dto.UserCreateRequestDto
 import com.libreguardia.api.entity.User
 import com.libreguardia.api.repository.UserRoleRepository
 import com.libreguardia.api.service.UserAppDetailsService
+import com.libreguardia.api.service.UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
@@ -14,22 +16,23 @@ import kotlin.apply
 class CreateUserTest {
 
     @Autowired
-    private lateinit var userAppDetailsService: UserAppDetailsService
+    private lateinit var userService: UserService
 
     @Autowired
     private lateinit var userRoleRepository: UserRoleRepository
 
     @Test
     fun `should create user`() {
-        userAppDetailsService.addUser(
-            User().apply {
-                this.name = "admin"
-                this.surname = "admin"
-                this.email = "admin@admin.com"
-                this.phoneNumber = "000000000"
-                this.password = "admin"
-                this.userRole = userRoleRepository.findByName("ROLE_ADMIN")!!
-            }
+        userService.create(
+            UserCreateRequestDto(
+                name = "user",
+                surname = "user",
+                email = "user@user.com",
+                phoneNumber = "000",
+                isActive = true,
+                password = "123",
+                userRoleName = ""
+            )
         )
     }
 }
