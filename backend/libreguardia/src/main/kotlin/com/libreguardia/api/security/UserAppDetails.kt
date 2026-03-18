@@ -5,10 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserAppDetails(
-    val userName: String,
-    val userSurname: String,
     val userEmail: String,
-    val userPhoneNumber: String,
     val userIsActive: Boolean,
     val userPassword: String,
     val userRoleName: String

@@ -22,7 +22,7 @@ class UserController(
         userService.create(userCreateRequestDto)
         return createResponseEntity(
             httpStatus = HttpStatus.CREATED,
-            message = "User created succesfully"
+            message = "User created successfully"
         )
     }
 

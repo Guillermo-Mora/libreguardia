@@ -7,5 +7,5 @@ class LogintRequestDto (
 
 class LoginResponseDto (
     val message: String,
-    val token: String?,
+    val token: String,
 )

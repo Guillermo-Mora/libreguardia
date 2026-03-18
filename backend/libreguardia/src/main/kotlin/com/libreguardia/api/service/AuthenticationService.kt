@@ -2,6 +2,7 @@ package com.libreguardia.api.service
 
 import com.libreguardia.api.dto.LoginResponseDto
 import com.libreguardia.api.dto.LogintRequestDto
+import com.libreguardia.api.repository.UserRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
@@ -10,23 +11,23 @@ import org.springframework.stereotype.Service
 class AuthenticationService (
     private val jwtService: JwtService,
     private val authenticationManager: AuthenticationManager,
+    private val userRepository: UserRepository
 ) {
     fun login(
         loginRequestDto: LogintRequestDto
     ): LoginResponseDto {
-        val authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 loginRequestDto.email,
                 loginRequestDto.password
             )
         )
-        return if (authentication.isAuthenticated)
-            loginResponse(jwtService.generateToken(loginRequestDto.email))
-        else loginResponse(null)
+        return LoginResponseDto(
+            message = "Login succeded",
+            token = jwtService.generateToken(
+                email = loginRequestDto.email,
+                role = userRepository.findRoleNameByEmail(loginRequestDto.email)
+            )
+        )
     }
-
-    private fun loginResponse(token: String?) = LoginResponseDto(
-        message = if (token == null) "Invalid credentials" else "Login succeded",
-        token = token
-    )
 }

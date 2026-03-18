@@ -51,10 +51,7 @@ class SecurityConfiguration (
                     .hasAuthority("ROLE_ADMIN")
                     .anyRequest().denyAll()
             }
-            .sessionManagement {
-                it
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(
                 jwtAuthenticationFilter,

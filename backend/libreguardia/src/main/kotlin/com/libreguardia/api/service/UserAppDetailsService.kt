@@ -11,14 +11,11 @@ import org.springframework.stereotype.Service
 class UserAppDetailsService (
     private val userRepository: UserRepository,
 ): UserDetailsService {
-    override fun loadUserByUsername(email: String): UserDetails {
+    override fun loadUserByUsername(email: String): UserAppDetails {
         return userRepository.findByEmail(email)
             ?.let {
                 UserAppDetails(
-                    userName = it.name,
-                    userSurname = it.surname,
                     userEmail = it.email,
-                    userPhoneNumber = it.phoneNumber,
                     userIsActive = it.isActive,
                     userPassword = it.password,
                     userRoleName = it.userRole.name,
