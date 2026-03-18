@@ -1,11 +1,13 @@
 package com.libreguardia.api.service
 
+import com.libreguardia.api.config.SecurityConfiguration
 import com.libreguardia.api.dto.UserCreateRequestDto
 import com.libreguardia.api.entity.User
 import com.libreguardia.api.exception.EmailDuplicatedException
 import com.libreguardia.api.exception.UserRoleNotFoundException
 import com.libreguardia.api.repository.UserRepository
 import com.libreguardia.api.repository.UserRoleRepository
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,8 +26,7 @@ class UserService(
                     email = userCreateRequestDto.email
                     phoneNumber = userCreateRequestDto.phoneNumber
                     isActive = userCreateRequestDto.active
-                    //Password encryption still to implement
-                    password = userCreateRequestDto.password
+                    password = BCryptPasswordEncoder(10).encode(userCreateRequestDto.password)!!
                     userRole = it
                 })
             } ?: throw UserRoleNotFoundException(userCreateRequestDto.userRoleName)
