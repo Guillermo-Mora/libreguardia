@@ -10,4 +10,6 @@ import java.util.*
 interface UserRepository : JpaRepository<User, UUID> {
     @EntityGraph(attributePaths = ["userRole"])
     fun findByEmail(email: String): User?
+
+    fun existsByEmail(email: String): Boolean
 }

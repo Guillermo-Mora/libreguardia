@@ -2,6 +2,7 @@ package com.libreguardia.api.service
 
 import com.libreguardia.api.dto.UserCreateRequestDto
 import com.libreguardia.api.entity.User
+import com.libreguardia.api.exception.EmailDuplicatedException
 import com.libreguardia.api.exception.UserRoleNotFoundException
 import com.libreguardia.api.repository.UserRepository
 import com.libreguardia.api.repository.UserRoleRepository
@@ -14,6 +15,7 @@ class UserService(
     private val userRoleRepository: UserRoleRepository
 ) {
     fun create(userCreateRequestDto: UserCreateRequestDto) {
+        if (userRepository.existsByEmail(userCreateRequestDto.email)) throw EmailDuplicatedException(userCreateRequestDto.email)
         userRoleRepository.findByName(userCreateRequestDto.userRoleName)
             ?.let {
                 userRepository.save(User().apply {
@@ -21,12 +23,12 @@ class UserService(
                     surname = userCreateRequestDto.surname
                     email = userCreateRequestDto.email
                     phoneNumber = userCreateRequestDto.phoneNumber
-                    isActive = userCreateRequestDto.isActive
+                    isActive = userCreateRequestDto.active
                     //Password encryption still to implement
                     password = userCreateRequestDto.password
                     userRole = it
                 })
-            } ?: throw UserRoleNotFoundException("Role named ${userCreateRequestDto.userRoleName} doesn't exists")
+            } ?: throw UserRoleNotFoundException(userCreateRequestDto.userRoleName)
     }
 
     //In case an operation makes various queries and all they have to execute in order withouth fail, I should

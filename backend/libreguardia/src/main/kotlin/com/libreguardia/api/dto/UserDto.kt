@@ -5,7 +5,7 @@ class UserCreateRequestDto(
     val surname: String,
     val email: String,
     val phoneNumber: String,
-    val isActive: Boolean,
+    val active: Boolean,
     val password: String,
     val userRoleName: String
 )

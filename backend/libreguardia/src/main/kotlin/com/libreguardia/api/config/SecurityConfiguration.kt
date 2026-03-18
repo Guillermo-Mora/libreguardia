@@ -2,6 +2,7 @@ package com.libreguardia.api.config
 
 import com.libreguardia.api.security.JwtAuthenticationFilter
 import com.libreguardia.api.service.UserAppDetailsService
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -25,6 +26,13 @@ class SecurityConfiguration (
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         return http
             .csrf { it.disable() }
+            .exceptionHandling {
+                it.authenticationEntryPoint { _, response, _ ->
+                    response.status = HttpServletResponse.SC_UNAUTHORIZED
+                    response.contentType = "application/json"
+                    response.writer.write("""{"message": "You don't have permission to perform this operation"}""")
+                }
+            }
             .authorizeHttpRequests {
                 it
                     .requestMatchers(
@@ -37,9 +45,9 @@ class SecurityConfiguration (
                         "/api/authentication/login"
                     )
                     .permitAll()
-                    .requestMatchers("/auth/user/**")
+                    .requestMatchers("/not_implemented")
                     .hasAuthority("ROLE_USER")
-                    .requestMatchers("/auth/admin/**")
+                    .requestMatchers("/api/user/**")
                     .hasAuthority("ROLE_ADMIN")
                     .anyRequest().denyAll()
             }

@@ -1,5 +1,6 @@
 package com.libreguardia.api.exception.handler
 
+import com.libreguardia.api.exception.EmailDuplicatedException
 import com.libreguardia.api.exception.UserRoleNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,6 +17,11 @@ class GeneralExceptionHandler : BaseExceptionHandler() {
 
     @ExceptionHandler(UserRoleNotFoundException::class)
     fun handleUserRoleNotFound(e: UserRoleNotFoundException) = ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-        createResponseEntity(e.message)
+        createResponseEntity("Role '${e.roleName}' doesn't exists")
+    )
+
+    @ExceptionHandler(EmailDuplicatedException::class)
+    fun handleEmailDuplicated(e: EmailDuplicatedException) = ResponseEntity.status(HttpStatus.CONFLICT).body(
+        createResponseEntity("Already exists an user with the email '${e.email}'")
     )
 }

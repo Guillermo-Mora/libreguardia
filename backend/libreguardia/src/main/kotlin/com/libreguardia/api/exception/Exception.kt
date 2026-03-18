@@ -1,3 +1,5 @@
 package com.libreguardia.api.exception
 
-class UserRoleNotFoundException(override val message: String) : RuntimeException(message)
+class UserRoleNotFoundException(val roleName: String) : RuntimeException(roleName)
+
+class EmailDuplicatedException(val email: String) : RuntimeException(email)
