@@ -1,2 +1,12 @@
 - postgresql database: sudo systemctl start postgresql.service
 - pgadmin4 client: sudo /usr/pgadmin4/venv/bin/python /usr/pgadmin4/web/pgAdmin4.py
+
+Docker Compose:
+- [Solo funciona conb el proyecto corriendo en un disco duro normal y no en uno externo]
+- start docker: sudo systemctl start docker.service
+- build docker image:
+/run/media/guimor/guimor_SSD/4_PI/Proyecto_Codigo/Proyecto-DAM-Guardia/backend/libreguardia main*
+❯ ./gradlew buildFatJar
+- run docker image:
+/run/media/guimor/guimor_SSD/4_PI/Proyecto_Codigo/Proyecto-DAM-Guardia/backend/libreguardia main*
+❯ sudo docker compose up
