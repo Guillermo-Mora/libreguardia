@@ -11,6 +11,6 @@ object Zone: UUIDTable(){
     // ya que el campo se genera automáticamente
     var name = varchar(
         name = "name",
-        length = 50
-    )
+        length = 50,
+    ).nullable().uniqueIndex()
 }
