@@ -1,6 +1,5 @@
 [versions]
 exposed = "1.1.1"
-h2 = "2.3.232"
 kotlin = "2.3.0"
 ktor = "3.4.1"
 logback = "1.4.14"
@@ -23,6 +22,7 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
 ktor-server-compression = { module = "io.ktor:ktor-server-compression", version.ref = "ktor" }
+ktor-server-default-headers = { module = "io.ktor:ktor-server-default-headers", version.ref = "ktor" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

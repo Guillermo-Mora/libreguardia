@@ -1,10 +1,13 @@
 package com.libreguardia
 
 import com.libreguardia.config.configureAuthentication
+import com.libreguardia.config.configureCompression
 import com.libreguardia.config.configureDatabase
+import com.libreguardia.config.configureDefaultHeaders
 import com.libreguardia.config.configureFlyway
 import com.libreguardia.config.configureRouting
 import com.libreguardia.config.configureSerialization
+import com.libreguardia.config.configureStatusPage
 import com.libreguardia.user.PostgresTaskRepository
 import com.libreguardia.user.testRoutes
 import io.ktor.server.application.*
@@ -12,6 +15,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.compression.Compression
 import io.ktor.server.plugins.compression.deflate
 import io.ktor.server.plugins.compression.gzip
+import io.ktor.server.routing.Routing
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -33,12 +37,11 @@ fun Application.module() {
         user = user,
         password = password
     )
-    install(Compression) {
-        gzip { priority = 1.0 }
-        deflate { priority = 0.9 }
-    }
-    configureAuthentication()
+    configureDefaultHeaders()
+    configureCompression()
+    configureStatusPage()
     configureSerialization()
+    configureAuthentication()
     configureRouting()
     //Test route
     testRoutes(PostgresTaskRepository())
