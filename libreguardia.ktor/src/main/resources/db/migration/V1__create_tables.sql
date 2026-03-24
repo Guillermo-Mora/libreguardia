@@ -61,7 +61,6 @@ CREATE TABLE schedule_activity (
 
 CREATE TABLE time_range (
                             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                            is_active BOOLEAN NOT NULL DEFAULT TRUE,
                             start_time TIME NOT NULL,
                             end_time TIME NOT NULL,
                             CONSTRAINT uq_time_range UNIQUE (start_time, end_time)
