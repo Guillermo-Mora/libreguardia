@@ -9,3 +9,4 @@ storage:
     jdbcURL: "jdbc:postgresql://localhost:5432/libreguardia"
     user: "postgres"
     password: "libreguardia"
+#Implementar connection pool
