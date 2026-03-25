@@ -6,30 +6,30 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 object UserTbl: UUIDTable(
     name =  "user_tbl"
 ) {
-    var name = varchar(
+    val name = varchar(
         name = "name",
         length = 50
     )
-    var surname = varchar(
+    val surname = varchar(
         name = "surname",
         length = 50
     )
-    var email = varchar(
+    val email = varchar(
         name = "email",
         length = 50
     ).uniqueIndex()
-    var phoneNumber = varchar(
+    val phoneNumber = varchar(
         name = "phone_number",
         length = 20
     )
-    var isEnabled = bool(
+    val isEnabled = bool(
         name = "is_enabled"
     ).default(true)
-    var password = varchar(
+    val password = varchar(
         name = "password",
         length = 60
     )
-    var userRoleId = reference(
+    val userRoleId = reference(
         name = "user_role_id",
         refColumn = UserRoleTbl.id,
         onDelete = ReferenceOption.RESTRICT,

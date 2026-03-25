@@ -5,7 +5,7 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 object UserRoleTbl: UUIDTable(
     name =  "user_role"
 ) {
-    var name = varchar(
+    val name = varchar(
         name = "name",
         length = 50
     ).uniqueIndex()

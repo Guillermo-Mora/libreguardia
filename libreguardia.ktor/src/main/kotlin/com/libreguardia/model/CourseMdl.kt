@@ -6,15 +6,15 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 object CourseTbl: UUIDTable(
     name = "course"
 ) {
-    var name = varchar(
+    val name = varchar(
         name = "name",
         length = 50
     )
-    var professionalFamilyId = reference(
+    val professionalFamilyId = reference(
         name = "professional_family_id",
         refColumn = ProfessionalFamilyTbl.id
     )
-    var academicYearId = reference(
+    val academicYearId = reference(
         name = "academic_year_id",
         refColumn = AcademicYearTbl.id,
         onDelete = ReferenceOption.RESTRICT,

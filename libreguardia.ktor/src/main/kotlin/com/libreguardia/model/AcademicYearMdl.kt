@@ -6,14 +6,14 @@ import org.jetbrains.exposed.v1.datetime.*
 object AcademicYearTbl: UUIDTable(
     name = "academic_year"
 ) {
-    var name = varchar(
+    val name = varchar(
         name = "name",
         length = 50
     ).uniqueIndex()
-    var startDate = date(
+    val startDate = date(
         name = "start_date"
     )
-    var endDate = date(
+    val endDate = date(
         name = "end_date"
     )
 }

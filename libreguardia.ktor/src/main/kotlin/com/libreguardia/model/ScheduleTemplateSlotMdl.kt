@@ -6,35 +6,35 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 object ScheduleTemplateSlotTbl: UUIDTable(
     name =  "schedule_template_slot"
 ) {
-    var weekDay = enumerationByName<WeekDay>(
+    val weekDay = enumerationByName<WeekDay>(
         name = "week_day",
         length = 9
     )
-    var scheduleTemplateId = reference(
+    val scheduleTemplateId = reference(
         name = "schedule_template_id",
         refColumn = ScheduleTemplateTbl.id,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT
     )
-    var groupId = optReference(
+    val groupId = optReference(
         name = "group_id",
         refColumn = GroupTbl.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    var scheduleActivityId = optReference(
+    val scheduleActivityId = optReference(
         name = "schedule_activity_id",
         refColumn = ScheduleActivityTbl.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    var placeId = optReference(
+    val placeId = optReference(
         "place_id",
         PlaceTbl.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    var timeRangeId = reference(
+    val timeRangeId = reference(
         name = "time_range_id",
         refColumn = TimeRangeTbl.id,
         onDelete = ReferenceOption.RESTRICT,

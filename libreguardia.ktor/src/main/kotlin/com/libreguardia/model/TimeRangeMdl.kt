@@ -6,10 +6,10 @@ import org.jetbrains.exposed.v1.datetime.time
 object TimeRangeTbl: UUIDTable(
     name =  "time_range"
 ) {
-    var startTime = time(
+    val startTime = time(
         name = "start_time"
     )
-    var endTime = time(
+    val endTime = time(
         name = "end_time"
     )
 

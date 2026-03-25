@@ -6,11 +6,11 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 object GroupTbl: UUIDTable(
     name = "group_tbl"
 ) {
-    var name = varchar(
+    val name = varchar(
         name = "name",
         length = 50
     )
-    var courseId = reference(
+    val courseId = reference(
         name = "course_id",
         refColumn = CourseTbl.id,
         onDelete = ReferenceOption.RESTRICT,

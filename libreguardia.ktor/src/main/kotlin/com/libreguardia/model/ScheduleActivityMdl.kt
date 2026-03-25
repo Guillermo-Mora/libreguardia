@@ -5,11 +5,11 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 object ScheduleActivityTbl: UUIDTable(
      name = "schedule_activity"
 ) {
-    var name = varchar(
+    val name = varchar(
         name = "name",
         length = 50
     ).uniqueIndex()
-    var generatesService = bool(
+    val generatesService = bool(
         name = "generates_service"
     )
 }

@@ -7,10 +7,10 @@ import org.jetbrains.exposed.v1.datetime.date
 object AbsenceTbl: UUIDTable(
     name = "absence"
 ) {
-    var date = date(
+    val date = date(
         name = "date"
     )
-    var scheduleId = reference(
+    val scheduleId = reference(
         name = "schedule_id",
         refColumn = ScheduleTbl.id,
         onDelete = ReferenceOption.RESTRICT,
