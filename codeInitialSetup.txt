@@ -10,3 +10,5 @@ Docker Compose:
 - run docker image:
 /run/media/guimor/guimor_SSD/4_PI/Proyecto_Codigo/Proyecto-DAM-Guardia/backend/libreguardia main*
 ❯ sudo docker compose up
+
+Ruta pgAdmin archivos: /var/lib/pgadmin/storage/
