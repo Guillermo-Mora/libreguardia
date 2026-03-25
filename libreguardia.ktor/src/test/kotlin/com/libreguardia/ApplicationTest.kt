@@ -1,37 +1,23 @@
 package com.libreguardia
 
 import com.libreguardia.config.configureDatabase
+import com.libreguardia.config.configureRouting
+import com.libreguardia.model.*
 import com.libreguardia.user.Priority
 import com.libreguardia.user.Task
-import com.libreguardia.config.configureRouting
-import com.libreguardia.model.AbsenceTbl
-import com.libreguardia.model.AcademicYearTbl
-import com.libreguardia.model.BuildingTbl
-import com.libreguardia.model.CourseTbl
-import com.libreguardia.model.GroupTbl
-import com.libreguardia.model.PlaceTbl
-import com.libreguardia.model.PlaceTypeTbl
-import com.libreguardia.model.ProfessionalFamilyTbl
-import com.libreguardia.model.ScheduleActivityTbl
-import com.libreguardia.model.ScheduleTbl
-import com.libreguardia.model.ScheduleTemplateSlotTbl
-import com.libreguardia.model.ScheduleTemplateTbl
-import com.libreguardia.model.ServiceTbl
-import com.libreguardia.model.TimeRangeTbl
-import com.libreguardia.model.UserRoleTbl
-import com.libreguardia.model.UserTbl
-import com.libreguardia.model.ZoneTbl
 import com.libreguardia.user.testRoutes
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.config.MapApplicationConfig
 import io.ktor.server.testing.*
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test
