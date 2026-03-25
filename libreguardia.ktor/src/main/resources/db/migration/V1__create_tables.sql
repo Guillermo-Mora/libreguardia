@@ -108,7 +108,7 @@ CREATE TABLE schedule (
 CREATE TABLE schedule_template_slot (
 	id UUID PRIMARY KEY,
 	week_day VARCHAR(9) NOT NULL,
-	schedule_template_id UUID NOT NULL REFERENCES schedule_template(id) ON DELETE RESTRICT,
+	schedule_template_id UUID NOT NULL REFERENCES schedule_template(id) ON DELETE CASCADE,
 	group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT,
 	schedule_activity_id UUID REFERENCES schedule_activity(id) ON DELETE RESTRICT,
 	place_id UUID REFERENCES place(id) ON DELETE RESTRICT,
