@@ -7,4 +7,8 @@ object TimeRangeTbl: UUIDTable("time_range") {
     var name = varchar("name", 50).uniqueIndex()
     var startTime = time("start_time")
     var endTime = time("end_time")
+
+    init {
+        uniqueIndex("uq_time_range", startTime, endTime)
+    }
 }
