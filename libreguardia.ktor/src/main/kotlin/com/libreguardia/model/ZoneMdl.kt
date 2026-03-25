@@ -2,6 +2,11 @@ package com.libreguardia.model
 
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 
-object ZoneTbl: UUIDTable("zone") {
-    var name = varchar("name", 50).uniqueIndex()
+object ZoneTbl: UUIDTable(
+   name =  "zone"
+) {
+    var name = varchar(
+        name = "name",
+        length = 50
+    ).uniqueIndex()
 }

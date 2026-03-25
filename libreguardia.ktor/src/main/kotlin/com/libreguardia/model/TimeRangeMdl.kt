@@ -3,12 +3,20 @@ package com.libreguardia.model
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.datetime.time
 
-object TimeRangeTbl: UUIDTable("time_range") {
-    var name = varchar("name", 50).uniqueIndex()
-    var startTime = time("start_time")
-    var endTime = time("end_time")
+object TimeRangeTbl: UUIDTable(
+    name =  "time_range"
+) {
+    var startTime = time(
+        name = "start_time"
+    )
+    var endTime = time(
+        name = "end_time"
+    )
 
     init {
-        uniqueIndex("uq_time_range", startTime, endTime)
+        uniqueIndex(
+            customIndexName = "uq_time_range",
+            startTime, endTime
+        )
     }
 }
