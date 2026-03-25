@@ -35,15 +35,14 @@ import kotlin.test.*
 
 class ApplicationTest {
     @Test
-    fun exposedToDatabaseTablesDifferences() = testApplication {
+    fun exposedTablesMatchToDatabase() = testApplication {
         application {
             configureDatabase(
                 url = "jdbc:postgresql://localhost:5432/libreguardia",
                 user = "postgres",
                 password = "libreguardia"
             )
-
-            var missingColStatements: List<String>? = null
+            var missingColStatements = listOf<String>()
             transaction {
                 missingColStatements =
                     SchemaUtils.addMissingColumnsStatements(
@@ -66,8 +65,11 @@ class ApplicationTest {
                         ZoneTbl,
                     )
             }
-            missingColStatements?.forEach { println(it) } ?: println("[null]")
-
+            missingColStatements.forEach { println(it) }
+            assertEquals(
+                expected = emptyList(),
+                actual = missingColStatements
+            )
         }
     }
 
