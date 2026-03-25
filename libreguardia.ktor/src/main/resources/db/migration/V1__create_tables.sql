@@ -1,18 +1,4 @@
 -- ========================
--- ENUMS
--- ========================
-
-CREATE TYPE week_day AS ENUM (
-'MONDAY',
-'TUESDAY',
-'WEDNESDAY',
-'THURSDAY',
-'FRIDAY',
-'SATURDAY',
-'SUNDAY'
-);
-
--- ========================
 -- INDEPENDENT TABLES
 -- ========================
 
@@ -109,7 +95,7 @@ CREATE TABLE group_tbl (
 CREATE TABLE schedule (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 	is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
-	week_day week_day NOT NULL,
+	week_day VARCHAR(9) NOT NULL,
 	group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT,
 	schedule_activity_id UUID NOT NULL REFERENCES schedule_activity(id) ON DELETE RESTRICT,
 	place_id UUID NOT NULL REFERENCES place(id) ON DELETE RESTRICT,
@@ -121,7 +107,7 @@ CREATE TABLE schedule (
 
 CREATE TABLE schedule_template_slot (
 	id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-	week_day week_day NOT NULL,
+	week_day VARCHAR(9) NOT NULL,
 	schedule_template_id UUID NOT NULL REFERENCES schedule_template(id) ON DELETE RESTRICT,
 	group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT,
 	schedule_activity_id UUID REFERENCES schedule_activity(id) ON DELETE RESTRICT,
