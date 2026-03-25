@@ -35,6 +35,8 @@ dependencies {
     implementation("io.ktor:ktor-server-auth-jwt:3.4.1")
     implementation("io.ktor:ktor-server-auth:3.4.1")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.1.1")
+    implementation("org.jetbrains.exposed:exposed-migration-core:1.1.1")
+    implementation("org.jetbrains.exposed:exposed-migration-jdbc:1.1.1")
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.ktor.client.content.negotiation)

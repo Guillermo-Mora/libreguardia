@@ -1,8 +1,10 @@
 package com.libreguardia
 
+import com.libreguardia.config.configureDatabase
+import com.libreguardia.config.configureRouting
+import com.libreguardia.model.*
 import com.libreguardia.user.Priority
 import com.libreguardia.user.Task
-import com.libreguardia.config.configureRouting
 import com.libreguardia.user.testRoutes
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -10,9 +12,53 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
-import kotlin.test.*
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class ApplicationTest {
+    @Test
+    fun exposedTablesMatchToDatabase() = testApplication {
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            var missingColStatements = listOf<String>()
+            transaction {
+                missingColStatements =
+                    SchemaUtils.addMissingColumnsStatements(
+                        AbsenceTbl,
+                        AcademicYearTbl,
+                        BuildingTbl,
+                        CourseTbl,
+                        GroupTbl,
+                        PlaceTbl,
+                        PlaceTypeTbl,
+                        ProfessionalFamilyTbl,
+                        ScheduleActivityTbl,
+                        ScheduleTbl,
+                        ScheduleTemplateTbl,
+                        ScheduleTemplateSlotTbl,
+                        ServiceTbl,
+                        TimeRangeTbl,
+                        UserTbl,
+                        UserRoleTbl,
+                        ZoneTbl,
+                    )
+            }
+            missingColStatements.forEach { println(it) }
+            assertEquals(
+                expected = emptyList(),
+                actual = missingColStatements
+            )
+        }
+    }
+
     @Test
     fun tasksCanBeFoundByPriority() = testApplication {
         application {
