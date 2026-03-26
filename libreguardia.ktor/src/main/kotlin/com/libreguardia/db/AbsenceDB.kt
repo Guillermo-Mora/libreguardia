@@ -1,10 +1,10 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.datetime.date
 
-object AbsenceTbl: UUIDTable(
+object AbsenceTable: UUIDTable(
     name = "absence"
 ) {
     val date = date(
@@ -12,8 +12,8 @@ object AbsenceTbl: UUIDTable(
     )
     val scheduleId = reference(
         name = "schedule_id",
-        refColumn = ScheduleTbl.id,
-        onDelete = ReferenceOption.RESTRICT,
+        refColumn = ScheduleTable.id,
+        onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT
     )
 

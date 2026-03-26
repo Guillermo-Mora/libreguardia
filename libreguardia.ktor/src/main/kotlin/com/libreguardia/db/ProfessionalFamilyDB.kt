@@ -1,9 +1,9 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 
-object ScheduleTemplateTbl: UUIDTable(
-    name =  "schedule_template"
+object ProfessionalFamilyTable: UUIDTable(
+    name = "professional_family"
 ) {
     val name = varchar(
         name = "name",

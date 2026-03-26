@@ -1,9 +1,9 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 
-object GroupTbl: UUIDTable(
+object GroupTable: UUIDTable(
     name = "group_tbl"
 ) {
     val name = varchar(
@@ -12,7 +12,7 @@ object GroupTbl: UUIDTable(
     )
     val courseId = reference(
         name = "course_id",
-        refColumn = CourseTbl.id,
+        refColumn = CourseTable.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )

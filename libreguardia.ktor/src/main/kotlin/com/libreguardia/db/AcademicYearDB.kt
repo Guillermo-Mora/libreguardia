@@ -1,9 +1,9 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.datetime.*
 
-object AcademicYearTbl: UUIDTable(
+object AcademicYearTable: UUIDTable(
     name = "academic_year"
 ) {
     val name = varchar(

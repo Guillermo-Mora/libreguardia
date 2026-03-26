@@ -1,9 +1,9 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 
-object ScheduleTemplateSlotTbl: UUIDTable(
+object ScheduleTemplateSlotTable: UUIDTable(
     name =  "schedule_template_slot"
 ) {
     val weekDay = enumerationByName<WeekDay>(
@@ -12,31 +12,31 @@ object ScheduleTemplateSlotTbl: UUIDTable(
     )
     val scheduleTemplateId = reference(
         name = "schedule_template_id",
-        refColumn = ScheduleTemplateTbl.id,
+        refColumn = ScheduleTemplateTable.id,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT
     )
     val groupId = optReference(
         name = "group_id",
-        refColumn = GroupTbl.id,
+        refColumn = GroupTable.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
     val scheduleActivityId = optReference(
         name = "schedule_activity_id",
-        refColumn = ScheduleActivityTbl.id,
+        refColumn = ScheduleActivityTable.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
     val placeId = optReference(
         "place_id",
-        PlaceTbl.id,
+        PlaceTable.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
     val timeRangeId = reference(
         name = "time_range_id",
-        refColumn = TimeRangeTbl.id,
+        refColumn = TimeRangeTable.id,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )

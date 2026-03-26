@@ -2,7 +2,7 @@ package com.libreguardia
 
 import com.libreguardia.config.configureDatabase
 import com.libreguardia.config.configureRouting
-import com.libreguardia.model.*
+import com.libreguardia.db.*
 import com.libreguardia.user.Priority
 import com.libreguardia.user.Task
 import com.libreguardia.user.testRoutes
@@ -32,23 +32,26 @@ class ApplicationTest {
             transaction {
                 missingColStatements =
                     SchemaUtils.addMissingColumnsStatements(
-                        AbsenceTbl,
-                        AcademicYearTbl,
-                        BuildingTbl,
-                        CourseTbl,
-                        GroupTbl,
-                        PlaceTbl,
-                        PlaceTypeTbl,
-                        ProfessionalFamilyTbl,
-                        ScheduleActivityTbl,
-                        ScheduleTbl,
-                        ScheduleTemplateTbl,
-                        ScheduleTemplateSlotTbl,
-                        ServiceTbl,
-                        TimeRangeTbl,
-                        UserTbl,
-                        UserRoleTbl,
-                        ZoneTbl,
+                        AbsenceTable,
+                        AcademicYearTable,
+                        BuildingTable,
+                        CourseTable,
+                        GroupTable,
+                        PlaceTable,
+                        PlaceTypeTable,
+                        ProfessionalFamilyTable,
+                        ScheduleActivityTable,
+                        ScheduleTable,
+                        ScheduleTemplateTable,
+                        ScheduleTemplateSlotTable,
+                        ServiceTable,
+                        TimeRangeTable,
+                        UserTable,
+                        UserRoleTable,
+                        ZoneTable,
+                        AppSettingsTable,
+                        AbsenceHistoryTable,
+                        ServiceHistoryTable
                     )
             }
             missingColStatements.forEach { println(it) }
@@ -64,7 +67,7 @@ class ApplicationTest {
         application {
             val repository = FakeTaskRepository()
             testRoutes(repository)
-            configureRouting()
+            //configureRouting()
         }
 
         val client = createClient {
@@ -88,7 +91,7 @@ class ApplicationTest {
         application {
             val repository = FakeTaskRepository()
             testRoutes(repository)
-            configureRouting()
+            //configureRouting()
         }
         val response = client.get("/tasks/byPriority/Invalid")
         assertEquals(HttpStatusCode.BadRequest, response.status)
@@ -99,7 +102,7 @@ class ApplicationTest {
         application {
             val repository = FakeTaskRepository()
             testRoutes(repository)
-            configureRouting()
+            //configureRouting()
         }
 
         val response = client.get("/tasks/byPriority/Vital")
@@ -111,7 +114,7 @@ class ApplicationTest {
         application {
             val repository = FakeTaskRepository()
             testRoutes(repository)
-            configureRouting()
+            //configureRouting()
         }
 
         val client = createClient {

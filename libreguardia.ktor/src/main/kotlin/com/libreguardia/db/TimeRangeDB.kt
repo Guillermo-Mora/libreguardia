@@ -1,9 +1,9 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.datetime.time
 
-object TimeRangeTbl: UUIDTable(
+object TimeRangeTable: UUIDTable(
     name =  "time_range"
 ) {
     val startTime = time(
