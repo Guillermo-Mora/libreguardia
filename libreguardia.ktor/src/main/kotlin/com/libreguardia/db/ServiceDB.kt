@@ -12,21 +12,21 @@ object ServiceTable: UUIDTable(
         precision = 8,
         scale = 1
     ).default(BigDecimal.ONE)
-    val absenceId = reference(
+    val absence = reference(
         name = "absence_id",
-        refColumn = AbsenceTable.id,
+        foreign = AbsenceTable,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val coverUserId = optReference(
+    val coverUser = optReference(
         name = "cover_user_id",
-        refColumn = UserTable.id,
+        foreign = UserTable,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT
     ).default(null)
-    val assignedUserId = optReference(
+    val assignedUser = optReference(
         name = "assigned_user_id",
-        refColumn = UserTable.id,
+        foreign = UserTable,
         onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.RESTRICT
     )

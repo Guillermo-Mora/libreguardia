@@ -10,33 +10,33 @@ object ScheduleTable: UUIDTable(
         name = "week_day",
         length = 9
     )
-    val groupId = optReference(
+    val group = optReference(
         name = "group_id",
-        refColumn = GroupTable.id,
+        foreign = GroupTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )
-    val scheduleActivityId = reference(
+    val scheduleActivity = reference(
         name = "schedule_activity_id",
-        refColumn = ScheduleActivityTable.id,
+        foreign = ScheduleActivityTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )
-    val placeId = reference(
+    val place = reference(
         name = "place_id",
-        refColumn = PlaceTable.id,
+        foreign = PlaceTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )
-    val timeRangeId = reference(
+    val timeRange = reference(
         name = "time_range_id",
-        refColumn = TimeRangeTable.id,
+        foreign = TimeRangeTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val userId = reference(
+    val user = reference(
         name = "user_id",
-        refColumn = UserTable.id,
+        foreign = UserTable,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT,
     )
@@ -44,7 +44,7 @@ object ScheduleTable: UUIDTable(
     init {
         uniqueIndex(
             customIndexName = "uq_schedule",
-            weekDay, timeRangeId, userId
+            weekDay, timeRange, user
         )
     }
 }

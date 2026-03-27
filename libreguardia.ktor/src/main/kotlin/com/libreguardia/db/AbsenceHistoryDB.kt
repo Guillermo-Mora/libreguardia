@@ -41,15 +41,15 @@ object AbsenceHistoryTable: UUIDTable(
     val timeRangeEndTime = time(
         name = "time_range_end_time",
     )
-    val academicYearId = reference(
+    val academicYear = reference(
         name = "academic_year_id",
-        refColumn = AcademicYearTable.id,
+        foreign = AcademicYearTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val absenceId = optReference(
+    val absence = optReference(
         name = "absence_id",
-        refColumn = AbsenceTable.id,
+        foreign = AbsenceTable,
         onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.RESTRICT
     )

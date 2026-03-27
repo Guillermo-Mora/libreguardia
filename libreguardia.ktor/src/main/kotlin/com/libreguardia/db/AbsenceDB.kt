@@ -10,9 +10,9 @@ object AbsenceTable: UUIDTable(
     val date = date(
         name = "date"
     )
-    val scheduleId = reference(
+    val schedule = reference(
         name = "schedule_id",
-        refColumn = ScheduleTable.id,
+        foreign = ScheduleTable,
         onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT
     )
@@ -20,7 +20,7 @@ object AbsenceTable: UUIDTable(
     init {
         uniqueIndex(
             customIndexName = "uq_absence",
-            date, scheduleId
+            date, schedule
         )
     }
 }

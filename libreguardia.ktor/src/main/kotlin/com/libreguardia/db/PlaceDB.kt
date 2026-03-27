@@ -14,21 +14,21 @@ object PlaceTable: UUIDTable(
         name = "floor",
         length = 50
     ).nullable().default(null)
-    val buildingId = optReference(
+    val building = optReference(
         name = "building_id",
-        refColumn = BuildingTable.id,
+        foreign = BuildingTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     ).default(null)
-    val zoneId = reference(
+    val zone = reference(
         name = "zone_id",
-        refColumn = ZoneTable.id,
+        foreign = ZoneTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val placeTypeId = reference(
+    val placeType = reference(
         name = "place_type_id",
-        refColumn = PlaceTypeTable.id,
+        foreign = PlaceTypeTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )
@@ -36,7 +36,7 @@ object PlaceTable: UUIDTable(
     init {
         uniqueIndex(
             customIndexName = "uq_place",
-            name, buildingId, zoneId
+            name, building, zone
         )
     }
 }

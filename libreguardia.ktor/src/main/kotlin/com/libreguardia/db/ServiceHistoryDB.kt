@@ -30,27 +30,27 @@ object ServiceHistoryTable: UUIDTable(
         name = "assigned_user_email",
         length = 50
     ).nullable()
-    val absenceHistoryId = reference(
+    val absenceHistory = reference(
         name = "absence_history_id",
-        refColumn = AbsenceHistoryTable.id,
+        foreign = AbsenceHistoryTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val serviceId = optReference(
+    val service = optReference(
         name = "service_id",
-        refColumn = ServiceTable.id,
+        foreign = ServiceTable,
         onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val coverUserId = optReference(
+    val coverUser = optReference(
         name = "cover_user_id",
-        refColumn = UserTable.id,
+        foreign = UserTable,
         onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.RESTRICT
     )
-    val assignedUserId = optReference(
+    val assignedUser = optReference(
         name = "assigned_user_id",
-        refColumn = UserTable.id,
+        foreign = UserTable,
         onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.RESTRICT
     )

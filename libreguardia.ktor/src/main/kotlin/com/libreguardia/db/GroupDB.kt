@@ -10,9 +10,9 @@ object GroupTable: UUIDTable(
         name = "name",
         length = 50
     )
-    val courseId = reference(
+    val course = reference(
         name = "course_id",
-        refColumn = CourseTable.id,
+        foreign = CourseTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
@@ -20,7 +20,7 @@ object GroupTable: UUIDTable(
     init {
         uniqueIndex(
             customIndexName = "uq_group",
-            name, courseId
+            name, course
         )
     }
 }

@@ -29,9 +29,9 @@ object UserTable: UUIDTable(
         name = "password",
         length = 60
     )
-    val userRoleId = reference(
+    val userRole = reference(
         name = "user_role_id",
-        refColumn = UserRoleTable.id,
+        foreign = UserRoleTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )

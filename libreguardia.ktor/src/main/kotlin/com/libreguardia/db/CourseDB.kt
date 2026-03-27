@@ -9,8 +9,8 @@ object CourseTable: UUIDTable(
         name = "name",
         length = 50,
     ).uniqueIndex()
-    val professionalFamilyId = reference(
+    val professionalFamily = reference(
         name = "professional_family_id",
-        refColumn = ProfessionalFamilyTable.id
+        foreign = ProfessionalFamilyTable
     )
 }
