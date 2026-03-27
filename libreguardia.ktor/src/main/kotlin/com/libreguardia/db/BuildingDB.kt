@@ -1,8 +1,8 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 
-object BuildingTbl: UUIDTable(
+object BuildingTable: UUIDTable(
     name = "building"
 ) {
     val name = varchar(
