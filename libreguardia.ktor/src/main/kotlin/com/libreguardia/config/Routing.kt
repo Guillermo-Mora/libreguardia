@@ -1,19 +1,22 @@
 package com.libreguardia.config
 
 
-import io.ktor.http.*
+import com.libreguardia.routing.userRoute
+import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.http.content.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Application.configureRouting() {
+fun Application.configureRouting(
+    userService: UserService
+) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
+        userRoute(
+            userService = userService
+        )
+
+
         // Static plugin. Try to access `/static/index.html`
         staticResources("/static", "static")
     }
