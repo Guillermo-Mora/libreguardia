@@ -1,4 +1,4 @@
-package com.libreguardia.model
+package com.libreguardia.db
 
 enum class WeekDay {
     MONDAY,
