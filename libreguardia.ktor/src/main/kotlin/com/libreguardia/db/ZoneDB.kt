@@ -15,12 +15,16 @@ object ZoneTable: UUIDTable(
         name = "name",
         length = 50
     ).uniqueIndex()
+    val isEnabled = bool(
+        name = "is_enabled"
+    ).default(true)
 }
 
 class ZoneEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ZoneEntity>(ZoneTable)
 
     var name by ZoneTable.name
+    var isEnabled by ZoneTable.isEnabled
 }
 
 fun etyToModel(dao: ZoneEntity) = ZoneMdl(
