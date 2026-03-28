@@ -45,13 +45,10 @@ class ApplicationTest {
                         ScheduleTemplateTable,
                         ScheduleTemplateSlotTable,
                         ServiceTable,
-                        TimeRangeTable,
                         UserTable,
                         UserRoleTable,
                         ZoneTable,
-                        AppSettingsTable,
-                        AbsenceHistoryTable,
-                        ServiceHistoryTable
+                        AppSettingsTable
                     )
             }
             missingColStatements.forEach { println(it) }
