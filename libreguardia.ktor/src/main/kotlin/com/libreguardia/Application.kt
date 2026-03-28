@@ -1,6 +1,8 @@
 package com.libreguardia
 
 import com.libreguardia.config.*
+import com.libreguardia.repository.UserRepository
+import com.libreguardia.service.UserService
 import com.libreguardia.user.PostgresTaskRepository
 import com.libreguardia.user.testRoutes
 import io.ktor.server.application.*
@@ -12,26 +14,35 @@ fun main(args: Array<String>) {
 
 fun Application.module() {
     val config = environment.config
-    val url = config.property("storage.jdbcURL").getString()
-    val user = config.property("storage.user").getString()
-    val password = config.property("storage.password").getString()
+    val dbUrl = config.property("storage.jdbcURL").getString()
+    val dbUser = config.property("storage.user").getString()
+    val dbPassword = config.property("storage.password").getString()
+
+    val userRepository = UserRepository()
+
+    val userService = UserService(
+        userRepository = userRepository
+    )
 
     configureDatabase(
-        url = url,
-        user = user,
-        password = password
+        url = dbUrl,
+        user = dbUser,
+        password = dbPassword
     )
     configureFlyway(
-        url = url,
-        user = user,
-        password = password
+        url = dbUrl,
+        user = dbUser,
+        password = dbPassword
     )
     configureDefaultHeaders()
     configureCompression()
     configureStatusPage()
     configureSerialization()
     configureAuthentication()
-    configureRouting()
+    configureRouting(
+        userService = userService
+    )
+
     //Test route
     testRoutes(PostgresTaskRepository())
 }
