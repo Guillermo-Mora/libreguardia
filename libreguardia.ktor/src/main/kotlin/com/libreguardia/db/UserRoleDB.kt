@@ -19,4 +19,5 @@ class UserRoleEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<UserRoleEntity>(UserRoleTable)
 
     var name by UserRoleTable.name
+    val users by UserEntity referrersOn UserTable.userRole
 }

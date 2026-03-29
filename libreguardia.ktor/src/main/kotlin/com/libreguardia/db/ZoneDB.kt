@@ -25,6 +25,7 @@ class ZoneEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var name by ZoneTable.name
     var isEnabled by ZoneTable.isEnabled
+    val places by PlaceEntity referrersOn PlaceTable.zone
 }
 
 fun etyToModel(dao: ZoneEntity) = ZoneMdl(

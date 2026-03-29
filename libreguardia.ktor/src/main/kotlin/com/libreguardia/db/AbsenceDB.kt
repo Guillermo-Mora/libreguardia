@@ -64,4 +64,5 @@ class AbsenceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var scheduleActivity by ScheduleActivityEntity referencedOn AbsenceTable.scheduleActivity
     var place by PlaceEntity referencedOn AbsenceTable.place
     var user by UserEntity referencedOn AbsenceTable.user
+    val service by ServiceEntity optionalBackReferencedOn ServiceTable.absence
 }

@@ -23,4 +23,5 @@ class BuildingEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var name by BuildingTable.name
     var isEnabled by BuildingTable.isEnabled
+    val places by PlaceEntity optionalReferrersOn PlaceTable.building
 }

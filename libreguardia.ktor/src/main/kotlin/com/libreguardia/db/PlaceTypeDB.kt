@@ -23,4 +23,5 @@ class PlaceTypeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var name by PlaceTypeTable.name
     var isEnabled by PlaceTypeTable.isEnabled
+    val places by PlaceEntity referrersOn PlaceTable.placeType
 }

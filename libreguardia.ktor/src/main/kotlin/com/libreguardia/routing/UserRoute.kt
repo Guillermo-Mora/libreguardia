@@ -11,9 +11,8 @@ import io.ktor.server.routing.route
 fun Route.userRoute(
     userService: UserService
 ) {
-    route("/users") {
+    route("/api/user") {
         get {
-
         }
         post {
 
