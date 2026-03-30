@@ -36,6 +36,7 @@ fun Application.module() {
         user = dbUser,
         password = dbPassword
     )
+    configureMonitoring()
     configureDefaultHeaders()
     configureCompression()
     configureStatusPage()
