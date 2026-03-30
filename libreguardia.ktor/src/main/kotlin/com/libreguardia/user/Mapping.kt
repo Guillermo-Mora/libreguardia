@@ -1,9 +1,5 @@
 package com.libreguardia.user
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.jetbrains.exposed.v1.jdbc.JdbcTransaction
-import org.jetbrains.exposed.v1.jdbc.transactions.inTopLevelSuspendTransaction
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
 import org.jetbrains.exposed.v1.dao.IntEntity
@@ -21,10 +17,6 @@ class TaskDAO(id: EntityID<Int>) : IntEntity(id) {
     var name by TaskTable.name
     var description by TaskTable.description
     var priority by TaskTable.priority
-}
-
-suspend fun <T> withTransaction(block: suspend JdbcTransaction.() -> T): T = withContext(Dispatchers.IO) {
-    inTopLevelSuspendTransaction { block() }
 }
 
 fun daoToModel(dao: TaskDAO) = Task(

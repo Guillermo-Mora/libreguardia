@@ -12,6 +12,8 @@ fun main(args: Array<String>) {
     EngineMain.main(args)
 }
 
+//It would be better to separate the app in different modules in the future. For better responsability
+// separations.
 fun Application.module() {
     val config = environment.config
     val dbUrl = config.property("storage.jdbcURL").getString()

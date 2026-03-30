@@ -1,18 +1,18 @@
 package com.libreguardia.routing
 
 import com.libreguardia.dto.UserRequestDTO
+import com.libreguardia.exception.UserRoleNotFoundException
 import com.libreguardia.service.UserService
+import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
 import io.ktor.server.request.receive
 import io.ktor.server.resources.get
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
-import io.ktor.server.routing.get
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
-import io.ktor.server.routing.route
 
 @Resource("/api/users")
 class Users {
@@ -33,6 +33,12 @@ fun Route.userRouting(
     }
     post<Users> {
         val user = call.receive<UserRequestDTO>()
+        try {
+            userService.createUser(user)
+            call.respond(HttpStatusCode.Created)
+        } catch (_: UserRoleNotFoundException) {
+            call.respond(HttpStatusCode.NotFound)
+        }
     }
     get<Users.Email.Edit> { user ->
         println("Email of the user to edit: ${user.parent.email}")

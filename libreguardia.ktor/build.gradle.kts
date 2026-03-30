@@ -37,6 +37,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.1.1")
     implementation("org.jetbrains.exposed:exposed-migration-core:1.1.1")
     implementation("org.jetbrains.exposed:exposed-migration-jdbc:1.1.1")
+    implementation("io.ktor:ktor-server-resources:3.4.1")
+    implementation("at.favre.lib:bcrypt:0.10.2")
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.ktor.client.content.negotiation)

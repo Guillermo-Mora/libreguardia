@@ -2,7 +2,7 @@ package com.libreguardia.user
 
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
-
+import com.libreguardia.config.withTransaction
 class PostgresTaskRepository : TaskRepository {
     override suspend fun allTasks(): List<Task> = withTransaction {
         TaskDAO.all().map(::daoToModel)
