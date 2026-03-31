@@ -3,9 +3,15 @@ package com.libreguardia
 import com.libreguardia.config.configureDatabase
 import com.libreguardia.config.configureRouting
 import com.libreguardia.db.*
+import com.libreguardia.dto.ProfessionalFamilyRequestDTO
+import com.libreguardia.dto.ProfessionalFamilyResponseDTO
 import com.libreguardia.dto.UserRequestDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.routing.Users
+import com.libreguardia.repository.ProfessionalFamilyRepository
+import com.libreguardia.repository.UserRepository
+import com.libreguardia.service.ProfessionalFamilyService
+import com.libreguardia.service.UserService
 import com.libreguardia.user.Priority
 import com.libreguardia.user.Task
 import com.libreguardia.user.testRoutes
@@ -23,6 +29,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ApplicationTest {
@@ -83,21 +90,10 @@ class ApplicationTest {
 
         }
 
-        val createResponse = client.post(Users()) {
-            setBody(
-                UserRequestDTO(
-                    name = "Juan",
-                    surname = "Martínez Hernández",
-                    email = "juanmaher@edu.gva.es",
-                    phoneNumber = "000000000",
-                    password = "123",
-                    isEnabled = true,
-                    userRole = "ADMIN"
-                )
-            )
+        val createResponse = client.post("/api/users") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"Juan","surname":"Martínez Hernández","email":"juanmaher@edu.gva.es","phoneNumber":"000000000","password":"123","isEnabled":true,"userRole":"ADMIN"}""")
         }
-        val postArticle = client.post(Users()) { setBody("Article content") }
-
         assertEquals(
             expected = HttpStatusCode.Created,
             actual = createResponse.status
@@ -187,5 +183,127 @@ class ApplicationTest {
             .map { it.name }
 
         assertContains(taskNames, "swimming")
+    }
+
+    @Test
+    fun professionalFamilyCrud() = testApplication {
+        environment {
+            config = ApplicationConfig("application.yaml")
+        }
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            val repository = ProfessionalFamilyRepository()
+            val service = ProfessionalFamilyService(repository)
+            configureRouting(
+                professionalFamilyService = service,
+                userService = UserService(UserRepository())
+            )
+        }
+
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val initialFamilies: List<ProfessionalFamilyResponseDTO> = client.get("/api/professional-families").body()
+        val initialCount = initialFamilies.size
+
+        val createResponse = client.post("/api/professional-families") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name": "Informática", "isEnabled": true}""")
+        }
+        assertEquals(HttpStatusCode.Created, createResponse.status)
+        val createdFamily: ProfessionalFamilyResponseDTO = createResponse.body()
+        assertEquals("Informática", createdFamily.name)
+        assertTrue(createdFamily.isEnabled)
+
+        val getByIdResponse = client.get("/api/professional-families/${createdFamily.id}")
+        assertEquals(HttpStatusCode.OK, getByIdResponse.status)
+        val retrievedFamily: ProfessionalFamilyResponseDTO = getByIdResponse.body()
+        assertEquals(createdFamily.id, retrievedFamily.id)
+
+        val updateResponse = client.put("/api/professional-families/${createdFamily.id}") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name": "Informática y Comunicaciones", "isEnabled": false}""")
+        }
+        assertEquals(HttpStatusCode.OK, updateResponse.status)
+        val updatedFamily: ProfessionalFamilyResponseDTO = updateResponse.body()
+        assertEquals("Informática y Comunicaciones", updatedFamily.name)
+        assertFalse(updatedFamily.isEnabled)
+
+        val deleteResponse = client.delete("/api/professional-families/${createdFamily.id}")
+        assertEquals(HttpStatusCode.NoContent, deleteResponse.status)
+
+        val notFoundResponse = client.get("/api/professional-families/${createdFamily.id}")
+        assertEquals(HttpStatusCode.NotFound, notFoundResponse.status)
+
+        val finalFamilies: List<ProfessionalFamilyResponseDTO> = client.get("/api/professional-families").body()
+        assertEquals(initialCount, finalFamilies.size)
+    }
+
+    @Test
+    fun professionalFamilyValidation() = testApplication {
+        environment {
+            config = ApplicationConfig("application.yaml")
+        }
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            val repository = ProfessionalFamilyRepository()
+            val service = ProfessionalFamilyService(repository)
+            configureRouting(
+                professionalFamilyService = service,
+                userService = UserService(UserRepository())
+            )
+        }
+
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val invalidResponse = client.post("/api/professional-families") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name": "", "isEnabled": true}""")
+        }
+        assertEquals(HttpStatusCode.BadRequest, invalidResponse.status)
+    }
+
+    @Test
+    fun professionalFamilyNotFound() = testApplication {
+        environment {
+            config = ApplicationConfig("application.yaml")
+        }
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            val repository = ProfessionalFamilyRepository()
+            val service = ProfessionalFamilyService(repository)
+            configureRouting(
+                professionalFamilyService = service,
+                userService = UserService(UserRepository())
+            )
+        }
+
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val notFoundResponse = client.get("/api/professional-families/00000000-0000-0000-0000-000000000000")
+        assertEquals(HttpStatusCode.NotFound, notFoundResponse.status)
     }
 }

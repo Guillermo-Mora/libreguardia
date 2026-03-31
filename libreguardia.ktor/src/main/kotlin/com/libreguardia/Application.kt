@@ -1,7 +1,9 @@
 package com.libreguardia
 
 import com.libreguardia.config.*
+import com.libreguardia.repository.ProfessionalFamilyRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import com.libreguardia.user.PostgresTaskRepository
 import com.libreguardia.user.testRoutes
@@ -21,9 +23,13 @@ fun Application.module() {
     val dbPassword = config.property("storage.password").getString()
 
     val userRepository = UserRepository()
+    val professionalFamilyRepository = ProfessionalFamilyRepository()
 
     val userService = UserService(
         userRepository = userRepository
+    )
+    val professionalFamilyService = ProfessionalFamilyService(
+        repository = professionalFamilyRepository
     )
 
     configureDatabase(
@@ -42,6 +48,7 @@ fun Application.module() {
     configureSerialization()
     configureAuthentication()
     configureRouting(
+        professionalFamilyService = professionalFamilyService,
         userService = userService
     )
 
