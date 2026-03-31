@@ -7,11 +7,10 @@ import com.libreguardia.config.configureRouting
 import com.libreguardia.config.configureSerialization
 import com.libreguardia.config.withTransaction
 import com.libreguardia.db.*
-import com.libreguardia.dto.UserRequestDTO
+import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.repository.UserRepository
-import com.libreguardia.routing.Users
-import com.libreguardia.routing.userRouting
+import com.libreguardia.routing.UsersAPI
 import com.libreguardia.service.UserService
 import com.libreguardia.user.Priority
 import com.libreguardia.user.Task
@@ -23,16 +22,10 @@ import io.ktor.client.plugins.resources.post
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.Application
-import io.ktor.server.application.install
 import io.ktor.server.config.*
-import io.ktor.server.resources.Resources
 import io.ktor.server.testing.*
-import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
-import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import org.postgresql.ds.PGSimpleDataSource
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.postgresql.PostgreSQLContainer
 import kotlin.test.*
@@ -123,10 +116,10 @@ class ApplicationTest {
             install(io.ktor.client.plugins.resources.Resources)
         }
 
-        val createResponse = client.post(Users()) {
+        val createResponse = client.post(UsersAPI()) {
             contentType(ContentType.Application.Json)
             setBody(
-                UserRequestDTO(
+                UserCreateDTO(
                     name = "Juan",
                     surname = "Martínez Hernández",
                     email = "juanmaher@edu.gva.es",
@@ -142,8 +135,8 @@ class ApplicationTest {
             expected = HttpStatusCode.Created,
             actual = createResponse.status
         )
-        val users: List<UserResponseDTO> = client.get(Users()).body()
-        assertTrue { users.isNotEmpty() }
+        val usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
     }
 
 
