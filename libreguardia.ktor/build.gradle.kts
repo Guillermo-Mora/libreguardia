@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.ktor.server.call.logging)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.resources)
+    implementation(libs.ktor.server.request.validation)
     implementation("org.flywaydb:flyway-database-postgresql:12.2.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.1.1")
     implementation("org.jetbrains.exposed:exposed-migration-core:1.1.1")
