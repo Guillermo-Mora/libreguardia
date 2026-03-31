@@ -1,14 +1,17 @@
 package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import com.libreguardia.config.UserNotFoundException
 import com.libreguardia.config.withTransaction
 import com.libreguardia.db.UserRoleEntity
 import com.libreguardia.db.UserRoleTable
-import com.libreguardia.dto.UserRequestDTO
+import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserResponseDTO
-import com.libreguardia.exception.UserRoleNotFoundException
+import com.libreguardia.config.UserRoleNotFoundException
+import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.repository.UserRepository
 import org.jetbrains.exposed.v1.core.eq
+import java.util.UUID
 
 class UserService (
     private val userRepository: UserRepository
@@ -20,22 +23,40 @@ class UserService (
         userRepository.all()
     }
 
+    suspend fun getUser(
+        userUUID: UUID
+    ): UserResponseDTO {
+        return withTransaction {
+            val user = userRepository.getByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
+            user
+        }
+    }
+
     suspend fun createUser(
-        userRequestDTO: UserRequestDTO
+        userCreateDTO: UserCreateDTO
     ) {
         val bcryptHasher = BCrypt.withDefaults()
         val hashedPassword = bcryptHasher.hashToString(
             10,
-            userRequestDTO.password.toCharArray()
+            userCreateDTO.password.toCharArray()
         )
         withTransaction {
-            val userRoleEntity = UserRoleEntity.find { UserRoleTable.name eq userRequestDTO.userRole }.firstOrNull()
-            if (userRoleEntity == null) throw UserRoleNotFoundException()
+            val userRoleEntity = UserRoleEntity.find { UserRoleTable.name eq userCreateDTO.userRole }.firstOrNull()
+            if (userRoleEntity == null) throw UserRoleNotFoundException(userCreateDTO.userRole)
             userRepository.save(
-                userRequestDTO = userRequestDTO,
+                userCreateDTO = userCreateDTO,
                 userRoleEntity = userRoleEntity,
                 hashedPassword = hashedPassword
             )
+        }
+    }
+
+    suspend fun editUser(
+        userUUID: UUID,
+        userEditDTO: UserEditDTO
+    ) {
+        withTransaction {
+
         }
     }
 }
