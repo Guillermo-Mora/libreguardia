@@ -39,7 +39,7 @@ fun Application.module() {
     configureMonitoring()
     configureDefaultHeaders()
     configureCompression()
-    configureStatusPage()
+    configureStatusPages()
     configureSerialization()
     configureAuthentication()
     configureRouting(
