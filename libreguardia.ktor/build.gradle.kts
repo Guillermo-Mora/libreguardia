@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
@@ -39,7 +41,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-migration-core:1.1.1")
     implementation("org.jetbrains.exposed:exposed-migration-jdbc:1.1.1")
     implementation("at.favre.lib:bcrypt:0.10.2")
-    implementation("com.h2database:h2:2.3.232")
+    implementation("io.ktor:ktor-client-resources:3.4.2")
+    testImplementation("org.testcontainers:testcontainers:2.0.4")
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.4")
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
     testImplementation(libs.ktor.client.content.negotiation)
