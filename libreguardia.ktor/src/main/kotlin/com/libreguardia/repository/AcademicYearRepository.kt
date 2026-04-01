@@ -4,6 +4,7 @@ import com.libreguardia.db.AcademicYearEntity
 import com.libreguardia.db.AcademicYearTable
 import com.libreguardia.dto.AcademicYearRequestDTO
 import com.libreguardia.dto.AcademicYearResponseDTO
+import kotlinx.datetime.LocalDate
 import java.util.UUID
 
 class AcademicYearRepository {

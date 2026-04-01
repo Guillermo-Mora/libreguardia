@@ -5,12 +5,16 @@ import com.libreguardia.config.configureRouting
 import com.libreguardia.db.*
 import com.libreguardia.dto.ProfessionalFamilyRequestDTO
 import com.libreguardia.dto.ProfessionalFamilyResponseDTO
+import com.libreguardia.dto.AcademicYearRequestDTO
+import com.libreguardia.dto.AcademicYearResponseDTO
 import com.libreguardia.dto.UserRequestDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.routing.Users
 import com.libreguardia.repository.ProfessionalFamilyRepository
+import com.libreguardia.repository.AcademicYearRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.service.ProfessionalFamilyService
+import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.UserService
 import com.libreguardia.user.Priority
 import com.libreguardia.user.Task
@@ -199,6 +203,7 @@ class ApplicationTest {
             val repository = ProfessionalFamilyRepository()
             val service = ProfessionalFamilyService(repository)
             configureRouting(
+                academicYearService = AcademicYearService(AcademicYearRepository()),
                 professionalFamilyService = service,
                 userService = UserService(UserRepository())
             )
@@ -260,6 +265,7 @@ class ApplicationTest {
             val repository = ProfessionalFamilyRepository()
             val service = ProfessionalFamilyService(repository)
             configureRouting(
+                academicYearService = AcademicYearService(AcademicYearRepository()),
                 professionalFamilyService = service,
                 userService = UserService(UserRepository())
             )
@@ -292,6 +298,7 @@ class ApplicationTest {
             val repository = ProfessionalFamilyRepository()
             val service = ProfessionalFamilyService(repository)
             configureRouting(
+                academicYearService = AcademicYearService(AcademicYearRepository()),
                 professionalFamilyService = service,
                 userService = UserService(UserRepository())
             )
@@ -304,6 +311,129 @@ class ApplicationTest {
         }
 
         val notFoundResponse = client.get("/api/professional-families/00000000-0000-0000-0000-000000000000")
+        assertEquals(HttpStatusCode.NotFound, notFoundResponse.status)
+    }
+
+    @Test
+    fun academicYearCrud() = testApplication {
+        environment {
+            config = ApplicationConfig("application.yaml")
+        }
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            val repository = AcademicYearRepository()
+            val service = AcademicYearService(repository)
+            configureRouting(
+                academicYearService = service,
+                professionalFamilyService = ProfessionalFamilyService(ProfessionalFamilyRepository()),
+                userService = UserService(UserRepository())
+            )
+        }
+
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val initialYears: List<AcademicYearResponseDTO> = client.get("/api/academic-years").body()
+        val initialCount = initialYears.size
+
+        val createResponse = client.post("/api/academic-years") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"2024-2025","startDate":"2024-09-01","endDate":"2025-06-30"}""")
+        }
+        assertEquals(HttpStatusCode.Created, createResponse.status)
+        val createdYear: AcademicYearResponseDTO = createResponse.body()
+        assertEquals("2024-2025", createdYear.name)
+
+        val getByIdResponse = client.get("/api/academic-years/${createdYear.id}")
+        assertEquals(HttpStatusCode.OK, getByIdResponse.status)
+        val retrievedYear: AcademicYearResponseDTO = getByIdResponse.body()
+        assertEquals(createdYear.id, retrievedYear.id)
+
+        val updateResponse = client.put("/api/academic-years/${createdYear.id}") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"2025-2026","startDate":"2025-09-01","endDate":"2026-06-30"}""")
+        }
+        assertEquals(HttpStatusCode.OK, updateResponse.status)
+        val updatedYear: AcademicYearResponseDTO = updateResponse.body()
+        assertEquals("2025-2026", updatedYear.name)
+
+        val deleteResponse = client.delete("/api/academic-years/${createdYear.id}")
+        assertEquals(HttpStatusCode.NoContent, deleteResponse.status)
+
+        val notFoundResponse = client.get("/api/academic-years/${createdYear.id}")
+        assertEquals(HttpStatusCode.NotFound, notFoundResponse.status)
+
+        val finalYears: List<AcademicYearResponseDTO> = client.get("/api/academic-years").body()
+        assertEquals(initialCount, finalYears.size)
+    }
+
+    @Test
+    fun academicYearValidation() = testApplication {
+        environment {
+            config = ApplicationConfig("application.yaml")
+        }
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            val repository = AcademicYearRepository()
+            val service = AcademicYearService(repository)
+            configureRouting(
+                academicYearService = service,
+                professionalFamilyService = ProfessionalFamilyService(ProfessionalFamilyRepository()),
+                userService = UserService(UserRepository())
+            )
+        }
+
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val invalidResponse = client.post("/api/academic-years") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"name":"","startDate":"2024-09-01","endDate":"2024-06-30"}""")
+        }
+        assertEquals(HttpStatusCode.BadRequest, invalidResponse.status)
+    }
+
+    @Test
+    fun academicYearNotFound() = testApplication {
+        environment {
+            config = ApplicationConfig("application.yaml")
+        }
+        application {
+            configureDatabase(
+                url = "jdbc:postgresql://localhost:5432/libreguardia",
+                user = "postgres",
+                password = "libreguardia"
+            )
+            val repository = AcademicYearRepository()
+            val service = AcademicYearService(repository)
+            configureRouting(
+                academicYearService = service,
+                professionalFamilyService = ProfessionalFamilyService(ProfessionalFamilyRepository()),
+                userService = UserService(UserRepository())
+            )
+        }
+
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+
+        val notFoundResponse = client.get("/api/academic-years/00000000-0000-0000-0000-000000000000")
         assertEquals(HttpStatusCode.NotFound, notFoundResponse.status)
     }
 }
