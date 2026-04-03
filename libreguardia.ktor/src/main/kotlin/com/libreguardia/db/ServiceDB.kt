@@ -21,7 +21,7 @@ object ServiceTable: UUIDTable(
         foreign = AbsenceTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
-    )
+    ).uniqueIndex()
     val coverUser = optReference(
         name = "cover_user_id",
         foreign = UserTable,

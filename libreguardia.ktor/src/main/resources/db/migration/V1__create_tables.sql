@@ -133,7 +133,7 @@ CREATE TABLE absence (
                          group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          schedule_activity_id UUID NOT NULL REFERENCES schedule_activity(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          place_id UUID NOT NULL REFERENCES place(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                         user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                         user_id UUID REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          CONSTRAINT uq_absence UNIQUE (date, start_time, end_time, user_id)
 );
 
