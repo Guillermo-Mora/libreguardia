@@ -5,16 +5,17 @@ import com.libreguardia.config.configureDefaultHeaders
 import com.libreguardia.config.configureFlyway
 import com.libreguardia.config.configureRouting
 import com.libreguardia.config.configureSerialization
+import com.libreguardia.config.configureStatusPages
 import com.libreguardia.config.withTransaction
 import com.libreguardia.db.*
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserResponseDTO
+import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.ScheduleRepository
+import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.UsersAPI
 import com.libreguardia.service.UserService
-import com.libreguardia.user.Priority
-import com.libreguardia.user.Task
-import com.libreguardia.user.testRoutes
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.resources.*
@@ -24,7 +25,11 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.config.*
 import io.ktor.server.testing.*
+import org.flywaydb.core.Flyway
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.testcontainers.DockerClientFactory
 import org.testcontainers.postgresql.PostgreSQLContainer
@@ -78,6 +83,71 @@ class ApplicationTest {
 
     @Test
     fun addUserAndList() = testApplication {
+        val dbConnection = setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+        }
+        val roleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        println(roleUUID)
+
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = "12345678",
+                    isEnabled = true,
+                    userRoleUUID = roleUUID
+                )
+            )
+        }
+
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        val usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
+    }
+
+    @Test
+    fun deleteUserWithoutReferences() = testApplication {
         application {
             val testDB = PostgreSQLContainer("postgres:18.3").apply {
                 withDatabaseName("testdb")
@@ -100,7 +170,7 @@ class ApplicationTest {
             )
             configureSerialization()
             configureDefaultHeaders()
-            configureRouting(UserService(UserRepository()))
+            //configureRouting(UserService(UserRepository()))
 
             //Here temporarly, as right now there's no UserRoleRepository
             withTransaction {
@@ -109,116 +179,36 @@ class ApplicationTest {
                 }
             }
         }
-        val client = createClient {
-            install(ContentNegotiation) {
-                json()
-            }
-            install(io.ktor.client.plugins.resources.Resources)
-        }
+    }
 
-        val createResponse = client.post(UsersAPI()) {
-            contentType(ContentType.Application.Json)
-            setBody(
-                UserCreateDTO(
-                    name = "Juan",
-                    surname = "Martínez Hernández",
-                    email = "juanmaher@edu.gva.es",
-                    phoneNumber = "000000000",
-                    password = "123",
-                    isEnabled = true,
-                    userRole = "ADMIN"
-                )
-            )
+    private fun setupTestDBAndFlyway(): DbConnection {
+        val testDBContainer = PostgreSQLContainer("postgres:18.3").apply {
+            withDatabaseName("testdb")
+            withUsername("test")
+            withPassword("test")
+            start()
         }
-
-        assertEquals(
-            expected = HttpStatusCode.Created,
-            actual = createResponse.status
+        val dbConnection = DbConnection(
+            url = testDBContainer.jdbcUrl,
+            user = testDBContainer.username,
+            password = testDBContainer.password
         )
-        val usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
-        assertTrue { usersAPI.isNotEmpty() }
+        Database.connect(
+            url = dbConnection.url,
+            user = dbConnection.user,
+            password = dbConnection.password
+        )
+        Flyway.configure().dataSource(
+            dbConnection.url,
+            dbConnection.user,
+            dbConnection.password
+        ).load().migrate()
+        return dbConnection
     }
 
-
-    @Test
-    fun tasksCanBeFoundByPriority() = testApplication {
-        application {
-            val repository = FakeTaskRepository()
-            testRoutes(repository)
-            //configureRouting()
-        }
-
-        val client = createClient {
-            install(ContentNegotiation) {
-                json()
-            }
-        }
-
-        val response = client.get("/tasks/byPriority/Medium")
-        val results = response.body<List<Task>>()
-
-        assertEquals(HttpStatusCode.OK, response.status)
-
-        val expectedTaskNames = listOf("gardening", "painting")
-        val actualTaskNames = results.map(Task::name)
-        assertContentEquals(expectedTaskNames, actualTaskNames)
-    }
-
-    @Test
-    fun invalidPriorityProduces400() = testApplication {
-        application {
-            val repository = FakeTaskRepository()
-            testRoutes(repository)
-            //configureRouting()
-        }
-        val response = client.get("/tasks/byPriority/Invalid")
-        assertEquals(HttpStatusCode.BadRequest, response.status)
-    }
-
-    @Test
-    fun unusedPriorityProduces404() = testApplication {
-        application {
-            val repository = FakeTaskRepository()
-            testRoutes(repository)
-            //configureRouting()
-        }
-
-        val response = client.get("/tasks/byPriority/Vital")
-        assertEquals(HttpStatusCode.NotFound, response.status)
-    }
-
-    @Test
-    fun newTasksCanBeAdded() = testApplication {
-        application {
-            val repository = FakeTaskRepository()
-            testRoutes(repository)
-            //configureRouting()
-        }
-
-        val client = createClient {
-            install(ContentNegotiation) {
-                json()
-            }
-        }
-
-        val task = Task("swimming", "Go to the beach", Priority.Low)
-        val response1 = client.post("/tasks") {
-            header(
-                HttpHeaders.ContentType,
-                ContentType.Application.Json
-            )
-
-            setBody(task)
-        }
-        assertEquals(HttpStatusCode.NoContent, response1.status)
-
-        val response2 = client.get("/tasks")
-        assertEquals(HttpStatusCode.OK, response2.status)
-
-        val taskNames = response2
-            .body<List<Task>>()
-            .map { it.name }
-
-        assertContains(taskNames, "swimming")
-    }
+    private data class DbConnection(
+        val url: String,
+        val user: String,
+        val password: String
+    )
 }
