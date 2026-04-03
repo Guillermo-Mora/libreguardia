@@ -9,37 +9,25 @@ fun Route.userValidation() {
     install(RequestValidation) {
         validate<UserCreateDTO> {
             val errors = mutableListOf<String>()
-            if (it.name.isBlank())
-                errors.add("Invalid empty name")
-            if (it.surname.isBlank())
-                errors.add("Invalid empty surname")
-            if (it.userRole.isBlank())
-                errors.add("Invalid empty role name")
-            if (it.password.length !in 8..50 || it.password.isBlank())
-                errors.add("Invalid password length")
-            if (!Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$").matches(it.email))
-                errors.add("Invalid email format")
-            if (!Regex("^[0-9]{1,20}$").matches(it.phoneNumber))
-                errors.add("Phone number can only contain numbers with a length of 1-20")
-            if (errors.isNotEmpty()) return@validate ValidationResult.Invalid(errors)
-            else return@validate ValidationResult.Valid
+            validateString(it.name)?.let { error -> errors.add(error) }
+            validateString(it.surname)?.let { error -> errors.add(error) }
+            validatePassword(it.password)?.let { error -> errors.add(error) }
+            validateEmail(it.email)?.let { error -> errors.add(error) }
+            validatePhoneNumber(it.phoneNumber)?.let { error -> errors.add(error) }
+            return@validate validateResult(errors)
         }
         validate<UserEditDTO> {
             val errors = mutableListOf<String>()
-            if (it.name != null && it.name.isBlank())
-                errors.add("Invalid empty name")
-            if (it.surname != null && it.surname.isBlank())
-                errors.add("Invalid empty surname")
-            if (it.userRole != null && it.userRole.isBlank())
-                errors.add("Invalid empty role name")
-            if (it.password.length !in 8..50 || it.password.isBlank())
-                errors.add("Invalid password length")
-            if (!Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$").matches(it.email))
-                errors.add("Invalid email format")
-            if (!Regex("^[0-9]{1,20}$").matches(it.phoneNumber))
-                errors.add("Phone number can only contain numbers with a length of 1-20")
-            if (errors.isNotEmpty()) return@validate ValidationResult.Invalid(errors)
-            else return@validate ValidationResult.Valid
+            it.name?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
+            it.surname?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
+            validateNewPassword(
+                currentPassword = it.currentPassword,
+                newPassword = it.newPassword
+            )
+            it.currentPassword?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
+            it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
+            it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
+            return@validate validateResult(errors)
         }
-
+    }
 }
