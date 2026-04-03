@@ -140,7 +140,7 @@ CREATE TABLE absence (
 CREATE TABLE service_tbl (
                              id UUID PRIMARY KEY,
                              points_obtained DECIMAL(8,1) NOT NULL,
-                             absence_id UUID NOT NULL UNIQUE REFERENCES absence(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                             absence_id UUID NOT NULL UNIQUE REFERENCES absence(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                              cover_user_id UUID DEFAULT NULL REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                              assigned_user_id UUID REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
