@@ -27,19 +27,21 @@ data class UserCreateDTO(
     val phoneNumber: String,
     val password: String,
     val isEnabled: Boolean,
-    val userRole: String
+    @Serializable(with = UUIDSerializer::class)
+    val userRoleUUID: UUID
 )
 
 @Serializable
 data class UserEditDTO(
-    val name: String?,
-    val surname: String?,
-    val email: String?,
-    val phoneNumber: String?,
-    val password: String?,
-    val newPassword: String?,
-    val isEnabled: Boolean?,
-    val userRole: String?
+    val name: String? = null,
+    val surname: String? = null,
+    val email: String? = null,
+    val phoneNumber: String? = null,
+    val currentPassword: String? = null,
+    val newPassword: String? = null,
+    val isEnabled: Boolean? = null,
+    @Serializable(with = UUIDSerializer::class)
+    val userRoleUUID: UUID? = null
 )
 
 fun UserRepository.entityToResponse(
