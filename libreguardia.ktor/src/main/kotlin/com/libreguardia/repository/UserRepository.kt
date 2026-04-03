@@ -2,22 +2,27 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.UserEntity
 import com.libreguardia.db.UserRoleEntity
-import com.libreguardia.db.UserTable
 import com.libreguardia.dto.UserCreateDTO
+import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.dto.entityToResponse
-import org.jetbrains.exposed.v1.core.eq
-import java.util.UUID
+import java.util.*
 
 
 class UserRepository {
-    fun all(): List<UserResponseDTO> = UserEntity.all().map(::entityToResponse)
+    fun getAll(): List<UserResponseDTO> = UserEntity.all().map(::entityToResponse)
     fun getByUUID(
         uuid: UUID
     ): UserResponseDTO? {
-        val user = UserEntity.find { UserTable.id eq uuid }.firstOrNull()
-        return if (user != null) entityToResponse(user) else null
+        return UserEntity.findById(uuid)?.let { entityToResponse(it) }
     }
+
+    fun getEntityByUUID(
+        uuid: UUID
+    ): UserEntity? {
+        return UserEntity.findById(uuid)
+    }
+
     fun save(
         userCreateDTO: UserCreateDTO,
         userRoleEntity: UserRoleEntity,
@@ -32,5 +37,27 @@ class UserRepository {
             isEnabled = userCreateDTO.isEnabled
             userRole = userRoleEntity
         }
+    }
+
+    fun editByUUID(
+        uuid: UUID,
+        userEditDTO: UserEditDTO,
+        userRoleEntity: UserRoleEntity?,
+    ): Boolean {
+        return UserEntity.findByIdAndUpdate(uuid) { userEdit ->
+            userEditDTO.name?.let { userEdit.name = it }
+            userEditDTO.surname?.let { userEdit.surname = it }
+            userEditDTO.email?.let { userEdit.email = it }
+            userEditDTO.phoneNumber?.let { userEdit.phoneNumber = it }
+            userEditDTO.newPassword?.let { userEdit.password = it }
+            userEditDTO.isEnabled?.let { userEdit.isEnabled = it }
+            userRoleEntity?.let { userEdit.userRole = it }
+        } != null
+    }
+
+    fun deleteUser(
+        userEntity: UserEntity
+    ) {
+        userEntity.delete()
     }
 }
