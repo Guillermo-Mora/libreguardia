@@ -5,6 +5,7 @@ import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.service.UserService
 import com.libreguardia.validation.userValidation
+import com.sun.net.httpserver.HttpsServer
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.request.*
@@ -22,7 +23,8 @@ class UsersAPI {
     ) {
         @Resource("edit")
         class Edit(val parent: UUID)
-
+        @Resource("disable")
+        class Disable(val parent: UUID)
         @Resource("delete")
         class Delete(val parent: UUID)
     }
@@ -39,7 +41,9 @@ fun Route.userRouting(
     }
     post<UsersAPI> {
         val user = call.receive<UserCreateDTO>()
-        userService.createUser(user)
+        userService.createUser(
+            userCreateDTO = user
+        )
         call.respond(HttpStatusCode.Created)
     }
     get<UsersAPI.UUID> { user ->
@@ -52,8 +56,18 @@ fun Route.userRouting(
             userUUID = user.parent.uuid,
             userEditDTO = userEdit
         )
+        call.respond(HttpStatusCode.OK)
     }
     delete<UsersAPI.UUID.Delete> { user ->
-
+        userService.deleteUser(
+            userUUID = user.parent.uuid
+        )
+        call.respond(HttpStatusCode.OK)
+    }
+    patch<UsersAPI.UUID.Disable> { user ->
+        userService.disableUser(
+            userUUID = user.parent.uuid
+        )
+        call.respond(HttpStatusCode.OK)
     }
 }
