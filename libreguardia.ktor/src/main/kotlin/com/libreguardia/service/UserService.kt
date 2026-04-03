@@ -8,13 +8,16 @@ import com.libreguardia.db.UserRoleEntity
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.config.UserRoleNotFoundException
-import com.libreguardia.db.UserEntity
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
+import kotlin.time.Clock
 
 class UserService (
     private val userRepository: UserRepository,
@@ -66,7 +69,7 @@ class UserService (
                     userEditDTO.userRoleUUID.toString()
                 )
             }
-            //New password verification if the current and new password are passed, still to implement
+            //This edit user is for admins, there shouldn't be need to provide the previous password to change it
             if (!userRepository.editByUUID(
                     uuid = userUUID,
                     userEditDTO = userEditDTO,
@@ -80,20 +83,32 @@ class UserService (
         userUUID: UUID
     ) {
         withTransaction {
+            println("Inside delete transaction")
             val userEntity =
                 userRepository.getEntityByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
             if (userEntity.isDeleted && !userEntity.isEnabled) throw UserAlreadyDeletedException(userUUID.toString())
+            val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            scheduleRepository.deleteSchedulesByUserUUID(userUUID)
+            serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
+                userUUID = userUUID,
+                dateTimeNow = dateTimeNow
+            )
+            absenceRepository.deleteAbsencesByUserUUIDAfterNow(
+                userUUID = userUUID,
+                dateTimeNow = dateTimeNow
+            )
             if (
-                absenceRepository.existsAbsenceByUserUUID(userEntity.id.value) ||
-                serviceRepository.existsServiceCoveredByUserUUID(userEntity.id.value) ||
-                serviceRepository.existsServiceAssignedToUserUUIDPreviousToNow(userEntity.id.value)
+                absenceRepository.existsAbsenceByUserUUIDPreviousToNow(
+                    userUUID = userUUID,
+                    dateTimeNow = dateTimeNow
+                ) ||
+                serviceRepository.existsServiceAssignedOrCoveredByUserUUIDPreviousToNow(
+                    userUUID = userUUID,
+                    dateTimeNow = dateTimeNow
+                )
             ) {
-                userEntity.isEnabled = false
-                userEntity.isDeleted = true
-            } else {
-                scheduleRepository.deleteSchedulesByUserUUID(userEntity.id.value)
-                userRepository.deleteUser(userEntity)
-            }
+                if (!userRepository.softDeleteUser(userUUID)) throw UserNotFoundException(userUUID.toString())
+            } else if (!userRepository.deleteUser(userUUID)) throw UserNotFoundException(userUUID.toString())
         }
     }
 
@@ -101,9 +116,7 @@ class UserService (
         userUUID: UUID
     ) {
         withTransaction {
-            val userEntity =
-                userRepository.getEntityByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
-            userEntity.isEnabled = false
+            if (!userRepository.disableUser(userUUID)) throw UserNotFoundException(userUUID.toString())
         }
     }
 }
