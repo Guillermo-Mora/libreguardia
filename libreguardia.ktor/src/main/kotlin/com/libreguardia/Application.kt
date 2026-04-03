@@ -1,6 +1,9 @@
 package com.libreguardia
 
 import com.libreguardia.config.*
+import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.ScheduleRepository
+import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.service.UserService
 import com.libreguardia.user.PostgresTaskRepository
@@ -21,9 +24,15 @@ fun Application.module() {
     val dbPassword = config.property("storage.password").getString()
 
     val userRepository = UserRepository()
+    val absenceRepository = AbsenceRepository()
+    val serviceRepository = ServiceRepository()
+    val scheduleRepository = ScheduleRepository()
 
     val userService = UserService(
-        userRepository = userRepository
+        userRepository = userRepository,
+        absenceRepository = absenceRepository,
+        serviceRepository = serviceRepository,
+        scheduleRepository = scheduleRepository
     )
 
     configureDatabase(
