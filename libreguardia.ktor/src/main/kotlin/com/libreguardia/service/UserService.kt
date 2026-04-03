@@ -1,26 +1,29 @@
 package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import com.libreguardia.config.UserAlreadyDeletedException
 import com.libreguardia.config.UserNotFoundException
 import com.libreguardia.config.withTransaction
 import com.libreguardia.db.UserRoleEntity
-import com.libreguardia.db.UserRoleTable
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.config.UserRoleNotFoundException
+import com.libreguardia.db.UserEntity
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.ScheduleRepository
+import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
-import org.jetbrains.exposed.v1.core.eq
 import java.util.UUID
 
 class UserService (
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val absenceRepository: AbsenceRepository,
+    private val serviceRepository: ServiceRepository,
+    private val scheduleRepository: ScheduleRepository
 ) {
     suspend fun getAllUsers(): List<UserResponseDTO> = withTransaction {
-        //Recordar que no debo incluir lógica de negocio dentro de las transacciones,
-        // es decir. Operaciones que no afecten directamente a la transacción y unicidad de los datos.
-        // Hashear una contraseña por ejemplo, debe ir fuera de la transacción.
-        userRepository.all()
+        userRepository.getAll()
     }
 
     suspend fun getUser(
@@ -41,8 +44,9 @@ class UserService (
             userCreateDTO.password.toCharArray()
         )
         withTransaction {
-            val userRoleEntity = UserRoleEntity.find { UserRoleTable.name eq userCreateDTO.userRole }.firstOrNull()
-            if (userRoleEntity == null) throw UserRoleNotFoundException(userCreateDTO.userRole)
+            val userRoleEntity = UserRoleEntity.findById(userCreateDTO.userRoleUUID) ?: throw UserRoleNotFoundException(
+                userCreateDTO.userRoleUUID.toString()
+            )
             userRepository.save(
                 userCreateDTO = userCreateDTO,
                 userRoleEntity = userRoleEntity,
@@ -56,7 +60,50 @@ class UserService (
         userEditDTO: UserEditDTO
     ) {
         withTransaction {
+            var userRoleEntity: UserRoleEntity? = null
+            if (userEditDTO.userRoleUUID != null) {
+                userRoleEntity = UserRoleEntity.findById(userEditDTO.userRoleUUID) ?: throw UserRoleNotFoundException(
+                    userEditDTO.userRoleUUID.toString()
+                )
+            }
+            //New password verification if the current and new password are passed, still to implement
+            if (!userRepository.editByUUID(
+                    uuid = userUUID,
+                    userEditDTO = userEditDTO,
+                    userRoleEntity = userRoleEntity
+                )
+            ) throw UserNotFoundException(userUUID.toString())
+        }
+    }
 
+    suspend fun deleteUser(
+        userUUID: UUID
+    ) {
+        withTransaction {
+            val userEntity =
+                userRepository.getEntityByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
+            if (userEntity.isDeleted && !userEntity.isEnabled) throw UserAlreadyDeletedException(userUUID.toString())
+            if (
+                absenceRepository.existsAbsenceByUserUUID(userEntity.id.value) ||
+                serviceRepository.existsServiceCoveredByUserUUID(userEntity.id.value) ||
+                serviceRepository.existsServiceAssignedToUserUUIDPreviousToNow(userEntity.id.value)
+            ) {
+                userEntity.isEnabled = false
+                userEntity.isDeleted = true
+            } else {
+                scheduleRepository.deleteSchedulesByUserUUID(userEntity.id.value)
+                userRepository.deleteUser(userEntity)
+            }
+        }
+    }
+
+    suspend fun disableUser(
+        userUUID: UUID
+    ) {
+        withTransaction {
+            val userEntity =
+                userRepository.getEntityByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
+            userEntity.isEnabled = false
         }
     }
 }
