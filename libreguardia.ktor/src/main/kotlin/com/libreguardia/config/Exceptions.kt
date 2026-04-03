@@ -1,6 +1,5 @@
 package com.libreguardia.config
 
-import java.util.UUID
-
-class UserRoleNotFoundException(val roleName: String) : RuntimeException(roleName)
+class UserRoleNotFoundException(val uuid: String) : RuntimeException(uuid)
 class UserNotFoundException(val uuid: String) : RuntimeException(uuid)
+class UserAlreadyDeletedException(val uuid: String) : RuntimeException(uuid)
