@@ -2,6 +2,7 @@ package com.libreguardia.validation
 
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.UserEditProfileDTO
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.routing.*
 
@@ -20,13 +21,18 @@ fun Route.userValidation() {
             val errors = mutableListOf<String>()
             it.name?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
             it.surname?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
+            it.newPassword?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
+            it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
+            it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
+            return@validate validateResult(errors)
+        }
+        validate<UserEditProfileDTO> {
+            val errors = mutableListOf<String>()
+            it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
             validateNewPassword(
                 currentPassword = it.currentPassword,
                 newPassword = it.newPassword
-            )
-            it.currentPassword?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
-            it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
-            it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
+            )?.let { error -> errors.add(error) }
             return@validate validateResult(errors)
         }
     }
