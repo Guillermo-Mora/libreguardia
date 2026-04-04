@@ -13,6 +13,7 @@ import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.repository.UserRoleRepository
 import com.libreguardia.routing.UsersAPI
 import com.libreguardia.service.UserService
 import io.ktor.client.call.*
@@ -104,7 +105,8 @@ class ApplicationTest {
                     UserRepository(),
                     AbsenceRepository(),
                     ServiceRepository(),
-                    ScheduleRepository()
+                    ScheduleRepository(),
+                    UserRoleRepository()
                 )
             )
         }
@@ -168,7 +170,8 @@ class ApplicationTest {
                     UserRepository(),
                     AbsenceRepository(),
                     ServiceRepository(),
-                    ScheduleRepository()
+                    ScheduleRepository(),
+                    UserRoleRepository()
                 )
             )
         }
