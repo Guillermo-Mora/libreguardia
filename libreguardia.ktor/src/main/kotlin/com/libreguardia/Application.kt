@@ -7,8 +7,6 @@ import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.repository.UserRoleRepository
 import com.libreguardia.service.UserService
-import com.libreguardia.user.PostgresTaskRepository
-import com.libreguardia.user.testRoutes
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 
@@ -57,7 +55,4 @@ fun Application.module() {
     configureRouting(
         userService = userService
     )
-
-    //Test route
-    testRoutes(PostgresTaskRepository())
 }
