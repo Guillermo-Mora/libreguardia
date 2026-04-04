@@ -5,6 +5,7 @@ import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.repository.UserRoleRepository
 import com.libreguardia.service.UserService
 import com.libreguardia.user.PostgresTaskRepository
 import com.libreguardia.user.testRoutes
@@ -27,12 +28,14 @@ fun Application.module() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
+    val userRoleRepository = UserRoleRepository()
 
     val userService = UserService(
         userRepository = userRepository,
         absenceRepository = absenceRepository,
         serviceRepository = serviceRepository,
-        scheduleRepository = scheduleRepository
+        scheduleRepository = scheduleRepository,
+        userRoleRepository = userRoleRepository
     )
 
     configureDatabase(
