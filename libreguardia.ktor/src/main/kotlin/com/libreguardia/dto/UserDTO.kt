@@ -37,7 +37,7 @@ data class UserEditDTO(
     val surname: String? = null,
     val email: String? = null,
     val phoneNumber: String? = null,
-    val newPassword: String? = null,
+    val password: String? = null,
     val isEnabled: Boolean? = null,
     @Serializable(with = UUIDSerializer::class)
     val userRoleUUID: UUID? = null
