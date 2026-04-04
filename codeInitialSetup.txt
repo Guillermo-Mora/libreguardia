@@ -1,6 +1,9 @@
 - postgresql database: sudo systemctl start postgresql.service
 - pgadmin4 client: sudo /usr/pgadmin4/venv/bin/python /usr/pgadmin4/web/pgAdmin4.py
 
+DB tests:
+sudo systemctl start docker
+
 Docker Compose:
 - [Solo funciona conb el proyecto corriendo en un disco duro normal y no en uno externo]
 - start docker: sudo systemctl start docker.service

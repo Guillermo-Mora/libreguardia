@@ -1,57 +1,85 @@
 package com.libreguardia.routing
 
-import com.libreguardia.dto.UserRequestDTO
-import com.libreguardia.exception.UserRoleNotFoundException
+import com.libreguardia.config.UUIDSerializer
+import com.libreguardia.dto.UserCreateDTO
+import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.UserEditProfileDTO
 import com.libreguardia.service.UserService
-import io.ktor.http.HttpStatusCode
-import io.ktor.resources.Resource
-import io.ktor.server.request.receive
-import io.ktor.server.resources.get
-import io.ktor.server.response.respond
+import com.libreguardia.validation.userValidation
+import io.ktor.http.*
+import io.ktor.resources.*
+import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.delete
-import io.ktor.server.routing.patch
-import io.ktor.server.routing.post
-import io.ktor.server.routing.put
+import kotlinx.serialization.Serializable
 
 @Resource("/api/users")
-class Users {
-    @Resource("{email}")
-    class Email(val parent: Users = Users(), val email: String) {
+class UsersAPI {
+    @Resource("{uuid}")
+    class UUID(
+        val parent: UsersAPI = UsersAPI(),
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    ) {
         @Resource("edit")
-        class Edit(val parent: Email)
+        class Edit(val parent: UUID)
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: UUID)
+        @Resource("delete")
+        class Delete(val parent: UUID)
+        @Resource("edit-profile")
+        class EditProfile(val parent: UUID)
     }
 }
-
 
 fun Route.userRouting(
     userService: UserService
 ) {
-    get<Users> {
+    userValidation()
+
+    get<UsersAPI> {
         val users = userService.getAllUsers()
         call.respond(users)
     }
-    post<Users> {
-        val user = call.receive<UserRequestDTO>()
-        try {
-            userService.createUser(user)
-            call.respond(HttpStatusCode.Created)
-        } catch (_: UserRoleNotFoundException) {
-            call.respond(HttpStatusCode.NotFound)
-        }
+    post<UsersAPI> {
+        val user = call.receive<UserCreateDTO>()
+        userService.createUser(
+            userCreateDTO = user
+        )
+        call.respond(HttpStatusCode.Created)
     }
-    get<Users.Email.Edit> { user ->
-        println("Email of the user to edit: ${user.parent.email}")
-        //Show a page for editing the user with that email
+    get<UsersAPI.UUID> { user ->
+        val user = userService.getUser(user.uuid)
+        call.respond(user)
     }
-    put<Users.Email> { user ->
-        println("Email of the user to edit: ${user.email}")
-        //Edit the user with that email
+    patch<UsersAPI.UUID.Edit> { user ->
+        val userEdit = call.receive<UserEditDTO>()
+        userService.editUser(
+            userUUID = user.parent.uuid,
+            userEditDTO = userEdit
+        )
+        call.respond(HttpStatusCode.OK)
     }
-    delete {
-
+    delete<UsersAPI.UUID.Delete> { user ->
+        userService.deleteUser(
+            userUUID = user.parent.uuid
+        )
+        call.respond(HttpStatusCode.OK)
     }
-    patch("/byEmail/{userEmail}") {
-
+    patch<UsersAPI.UUID.ToggleEnabled> { user ->
+        val enableOrDisable = call.receive<Boolean>()
+        userService.toggleEnableUser(
+            userUUID = user.parent.uuid,
+            enableOrDisable = enableOrDisable
+        )
+        call.respond(HttpStatusCode.OK)
+    }
+    patch<UsersAPI.UUID.EditProfile> { user ->
+        val userEditProfile = call.receive<UserEditProfileDTO>()
+        userService.editUserProfile(
+            userUUID = user.parent.uuid,
+            userEditProfileDTO = userEditProfile
+        )
+        call.respond(HttpStatusCode.OK)
     }
 }

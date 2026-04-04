@@ -1,0 +1,886 @@
+package com.libreguardia.integration
+
+import com.libreguardia.Testing
+import com.libreguardia.config.*
+import com.libreguardia.db.*
+import com.libreguardia.dto.UserCreateDTO
+import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.UserEditProfileDTO
+import com.libreguardia.dto.UserResponseDTO
+import com.libreguardia.repository.*
+import com.libreguardia.routing.UsersAPI
+import com.libreguardia.service.UserService
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.resources.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.testing.*
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.SizedIterable
+import org.jetbrains.exposed.v1.jdbc.select
+import java.math.BigDecimal
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
+
+class UserIntegrationTest {
+    @Test
+    fun createUserAndList() = testApplication {
+        val dbConnection = Testing.setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository(),
+                    UserRoleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+        }
+        val roleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = "12345678",
+                    isEnabled = true,
+                    userRoleUUID = roleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        val users: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { users.isNotEmpty() }
+        users.forEach { println(it) }
+        val userUUID =
+            withTransaction {
+                UserTable.select(UserTable.id)
+                    .where {
+                        UserTable.name eq "Juan"
+                    }.limit(1).map { it[UserTable.id].value }.first()
+            }
+        val getUser = client.get(UsersAPI.UUID(uuid = userUUID))
+        val userDTO = getUser.body<UserResponseDTO>()
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = getUser.status
+        )
+        assertTrue { userDTO.id == userUUID }
+    }
+
+    @Test
+    fun hardDeleteUserWithFutureReferences() = testApplication {
+        val dbConnection = Testing.setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository(),
+                    UserRoleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+        }
+        val roleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = "12345678",
+                    isEnabled = true,
+                    userRoleUUID = roleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        var usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
+        usersAPI.forEach { println(it) }
+        val userUUID =
+            withTransaction {
+                UserTable.select(UserTable.id)
+                    .where {
+                        UserTable.name eq "Juan"
+                    }.limit(1).map { it[UserTable.id].value }.first()
+            }
+        val userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        val scheduleActivityEntity = withTransaction {
+            ScheduleActivityEntity.new {
+                name = "test"
+                generatesService = true
+                isEnabled = true
+            }
+        }
+        val placeTypeEntity = withTransaction {
+            PlaceTypeEntity.new {
+                name = "test"
+                isEnabled = true
+            }
+        }
+        val zoneEntity = withTransaction {
+            ZoneEntity.new {
+                name = "test"
+                isEnabled = true
+            }
+        }
+        val placeEntity = withTransaction {
+            PlaceEntity.new {
+                name = "test"
+                floor = null
+                isEnabled = true
+                building = null
+                zone = zoneEntity
+                placeType = placeTypeEntity
+            }
+        }
+        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val timeZone = TimeZone.currentSystemDefault()
+        val dateTomorrw = dateTimeNow.toInstant(timeZone).plus(1.days).toLocalDateTime(timeZone).date
+        val startTimeToday = dateTimeNow.toInstant(timeZone).plus(30.minutes).toLocalDateTime(timeZone).time
+        val endTimeToday = dateTimeNow.toInstant(timeZone).plus(60.minutes).toLocalDateTime(timeZone).time
+        withTransaction {
+            AbsenceEntity.new {
+                date = dateTomorrw
+                startTime = startTimeToday
+                endTime = endTimeToday
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+            AbsenceEntity.new {
+                date = dateTimeNow.date
+                startTime = startTimeToday
+                endTime = endTimeToday
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+            val absence1 = AbsenceEntity.new {
+                date = dateTomorrw
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence2 = AbsenceEntity.new {
+                date = dateTomorrw
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence1
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence2
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ScheduleEntity.new {
+                weekDay = WeekDay.WEDNESDAY
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+        }
+        var schedules = withTransaction { ScheduleEntity.all() }
+        assertTrue { withTransaction { schedules.count().toInt() } == 1 }
+        var absences: SizedIterable<AbsenceEntity> = withTransaction { AbsenceEntity.all() }
+        assertTrue { withTransaction { absences.count().toInt() } == 4 }
+        var services: SizedIterable<ServiceEntity> = withTransaction { ServiceEntity.all() }
+        assertTrue { withTransaction { services.count().toInt() } == 2 }
+        val deleteResponse = client.delete(UsersAPI.UUID.Delete(UsersAPI.UUID(uuid = userUUID)))
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = deleteResponse.status
+        )
+        usersAPI = client.get(UsersAPI()).body()
+        usersAPI.forEach { println(it) }
+        assertTrue { usersAPI.isEmpty() }
+        absences = withTransaction { AbsenceEntity.all() }
+        assertTrue { withTransaction { absences.count().toInt() } == 2 }
+        services = withTransaction { ServiceEntity.all() }
+        assertTrue { withTransaction { services.count().toInt() } == 2 }
+        withTransaction { services.forEach { assertTrue { it.assignedUser == null } } }
+        schedules = withTransaction { ScheduleEntity.all() }
+        assertTrue { withTransaction { schedules.count().toInt() } == 0 }
+    }
+
+    @Test
+    fun softDeleteUserWithPastReferences() = testApplication {
+        val dbConnection = Testing.setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository(),
+                    UserRoleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+        }
+        val roleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = "12345678",
+                    isEnabled = true,
+                    userRoleUUID = roleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        var usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
+        usersAPI.forEach { println(it) }
+        val userUUID =
+            withTransaction {
+                UserTable.select(UserTable.id)
+                    .where {
+                        UserTable.name eq "Juan"
+                    }.limit(1).map { it[UserTable.id].value }.first()
+            }
+        val userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        val scheduleActivityEntity = withTransaction {
+            ScheduleActivityEntity.new {
+                name = "test"
+                generatesService = true
+                isEnabled = true
+            }
+        }
+        val placeTypeEntity = withTransaction {
+            PlaceTypeEntity.new {
+                name = "test"
+                isEnabled = true
+            }
+        }
+        val zoneEntity = withTransaction {
+            ZoneEntity.new {
+                name = "test"
+                isEnabled = true
+            }
+        }
+        val placeEntity = withTransaction {
+            PlaceEntity.new {
+                name = "test"
+                floor = null
+                isEnabled = true
+                building = null
+                zone = zoneEntity
+                placeType = placeTypeEntity
+            }
+        }
+        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val timeZone = TimeZone.currentSystemDefault()
+        val dateYesterday = dateTimeNow.toInstant(timeZone).minus(1.days).toLocalDateTime(timeZone).date
+        val dateTomorrow = dateTimeNow.toInstant(timeZone).plus(1.days).toLocalDateTime(timeZone).date
+        val startTimeToday = dateTimeNow.toInstant(timeZone).minus(60.minutes).toLocalDateTime(timeZone).time
+        val endTimeToday = dateTimeNow.toInstant(timeZone).minus(30.minutes).toLocalDateTime(timeZone).time
+        withTransaction {
+            AbsenceEntity.new {
+                date = dateYesterday
+                startTime = startTimeToday
+                endTime = endTimeToday
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+            AbsenceEntity.new {
+                date = dateTimeNow.date
+                startTime = startTimeToday
+                endTime = endTimeToday
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+            val absence1 = AbsenceEntity.new {
+                date = dateYesterday
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence2 = AbsenceEntity.new {
+                date = dateYesterday
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence3 = AbsenceEntity.new {
+                date = dateTomorrow
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence4 = AbsenceEntity.new {
+                date = dateTomorrow
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence5 = AbsenceEntity.new {
+                date = dateTomorrow
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+            val absence6 = AbsenceEntity.new {
+                date = dateTomorrow
+                startTime = startTimeToday
+                endTime = endTimeToday
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence1
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence2
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence3
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence4
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence5
+                coverUser = null
+                assignedUser = null
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence6
+                coverUser = null
+                assignedUser = null
+            }
+            ScheduleEntity.new {
+                weekDay = WeekDay.WEDNESDAY
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = userEntity
+            }
+        }
+        var schedules = withTransaction { ScheduleEntity.all() }
+        assertTrue { withTransaction { schedules.count().toInt() } == 1 }
+        var absences: SizedIterable<AbsenceEntity> = withTransaction { AbsenceEntity.all() }
+        assertTrue { withTransaction { absences.count().toInt() } == 8 }
+        var services: SizedIterable<ServiceEntity> = withTransaction { ServiceEntity.all() }
+        assertTrue { withTransaction { services.count().toInt() } == 6 }
+        val deleteResponse = client.delete(UsersAPI.UUID.Delete(UsersAPI.UUID(uuid = userUUID)))
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = deleteResponse.status
+        )
+        usersAPI = client.get(UsersAPI()).body()
+        usersAPI.forEach { println(it) }
+        assertTrue { usersAPI.isNotEmpty() }
+        assertTrue { withTransaction { !usersAPI.first().isEnabled } }
+        assertTrue { withTransaction { usersAPI.first().isDeleted } }
+        absences = withTransaction { AbsenceEntity.all() }
+        assertTrue { withTransaction { absences.count().toInt() } == 6 }
+        services = withTransaction { ServiceEntity.all() }
+        assertTrue { withTransaction { services.count().toInt() } == 4 }
+        var servicesAssigned = 0
+        var servicesNotAssigned = 0
+        withTransaction { services.forEach { if (it.assignedUser != null) servicesAssigned++ else servicesNotAssigned++ } }
+        assertTrue { servicesAssigned == 2 }
+        assertTrue { servicesNotAssigned == 2 }
+        schedules = withTransaction { ScheduleEntity.all() }
+        assertTrue { withTransaction { schedules.count().toInt() } == 0 }
+    }
+
+    @Test
+    fun toggleEnabledUser() = testApplication {
+        val dbConnection = Testing.setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository(),
+                    UserRoleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+        }
+        val roleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = "12345678",
+                    isEnabled = true,
+                    userRoleUUID = roleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        var usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
+        usersAPI.forEach { println(it) }
+        val userUUID =
+            withTransaction {
+                UserTable.select(UserTable.id)
+                    .where {
+                        UserTable.name eq "Juan"
+                    }.limit(1).map { it[UserTable.id].value }.first()
+            }
+        var userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue { userEntity.isEnabled }
+        var toggleEnabledResponse = client.patch(UsersAPI.UUID.ToggleEnabled(UsersAPI.UUID(uuid = userUUID))) {
+            contentType(ContentType.Application.Json)
+            setBody(false)
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = toggleEnabledResponse.status
+        )
+        userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue { !userEntity.isEnabled }
+        toggleEnabledResponse = client.patch(UsersAPI.UUID.ToggleEnabled(UsersAPI.UUID(uuid = userUUID))) {
+            contentType(ContentType.Application.Json)
+            setBody(true)
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = toggleEnabledResponse.status
+        )
+        userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue { userEntity.isEnabled }
+    }
+
+    @Test
+    fun editUser() = testApplication {
+        val dbConnection = Testing.setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository(),
+                    UserRoleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+            UserRoleEntity.new {
+                name = "USER"
+            }
+        }
+        val adminRoleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        val userRoleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "USER"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        val newName = "Mitchell"
+        val newSurname = "Admin"
+        val newEmail = "mitcheladmin@edu.gva.es"
+        val newPhoneNumber = "123456789"
+        val newPassword = "supersecretpassword"
+        val newIsEnabled = false
+        val newUserRoleUUID = userRoleUUID
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = "12345678",
+                    isEnabled = true,
+                    userRoleUUID = adminRoleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        var usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
+        usersAPI.forEach { println(it) }
+        val userUUID =
+            withTransaction {
+                UserTable.select(UserTable.id)
+                    .where {
+                        UserTable.name eq "Juan"
+                    }.limit(1).map { it[UserTable.id].value }.first()
+            }
+        var userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        val oldPassword = userEntity.password
+        assertTrue { userEntity.isEnabled }
+        var editResponse = client.patch(UsersAPI.UUID.Edit(UsersAPI.UUID(uuid = userUUID))) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserEditDTO(
+                    name = newName,
+                    surname = newSurname,
+                    email = newEmail,
+                    phoneNumber = newPhoneNumber
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = editResponse.status
+        )
+        userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue {
+            userEntity.name == newName &&
+                    userEntity.surname == newSurname &&
+                    userEntity.email == newEmail &&
+                    userEntity.phoneNumber == newPhoneNumber
+        }
+        editResponse = client.patch(UsersAPI.UUID.Edit(UsersAPI.UUID(uuid = userUUID))) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserEditDTO(
+                    password = newPassword,
+                    isEnabled = newIsEnabled,
+                    userRoleUUID = newUserRoleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = editResponse.status
+        )
+        userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue {
+            userEntity.password != oldPassword &&
+                    userEntity.isEnabled == newIsEnabled &&
+                    userEntity.phoneNumber == newPhoneNumber
+        }
+    }
+
+    @Test
+    fun editUserProfile() = testApplication {
+        val dbConnection = Testing.setupTestDBAndFlyway()
+        application {
+            configureDatabase(
+                url = dbConnection.url,
+                user = dbConnection.user,
+                password = dbConnection.password
+            )
+            configureStatusPages()
+            configureSerialization()
+            configureDefaultHeaders()
+            configureRouting(
+                UserService(
+                    UserRepository(),
+                    AbsenceRepository(),
+                    ServiceRepository(),
+                    ScheduleRepository(),
+                    UserRoleRepository()
+                )
+            )
+        }
+        val client = createClient {
+            install(ContentNegotiation) {
+                json()
+            }
+            install(Resources)
+        }
+        withTransaction {
+            UserRoleEntity.new {
+                name = "ADMIN"
+            }
+            UserRoleEntity.new {
+                name = "USER"
+            }
+        }
+        val adminRoleUUID =
+            withTransaction {
+                UserRoleTable.select(UserRoleTable.id)
+                    .where {
+                        UserRoleTable.name eq "ADMIN"
+                    }.limit(1).map { it[UserRoleTable.id].value }.first()
+            }
+        var newPhoneNumber = "123456789"
+        val currentPassword = "12345678"
+        val newPassword = "supersecretpassword"
+        val createResponse = client.post(UsersAPI()) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserCreateDTO(
+                    name = "Juan",
+                    surname = "Martínez Hernández",
+                    email = "juanmaher@edu.gva.es",
+                    phoneNumber = "000000000",
+                    password = currentPassword,
+                    isEnabled = true,
+                    userRoleUUID = adminRoleUUID
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        var usersAPI: List<UserResponseDTO> = client.get(UsersAPI()).body()
+        assertTrue { usersAPI.isNotEmpty() }
+        usersAPI.forEach { println(it) }
+        val userUUID =
+            withTransaction {
+                UserTable.select(UserTable.id)
+                    .where {
+                        UserTable.name eq "Juan"
+                    }.limit(1).map { it[UserTable.id].value }.first()
+            }
+        var userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        val oldPassword = userEntity.password
+        assertTrue { userEntity.isEnabled }
+        var editResponse = client.patch(UsersAPI.UUID.EditProfile(UsersAPI.UUID(uuid = userUUID))) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserEditProfileDTO(
+                    currentPassword = currentPassword,
+                    newPassword = newPassword,
+                    phoneNumber = newPhoneNumber
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = editResponse.status
+        )
+        userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue {
+            userEntity.phoneNumber == newPhoneNumber &&
+                    userEntity.password != oldPassword
+        }
+        newPhoneNumber = "99999999"
+        editResponse = client.patch(UsersAPI.UUID.EditProfile(UsersAPI.UUID(uuid = userUUID))) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                UserEditProfileDTO(
+                    phoneNumber = newPhoneNumber
+                )
+            )
+        }
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = editResponse.status
+        )
+        userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        assertTrue { userEntity.phoneNumber == newPhoneNumber }
+    }
+}
