@@ -3,9 +3,9 @@ package com.libreguardia.routing
 import com.libreguardia.config.UUIDSerializer
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.UserEditProfileDTO
 import com.libreguardia.service.UserService
 import com.libreguardia.validation.userValidation
-import com.sun.net.httpserver.HttpsServer
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.request.*
@@ -23,10 +23,12 @@ class UsersAPI {
     ) {
         @Resource("edit")
         class Edit(val parent: UUID)
-        @Resource("disable")
-        class Disable(val parent: UUID)
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: UUID)
         @Resource("delete")
         class Delete(val parent: UUID)
+        @Resource("edit-profile")
+        class EditProfile(val parent: UUID)
     }
 }
 
@@ -64,9 +66,19 @@ fun Route.userRouting(
         )
         call.respond(HttpStatusCode.OK)
     }
-    patch<UsersAPI.UUID.Disable> { user ->
-        userService.disableUser(
-            userUUID = user.parent.uuid
+    patch<UsersAPI.UUID.ToggleEnabled> { user ->
+        val enableOrDisable = call.receive<Boolean>()
+        userService.toggleEnableUser(
+            userUUID = user.parent.uuid,
+            enableOrDisable = enableOrDisable
+        )
+        call.respond(HttpStatusCode.OK)
+    }
+    patch<UsersAPI.UUID.EditProfile> { user ->
+        val userEditProfile = call.receive<UserEditProfileDTO>()
+        userService.editUserProfile(
+            userUUID = user.parent.uuid,
+            userEditProfileDTO = userEditProfile
         )
         call.respond(HttpStatusCode.OK)
     }
