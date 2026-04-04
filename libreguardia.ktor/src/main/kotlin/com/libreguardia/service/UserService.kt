@@ -80,7 +80,7 @@ class UserService (
                     userEditDTO.userRoleUUID.toString()
                 )
             }
-            val hashedPassword = userEditDTO.newPassword?.let { newPassword ->
+            val hashedPassword = userEditDTO.password?.let { newPassword ->
                 bcryptHasher.hashToString(
                     BCRYPT_HASH_COST,
                     newPassword.toCharArray()

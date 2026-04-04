@@ -21,7 +21,7 @@ fun Route.userValidation() {
             val errors = mutableListOf<String>()
             it.name?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
             it.surname?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
-            it.newPassword?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
+            it.password?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
             it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
             it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
             return@validate validateResult(errors)
