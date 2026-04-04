@@ -35,6 +35,12 @@ fun Application.configureStatusPages() {
                 message = "User with UUID ${cause.uuid} already deleted"
             )
         }
+        exception<IncorrectPasswordException> {call, _ ->
+            call.respond(
+                status = HttpStatusCode.BadRequest,
+                message = "Incorrect password"
+            )
+        }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
             call.respond(
