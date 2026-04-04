@@ -8,23 +8,34 @@ import com.libreguardia.db.UserRoleEntity
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.config.UserRoleNotFoundException
+import com.libreguardia.config.IncorrectPasswordException
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.UserEditProfileDTO
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.repository.UserRoleRepository
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 import kotlin.time.Clock
 
+private const val BCRYPT_HASH_COST = 10
+
 class UserService (
     private val userRepository: UserRepository,
     private val absenceRepository: AbsenceRepository,
     private val serviceRepository: ServiceRepository,
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val userRoleRepository: UserRoleRepository,
 ) {
+    private val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
+    private val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
+
+
+    //[Admin]
     suspend fun getAllUsers(): List<UserResponseDTO> = withTransaction {
         userRepository.getAll()
     }
@@ -38,12 +49,12 @@ class UserService (
         }
     }
 
+    //[Admin]
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
     ) {
-        val bcryptHasher = BCrypt.withDefaults()
         val hashedPassword = bcryptHasher.hashToString(
-            10,
+            BCRYPT_HASH_COST,
             userCreateDTO.password.toCharArray()
         )
         withTransaction {
@@ -58,32 +69,37 @@ class UserService (
         }
     }
 
+    //[Admin]
     suspend fun editUser(
         userUUID: UUID,
         userEditDTO: UserEditDTO
     ) {
         withTransaction {
-            var userRoleEntity: UserRoleEntity? = null
             if (userEditDTO.userRoleUUID != null) {
-                userRoleEntity = UserRoleEntity.findById(userEditDTO.userRoleUUID) ?: throw UserRoleNotFoundException(
+                if (!userRoleRepository.existsByUUID(userEditDTO.userRoleUUID)) throw UserRoleNotFoundException(
                     userEditDTO.userRoleUUID.toString()
                 )
             }
-            //This edit user is for admins, there shouldn't be need to provide the previous password to change it
+            val hashedPassword = userEditDTO.newPassword?.let { newPassword ->
+                bcryptHasher.hashToString(
+                    BCRYPT_HASH_COST,
+                    newPassword.toCharArray()
+                )
+            }
             if (!userRepository.editByUUID(
-                    uuid = userUUID,
+                    userUUID = userUUID,
                     userEditDTO = userEditDTO,
-                    userRoleEntity = userRoleEntity
+                    hashedPassword = hashedPassword
                 )
             ) throw UserNotFoundException(userUUID.toString())
         }
     }
 
+    //[Admin]
     suspend fun deleteUser(
         userUUID: UUID
     ) {
         withTransaction {
-            println("Inside delete transaction")
             val userEntity =
                 userRepository.getEntityByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
             if (userEntity.isDeleted && !userEntity.isEnabled) throw UserAlreadyDeletedException(userUUID.toString())
@@ -112,11 +128,47 @@ class UserService (
         }
     }
 
-    suspend fun disableUser(
-        userUUID: UUID
+    //[Admin]
+    suspend fun toggleEnableUser(
+        userUUID: UUID,
+        enableOrDisable: Boolean
     ) {
         withTransaction {
-            if (!userRepository.disableUser(userUUID)) throw UserNotFoundException(userUUID.toString())
+            if (!userRepository.toggleEnableUser(
+                    uuid = userUUID,
+                    enableOrDisable = enableOrDisable
+                )
+            ) throw UserNotFoundException(userUUID.toString())
+        }
+    }
+
+    suspend fun editUserProfile(
+        userUUID: UUID,
+        userEditProfileDTO: UserEditProfileDTO
+    ) {
+        withTransaction {
+            var hashedPassword: String? = null
+            if (userEditProfileDTO.currentPassword != null && userEditProfileDTO.newPassword != null) {
+                val hashedCurrentPassword =
+                    userRepository.getHashedPassword(userUUID) ?: throw UserNotFoundException(userUUID.toString())
+                val verificationResult = bcryptVerifyer.verify(
+                    userEditProfileDTO.currentPassword.toByteArray(),
+                    hashedCurrentPassword.toByteArray()
+                )
+                if (!verificationResult.verified || !verificationResult.validFormat)
+                    throw IncorrectPasswordException()
+                hashedPassword =
+                    bcryptHasher.hashToString(
+                        BCRYPT_HASH_COST,
+                        userEditProfileDTO.newPassword.toCharArray()
+                    )
+            }
+            if (!userRepository.editUserProfileByUUID(
+                    userUUID = userUUID,
+                    userEditProfileDTO = userEditProfileDTO,
+                    hashedPassword = hashedPassword
+                )
+            ) throw UserNotFoundException(userUUID.toString())
         }
     }
 }
