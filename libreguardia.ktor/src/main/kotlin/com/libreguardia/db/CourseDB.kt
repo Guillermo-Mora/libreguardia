@@ -28,4 +28,5 @@ class CourseEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by CourseTable.name
     var isEnabled by CourseTable.isEnabled
     var professionalFamily by ProfessionalFamilyEntity referencedOn CourseTable.professionalFamily
+    val groups by GroupEntity referrersOn GroupTable.course
 }

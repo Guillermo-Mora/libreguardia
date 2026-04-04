@@ -44,7 +44,7 @@ object AbsenceTable: UUIDTable(
         foreign = UserTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
-    )
+    ).nullable()
 
     init {
         uniqueIndex(
@@ -63,5 +63,6 @@ class AbsenceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var group by GroupEntity optionalReferencedOn AbsenceTable.group
     var scheduleActivity by ScheduleActivityEntity referencedOn AbsenceTable.scheduleActivity
     var place by PlaceEntity referencedOn AbsenceTable.place
-    var user by UserEntity referencedOn AbsenceTable.user
+    var user by UserEntity optionalReferencedOn AbsenceTable.user
+    val service by ServiceEntity optionalBackReferencedOn ServiceTable.absence
 }

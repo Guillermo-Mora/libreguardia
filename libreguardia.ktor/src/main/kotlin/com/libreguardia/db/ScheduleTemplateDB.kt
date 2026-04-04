@@ -19,4 +19,5 @@ class ScheduleTemplateEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<ScheduleTemplateEntity>(ScheduleTemplateTable)
 
     var name by ScheduleTemplateTable.name
+    val scheduleTemplateSlots by ScheduleTemplateSlotEntity referrersOn ScheduleTemplateSlotTable.scheduleTemplate
 }

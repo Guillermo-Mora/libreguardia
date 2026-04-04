@@ -49,5 +49,5 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var isEnabled by PlaceTable.isEnabled
     var building by BuildingEntity optionalReferencedOn PlaceTable.building
     var zone by ZoneEntity referencedOn PlaceTable.zone
-    var placeType by PlaceEntity referencedOn PlaceTable.placeType
+    var placeType by PlaceTypeEntity referencedOn PlaceTable.placeType
 }

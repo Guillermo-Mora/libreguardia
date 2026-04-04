@@ -55,4 +55,7 @@ class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var isEnabled by UserTable.isEnabled
     var isDeleted by UserTable.isDeleted
     var userRole by UserRoleEntity referencedOn UserTable.userRole
+    val schedules by ScheduleEntity referrersOn ScheduleTable.user
+    val absences by AbsenceEntity optionalReferrersOn AbsenceTable.user
+    val servicesCovered by ServiceEntity optionalReferrersOn ServiceTable.coverUser
 }
