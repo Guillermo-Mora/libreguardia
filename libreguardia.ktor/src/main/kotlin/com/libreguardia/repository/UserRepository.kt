@@ -5,11 +5,12 @@ import com.libreguardia.db.UserRoleEntity
 import com.libreguardia.db.UserTable
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.UserEditProfileDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.dto.entityToResponse
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
-import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
@@ -45,19 +46,19 @@ class UserRepository {
     }
 
     fun editByUUID(
-        uuid: UUID,
+        userUUID: UUID,
         userEditDTO: UserEditDTO,
-        userRoleEntity: UserRoleEntity?,
+        hashedPassword: String?
     ): Boolean {
-        return UserEntity.findByIdAndUpdate(uuid) { userEdit ->
-            userEditDTO.name?.let { userEdit.name = it }
-            userEditDTO.surname?.let { userEdit.surname = it }
-            userEditDTO.email?.let { userEdit.email = it }
-            userEditDTO.phoneNumber?.let { userEdit.phoneNumber = it }
-            userEditDTO.newPassword?.let { userEdit.password = it }
-            userEditDTO.isEnabled?.let { userEdit.isEnabled = it }
-            userRoleEntity?.let { userEdit.userRole = it }
-        } != null
+        return UserTable.update({ UserTable.id eq userUUID }) { userUpdated ->
+            userEditDTO.name?.let { userUpdated[name] = it }
+            userEditDTO.surname?.let { userUpdated[surname] = it }
+            userEditDTO.email?.let { userUpdated[email] = it }
+            userEditDTO.phoneNumber?.let { userUpdated[phoneNumber] = it }
+            hashedPassword?.let { userUpdated[password] = it }
+            userEditDTO.isEnabled?.let { userUpdated[isEnabled] = it }
+            userEditDTO.userRoleUUID?.let { userUpdated[userRole] = it }
+        } == 1
     }
 
     fun deleteUser(
@@ -75,11 +76,38 @@ class UserRepository {
         } == 1
     }
 
-    fun disableUser(
-        uuid: UUID
+    fun toggleEnableUser(
+        uuid: UUID,
+        enableOrDisable: Boolean
     ): Boolean {
         return UserTable.update({ UserTable.id eq uuid }) {
-            it[isEnabled] = false
+            it[isEnabled] = enableOrDisable
         } == 1
+    }
+
+    fun userExists(
+        uuid: UUID
+    ): Boolean = UserTable.select(UserTable.id eq uuid).limit(1).any()
+
+    fun editUserProfileByUUID(
+        userUUID: UUID,
+        userEditProfileDTO: UserEditProfileDTO,
+        hashedPassword: String?
+    ): Boolean {
+        return UserTable.update({ UserTable.id eq userUUID }) { userUpdated ->
+            userEditProfileDTO.phoneNumber?.let { userUpdated[phoneNumber] = it }
+            hashedPassword?.let { userUpdated[password] = it }
+        } == 1
+    }
+
+    fun getHashedPassword(
+        userUUID: UUID
+    ): String? {
+        return UserTable
+            .select(UserTable.password)
+            .where {
+                UserTable.id eq userUUID
+            }.limit(1)
+            .firstOrNull()?.get(UserTable.password)
     }
 }
