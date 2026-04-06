@@ -74,6 +74,7 @@ class UserService (
         userUUID: UUID,
         userEditDTO: UserEditDTO
     ) {
+        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         withTransaction {
             if (userEditDTO.userRoleUUID != null) {
                 if (!userRoleRepository.existsByUUID(userEditDTO.userRoleUUID)) throw UserRoleNotFoundException(
@@ -92,6 +93,12 @@ class UserService (
                     hashedPassword = hashedPassword
                 )
             ) throw UserNotFoundException(userUUID.toString())
+            userEditDTO.isEnabled?.let {
+                if (!it) serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
+                    userUUID = userUUID,
+                    dateTimeNow = dateTimeNow
+                )
+            }
         }
     }
 
@@ -133,12 +140,17 @@ class UserService (
         userUUID: UUID,
         enableOrDisable: Boolean
     ) {
+        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         withTransaction {
             if (!userRepository.toggleEnableUser(
                     uuid = userUUID,
                     enableOrDisable = enableOrDisable
                 )
             ) throw UserNotFoundException(userUUID.toString())
+            if (!enableOrDisable) serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
+                userUUID = userUUID,
+                dateTimeNow = dateTimeNow
+            )
         }
     }
 

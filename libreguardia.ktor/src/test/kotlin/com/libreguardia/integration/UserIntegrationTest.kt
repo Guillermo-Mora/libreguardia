@@ -616,7 +616,93 @@ class UserIntegrationTest {
                     }.limit(1).map { it[UserTable.id].value }.first()
             }
         var userEntity = withTransaction { UserEntity.findById(userUUID)!! }
+        val scheduleActivityEntity = withTransaction {
+            ScheduleActivityEntity.new {
+                name = "test"
+                generatesService = true
+                isEnabled = true
+            }
+        }
+        val placeTypeEntity = withTransaction {
+            PlaceTypeEntity.new {
+                name = "test"
+                isEnabled = true
+            }
+        }
+        val zoneEntity = withTransaction {
+            ZoneEntity.new {
+                name = "test"
+                isEnabled = true
+            }
+        }
+        val placeEntity = withTransaction {
+            PlaceEntity.new {
+                name = "test"
+                floor = null
+                isEnabled = true
+                building = null
+                zone = zoneEntity
+                placeType = placeTypeEntity
+            }
+        }
+        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val timeZone = TimeZone.currentSystemDefault()
+        val dateYesterday = dateTimeNow.toInstant(timeZone).minus(1.days).toLocalDateTime(timeZone).date
+        val dateTomorrow = dateTimeNow.toInstant(timeZone).plus(1.days).toLocalDateTime(timeZone).date
+        val startTimeToday = dateTimeNow.toInstant(timeZone).plus(30.minutes).toLocalDateTime(timeZone).time
+        val endTimeToday = dateTimeNow.toInstant(timeZone).plus(60.minutes).toLocalDateTime(timeZone).time
+        withTransaction {
+            val absence1 = AbsenceEntity.new {
+                date = dateTimeNow.date
+                startTime = startTimeToday
+                endTime = endTimeToday
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence2 = AbsenceEntity.new {
+                date = dateTomorrow
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            val absence3 = AbsenceEntity.new {
+                date = dateYesterday
+                startTime = dateTimeNow.time
+                endTime = dateTimeNow.time
+                group = null
+                scheduleActivity = scheduleActivityEntity
+                place = placeEntity
+                user = null
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence1
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence2
+                coverUser = null
+                assignedUser = userEntity
+            }
+            ServiceEntity.new {
+                pointsObtained = BigDecimal.ONE
+                absence = absence3
+                coverUser = null
+                assignedUser = userEntity
+            }
+        }
         assertTrue { userEntity.isEnabled }
+        var absences: SizedIterable<AbsenceEntity> = withTransaction { AbsenceEntity.all() }
+        assertTrue { withTransaction { absences.count().toInt() } == 3 }
+        var services: SizedIterable<ServiceEntity> = withTransaction { ServiceEntity.all() }
+        assertTrue { withTransaction { services.count().toInt() } == 3 }
         var toggleEnabledResponse = client.patch(UsersAPI.UUID.ToggleEnabled(UsersAPI.UUID(uuid = userUUID))) {
             contentType(ContentType.Application.Json)
             setBody(false)
@@ -627,6 +713,17 @@ class UserIntegrationTest {
         )
         userEntity = withTransaction { UserEntity.findById(userUUID)!! }
         assertTrue { !userEntity.isEnabled }
+        absences = withTransaction { AbsenceEntity.all() }
+        assertTrue { withTransaction { absences.count().toInt() } == 3 }
+        services = withTransaction { ServiceEntity.all() }
+        assertTrue { withTransaction { services.count().toInt() } == 3 }
+        var assignedServices = 0
+        var notAssignedServices = 0
+        withTransaction { services.forEach { if (it.assignedUser?.id?.value == userUUID) assignedServices++ else notAssignedServices++ } }
+        println(assignedServices)
+        println(notAssignedServices)
+        assertTrue { assignedServices == 1 }
+        assertTrue { notAssignedServices == 2 }
         toggleEnabledResponse = client.patch(UsersAPI.UUID.ToggleEnabled(UsersAPI.UUID(uuid = userUUID))) {
             contentType(ContentType.Application.Json)
             setBody(true)
