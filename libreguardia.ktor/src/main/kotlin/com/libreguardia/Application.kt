@@ -2,10 +2,12 @@ package com.libreguardia
 
 import com.libreguardia.config.*
 import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.ProfessionalFamilyRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.repository.UserRoleRepository
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
@@ -14,8 +16,6 @@ fun main(args: Array<String>) {
     EngineMain.main(args)
 }
 
-//It would be better to separate the app in different modules in the future. For better responsability
-// separations.
 fun Application.module() {
     val config = environment.config
     val dbUrl = config.property("storage.jdbcURL").getString()
@@ -23,6 +23,7 @@ fun Application.module() {
     val dbPassword = config.property("storage.password").getString()
 
     val userRepository = UserRepository()
+    val professionalFamilyRepository = ProfessionalFamilyRepository()
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
@@ -34,6 +35,9 @@ fun Application.module() {
         serviceRepository = serviceRepository,
         scheduleRepository = scheduleRepository,
         userRoleRepository = userRoleRepository
+    )
+    val professionalFamilyService = ProfessionalFamilyService(
+        repository = professionalFamilyRepository
     )
 
     configureDatabase(
@@ -53,6 +57,7 @@ fun Application.module() {
     configureSerialization()
     configureAuthentication()
     configureRouting(
+        professionalFamilyService = professionalFamilyService,
         userService = userService
     )
 }
