@@ -139,5 +139,9 @@ class BuildingIntegrationTest {
 
         val deleteResponse = client.delete(BuildingsAPI.BuildingUUID(uuid = buildingUUID))
         assertEquals(HttpStatusCode.OK, deleteResponse.status)
+
+        val getAfterDelete = client.get(BuildingsAPI.BuildingUUID(uuid = buildingUUID))
+        val deletedDTO = getAfterDelete.body<BuildingResponseDTO>()
+        assertEquals(false, deletedDTO.isEnabled)
     }
 }

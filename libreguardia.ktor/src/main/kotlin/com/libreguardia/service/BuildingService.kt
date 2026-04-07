@@ -24,6 +24,6 @@ class BuildingService(
 
     fun deleteBuilding(buildingUUID: UUID) {
         val existingBuilding = repository.findByUUID(buildingUUID) ?: throw BuildingNotFoundException(buildingUUID.toString())
-        repository.delete(buildingUUID)
+        repository.softDelete(buildingUUID)
     }
 }

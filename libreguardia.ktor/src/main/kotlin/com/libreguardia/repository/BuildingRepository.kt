@@ -39,6 +39,11 @@ class BuildingRepository {
         entity.isEnabled = request.isEnabled
     }
 
+    fun softDelete(buildingUUID: UUID) {
+        val entity = BuildingEntity.findById(buildingUUID) ?: return
+        entity.isEnabled = false
+    }
+
     fun delete(buildingUUID: UUID) {
         val entity = BuildingEntity.findById(buildingUUID) ?: return
         entity.delete()
