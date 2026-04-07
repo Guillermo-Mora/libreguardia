@@ -1,5 +1,6 @@
 package com.libreguardia.service
 
+import com.libreguardia.config.BuildingNotFoundException
 import com.libreguardia.dto.BuildingRequestDTO
 import com.libreguardia.dto.BuildingResponseDTO
 import com.libreguardia.repository.BuildingRepository
@@ -8,13 +9,21 @@ import java.util.UUID
 class BuildingService(
     private val repository: BuildingRepository
 ) {
-    fun getAll(): List<BuildingResponseDTO> = repository.all()
+    fun getAllBuildings(): List<BuildingResponseDTO> = repository.all()
 
-    fun getById(id: UUID): BuildingResponseDTO? = repository.findById(id)
+    fun getBuilding(uuid: UUID): BuildingResponseDTO = repository.findByUUID(uuid) ?: throw BuildingNotFoundException(uuid.toString())
 
-    fun create(request: BuildingRequestDTO): BuildingResponseDTO = repository.save(request)
+    fun createBuilding(request: BuildingRequestDTO) {
+        repository.save(request)
+    }
 
-    fun update(id: UUID, request: BuildingRequestDTO): BuildingResponseDTO? = repository.update(id, request)
+    fun editBuilding(buildingUUID: UUID, buildingEditDTO: BuildingRequestDTO) {
+        val existingBuilding = repository.findByUUID(buildingUUID) ?: throw BuildingNotFoundException(buildingUUID.toString())
+        repository.update(buildingUUID, buildingEditDTO)
+    }
 
-    fun delete(id: UUID): Boolean = repository.delete(id)
+    fun deleteBuilding(buildingUUID: UUID) {
+        val existingBuilding = repository.findByUUID(buildingUUID) ?: throw BuildingNotFoundException(buildingUUID.toString())
+        repository.delete(buildingUUID)
+    }
 }

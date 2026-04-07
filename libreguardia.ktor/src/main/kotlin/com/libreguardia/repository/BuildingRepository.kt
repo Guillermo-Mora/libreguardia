@@ -17,8 +17,8 @@ class BuildingRepository {
             )
         }
 
-    fun findById(id: UUID): BuildingResponseDTO? =
-        BuildingEntity.findById(id)?.let { entity ->
+    fun findByUUID(uuid: UUID): BuildingResponseDTO? =
+        BuildingEntity.find { BuildingTable.id eq uuid }.firstOrNull()?.let { entity ->
             BuildingResponseDTO(
                 id = entity.id.value.toString(),
                 name = entity.name,
@@ -26,32 +26,21 @@ class BuildingRepository {
             )
         }
 
-    fun save(request: BuildingRequestDTO): BuildingResponseDTO {
-        val entity = BuildingEntity.new {
+    fun save(request: BuildingRequestDTO) {
+        BuildingEntity.new {
             name = request.name
             isEnabled = request.isEnabled
         }
-        return BuildingResponseDTO(
-            id = entity.id.value.toString(),
-            name = entity.name,
-            isEnabled = entity.isEnabled
-        )
     }
 
-    fun update(id: UUID, request: BuildingRequestDTO): BuildingResponseDTO? {
-        val entity = BuildingEntity.findById(id) ?: return null
+    fun update(buildingUUID: UUID, request: BuildingRequestDTO) {
+        val entity = BuildingEntity.findById(buildingUUID) ?: return
         entity.name = request.name
         entity.isEnabled = request.isEnabled
-        return BuildingResponseDTO(
-            id = entity.id.value.toString(),
-            name = entity.name,
-            isEnabled = entity.isEnabled
-        )
     }
 
-    fun delete(id: UUID): Boolean {
-        val entity = BuildingEntity.findById(id) ?: return false
+    fun delete(buildingUUID: UUID) {
+        val entity = BuildingEntity.findById(buildingUUID) ?: return
         entity.delete()
-        return true
     }
 }

@@ -29,6 +29,12 @@ fun Application.configureStatusPages() {
                 message = "User with UUID ${cause.uuid} not found"
             )
         }
+        exception<BuildingNotFoundException> { call, cause ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = "Building with UUID ${cause.uuid} not found"
+            )
+        }
         exception<UserAlreadyDeletedException> { call, cause ->
             call.respond(
                 status = HttpStatusCode.Conflict,
