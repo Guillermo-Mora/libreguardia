@@ -1,7 +1,7 @@
 package com.libreguardia.routing
 
 import com.libreguardia.dto.ProfessionalFamilyRequestDTO
-import com.libreguardia.exception.ProfessionalFamilyNotFoundException
+import com.libreguardia.config.ProfessionalFamilyNotFoundException
 import com.libreguardia.service.ProfessionalFamilyService
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource

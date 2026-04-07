@@ -4,7 +4,7 @@ import com.libreguardia.db.ProfessionalFamilyEntity
 import com.libreguardia.db.ProfessionalFamilyTable
 import com.libreguardia.dto.ProfessionalFamilyRequestDTO
 import com.libreguardia.dto.ProfessionalFamilyResponseDTO
-import com.libreguardia.exception.ProfessionalFamilyNameAlreadyExistsException
+import com.libreguardia.config.ProfessionalFamilyNameAlreadyExistsException
 import org.jetbrains.exposed.v1.core.eq
 import java.util.UUID
 

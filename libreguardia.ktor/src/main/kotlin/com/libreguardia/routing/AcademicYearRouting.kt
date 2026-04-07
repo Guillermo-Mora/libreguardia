@@ -1,7 +1,7 @@
 package com.libreguardia.routing
 
 import com.libreguardia.dto.AcademicYearRequestDTO
-import com.libreguardia.exception.AcademicYearNotFoundException
+import com.libreguardia.config.AcademicYearNotFoundException
 import com.libreguardia.service.AcademicYearService
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
