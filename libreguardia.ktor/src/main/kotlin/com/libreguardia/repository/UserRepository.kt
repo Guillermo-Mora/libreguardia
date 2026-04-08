@@ -9,6 +9,7 @@ import com.libreguardia.dto.UserEditProfileDTO
 import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.dto.entityToResponse
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.dao.load
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
@@ -23,10 +24,22 @@ class UserRepository {
         return UserEntity.findById(uuid)?.let { entityToResponse(it) }
     }
 
-    fun getEntityByUUID(
+    fun getEntity(
         uuid: UUID
     ): UserEntity? {
         return UserEntity.findById(uuid)
+    }
+
+    fun getEntityWithRoleLoaded(
+        email: String
+    ): UserEntity? {
+        return UserEntity.find { UserTable.email eq email }.limit(1).firstOrNull()?.load(UserEntity::userRole)
+    }
+
+    fun getEntityWithRoleLoaded(
+        uuid: UUID
+    ): UserEntity? {
+        return UserEntity.findById(uuid)?.load(UserEntity::userRole)
     }
 
     fun save(
@@ -89,6 +102,10 @@ class UserRepository {
         uuid: UUID
     ): Boolean = UserTable.select(UserTable.id eq uuid).limit(1).any()
 
+    fun userExists(
+        userEmail: String
+    ): Boolean = UserTable.select(UserTable.email eq userEmail).limit(1).any()
+
     fun editUserProfileByUUID(
         userUUID: UUID,
         userEditProfileDTO: UserEditProfileDTO,
@@ -107,6 +124,17 @@ class UserRepository {
             .select(UserTable.password)
             .where {
                 UserTable.id eq userUUID
+            }.limit(1)
+            .firstOrNull()?.get(UserTable.password)
+    }
+
+    fun getHashedPassword(
+        userEmail: String
+    ): String? {
+        return UserTable
+            .select(UserTable.password)
+            .where {
+                UserTable.email eq userEmail
             }.limit(1)
             .firstOrNull()?.get(UserTable.password)
     }
