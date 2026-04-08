@@ -41,6 +41,18 @@ fun Application.configureStatusPages() {
                 message = "Incorrect password"
             )
         }
+        exception<InvalidCredentialsException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = "Invalid credentials"
+            )
+        }
+        exception<InvalidRefreshTokenException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.Unauthorized,
+                message = "Invalid refresh token"
+            )
+        }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
             call.respond(
