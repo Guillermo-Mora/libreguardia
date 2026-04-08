@@ -15,7 +15,6 @@ fun validateNewPassword(
     if ((currentPassword == null && newPassword != null) || (currentPassword != null && newPassword == null)) "Invalid empty password"
     else if (currentPassword != null && newPassword != null) validatePassword(newPassword)
     else null
-
 fun validateEmail(field: String): String? =
     if (!Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
         .matches(field)) "Invalid email format" else null
