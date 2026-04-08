@@ -21,6 +21,8 @@ class JwtService(
     //private val audience = getConfigProperty("jwt.audience")
     //val realm = getConfigProperty("jwt.realm")
     //TEMPORARY FOR DEVELOPMENT AND TESTING
+    //In the final application, it would be great if the user could set the names for these
+    // in the application configuration file.
     private val secret = "top-secret"
     private val issuer = "libreguardia-api"
     private val audience = "libreguardia-client"
