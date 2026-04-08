@@ -42,7 +42,7 @@ object ScheduleTable: UUIDTable(
     val user = reference(
         name = "user_id",
         foreign = UserTable,
-        onDelete = ReferenceOption.RESTRICT,
+        onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT,
     )
 

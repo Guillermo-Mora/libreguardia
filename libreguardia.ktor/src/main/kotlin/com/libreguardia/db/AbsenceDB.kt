@@ -39,12 +39,12 @@ object AbsenceTable: UUIDTable(
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT,
     )
-    val user = reference(
+    val user = optReference(
         name = "user_id",
         foreign = UserTable,
-        onDelete = ReferenceOption.RESTRICT,
+        onDelete = ReferenceOption.CASCADE,
         onUpdate = ReferenceOption.RESTRICT,
-    ).nullable()
+    )
 
     init {
         uniqueIndex(

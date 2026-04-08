@@ -5,8 +5,7 @@ import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.dao.java.UUIDEntity
 import org.jetbrains.exposed.v1.dao.java.UUIDEntityClass
-import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 object ServiceTable: UUIDTable(
     name =  "service_tbl"
@@ -31,7 +30,7 @@ object ServiceTable: UUIDTable(
     val assignedUser = optReference(
         name = "assigned_user_id",
         foreign = UserTable,
-        onDelete = ReferenceOption.RESTRICT,
+        onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.RESTRICT
     )
 }
