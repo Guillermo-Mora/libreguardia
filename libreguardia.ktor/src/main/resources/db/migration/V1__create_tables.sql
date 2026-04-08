@@ -109,7 +109,7 @@ CREATE TABLE schedule (
                           group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                           schedule_activity_id UUID NOT NULL REFERENCES schedule_activity(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                           place_id UUID NOT NULL REFERENCES place(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                          user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                          user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                           CONSTRAINT uq_schedule UNIQUE (week_day, start_time, end_time, user_id)
 );
 
@@ -133,7 +133,7 @@ CREATE TABLE absence (
                          group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          schedule_activity_id UUID NOT NULL REFERENCES schedule_activity(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          place_id UUID NOT NULL REFERENCES place(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                         user_id UUID REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                         user_id UUID REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                          CONSTRAINT uq_absence UNIQUE (date, start_time, end_time, user_id)
 );
 
@@ -142,5 +142,14 @@ CREATE TABLE service_tbl (
                              points_obtained DECIMAL(8,1) NOT NULL,
                              absence_id UUID NOT NULL UNIQUE REFERENCES absence(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                              cover_user_id UUID DEFAULT NULL REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                             assigned_user_id UUID REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+                             assigned_user_id UUID REFERENCES user_tbl(id) ON DELETE SET NULL ON UPDATE RESTRICT
+);
+
+CREATE TABLE refresh_token (
+                               id UUID PRIMARY KEY,
+                               refresh_token VARCHAR(60) NOT NULL,
+                               expires_at TIMESTAMP NOT NULL,
+                               revoked BOOLEAN DEFAULT FALSE,
+                               user_id UUID NOT NULL UNIQUE REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
+                               CONSTRAINT uq_refresh_token UNIQUE (refresh_token, user_id)
 );
