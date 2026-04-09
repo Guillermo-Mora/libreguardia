@@ -1,7 +1,7 @@
 package com.libreguardia.dto
 
-import com.libreguardia.config.UUIDSerializer
-import com.libreguardia.db.UserEntity
+import com.libreguardia.utils.UUIDSerializer
+import com.libreguardia.db.model.UserEntity
 import com.libreguardia.repository.UserRepository
 import kotlinx.serialization.Serializable
 import java.util.UUID

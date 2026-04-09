@@ -1,20 +1,28 @@
 package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import com.auth0.jwt.interfaces.DecodedJWT
-import com.libreguardia.config.InvalidCredentialsException
-import com.libreguardia.config.InvalidRefreshTokenException
-import com.libreguardia.config.UserNotFoundException
-import com.libreguardia.config.withTransaction
+import com.libreguardia.config.BCRYPT_HASH_COST
 import com.libreguardia.dto.LoginDTO
 import com.libreguardia.dto.LoginResponseDTO
+import com.libreguardia.exception.IncorrectPasswordException
+import com.libreguardia.exception.InvalidCredentialsException
+import com.libreguardia.exception.InvalidRefreshTokenException
+import com.libreguardia.repository.RefreshTokenRepository
 import com.libreguardia.repository.UserRepository
-import java.util.UUID
+import com.libreguardia.utils.withTransaction
+import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 
+private const val REFRESH_TOKEN_PREFIX_LENGTH = 8
+private val REFRESH_TOKEN_DURATION = 7.days
 class AuthService(
     private val bcryptVerifyer: BCrypt.Verifyer,
+    private val bcryptHasher: BCrypt.Hasher,
+    private val clock: Clock.System,
     private val jwtService: JwtService,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val refreshTokenRepository: RefreshTokenRepository
 ) {
     //Fake hashed password used to prevent timing attacks for discovering valid emails
     suspend fun validateLogin(
@@ -29,39 +37,67 @@ class AuthService(
         if (!verificationResult.verified || userEntity?.isEnabled != true) throw InvalidCredentialsException()
         val accessToken = jwtService.createAccessToken(
             uuid = userEntity.id.value,
-            role = userEntity.userRole.name
+            //Temporary for testing
+            role = withTransaction { userEntity.userRole.name }
         )
-        val refreshToken = jwtService.createRefreshToken(
-            uuid = userEntity.id.value,
-            role = userEntity.userRole.name
+        val refreshToken = createRefreshToken()
+        val refreshTokenPrefix = refreshToken.substring(0, REFRESH_TOKEN_PREFIX_LENGTH)
+        val refreshTokenHash = bcryptHasher.hashToString(
+            BCRYPT_HASH_COST,
+            refreshToken.substring(REFRESH_TOKEN_PREFIX_LENGTH).toCharArray()
         )
-        //To implement hash the refresh token and save it in the refresh token repository
-        // (I will need a new table in the DB)
+        withTransaction {
+            refreshTokenRepository.save(
+                newRefreshTokenPrefix = refreshTokenPrefix,
+                newRefreshTokenHash = refreshTokenHash,
+                expiration = clock.now().plus(REFRESH_TOKEN_DURATION),
+                userUuid = userEntity.id.value
+            )
+        }
         return LoginResponseDTO(
             accessToken = accessToken,
             refreshToken = refreshToken
         )
     }
 
-    suspend fun refreshToken(token: String): String? {
-        val decodedRefreshToken = verifyRefreshToken(token)
-        val userUuid = refreshTokenRepository.findUsernameByToken(token) ?: throw UserNotFoundException("")
-        val user = withTransaction { userRepository.getEntityWithRoleLoaded(UUID.fromString(userUuid)) }
-            ?: throw UserNotFoundException(userUuid)
-        val userUuidFromRefreshToken: String = decodedRefreshToken.getClaim("uuid").asString()
-        if (userUuid == userUuidFromRefreshToken)
-            jwtService.createAccessToken(
-                UUID.fromString(userUuid),
-                role = TODO()
-            )
-    }
-
-    private fun verifyRefreshToken(token: String): DecodedJWT {
-        val decodedJwt: DecodedJWT = try {
-            jwtService.jwtVerifier.verify(token)
-        } catch (_: Exception) {
+    suspend fun refreshToken(refreshToken: String): LoginResponseDTO {
+        val refreshTokenPrefix = refreshToken.substring(0, REFRESH_TOKEN_PREFIX_LENGTH)
+        val refreshTokenEntity = withTransaction { refreshTokenRepository.getRefreshTokenEntity(refreshTokenPrefix) }
+            ?: throw InvalidRefreshTokenException()
+        val refreshTokenHash = refreshToken.substring(REFRESH_TOKEN_PREFIX_LENGTH)
+        if (refreshTokenEntity.expiresAt <= clock.now()) {
+            withTransaction { refreshTokenRepository.deleteRefreshToken(refreshTokenEntity.id.value) }
             throw InvalidRefreshTokenException()
         }
-        return decodedJwt
+        val verificationResult = bcryptVerifyer.verify(
+            refreshTokenHash.toByteArray(),
+            refreshTokenEntity.refreshTokenHash.toByteArray()
+        )
+        if (!verificationResult.verified) throw InvalidRefreshTokenException()
+        val newRefreshToken = createRefreshToken()
+        val newRefreshTokenPrefix = newRefreshToken.substring(0, REFRESH_TOKEN_PREFIX_LENGTH)
+        val newRefreshTokenHash = bcryptHasher.hashToString(
+            BCRYPT_HASH_COST,
+            newRefreshToken.substring(REFRESH_TOKEN_PREFIX_LENGTH).toCharArray()
+        )
+        withTransaction {
+            refreshTokenRepository.save(
+                newRefreshTokenPrefix = newRefreshTokenPrefix,
+                newRefreshTokenHash = newRefreshTokenHash,
+                expiration = clock.now().plus(REFRESH_TOKEN_DURATION),
+                userUuid = refreshTokenEntity.user.id.value
+            )
+            refreshTokenRepository.deleteRefreshToken(refreshTokenEntity.id.value)
+        }
+        val accessToken = jwtService.createAccessToken(
+            uuid = refreshTokenEntity.user.id.value,
+            role = refreshTokenEntity.user.userRole.name
+        )
+        return LoginResponseDTO(
+            accessToken = accessToken,
+            refreshToken = newRefreshToken
+        )
     }
+
+    private fun createRefreshToken(): String = UUID.randomUUID().toString().replace("-", "")
 }

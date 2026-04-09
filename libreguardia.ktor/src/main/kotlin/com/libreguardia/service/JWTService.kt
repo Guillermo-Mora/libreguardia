@@ -3,8 +3,8 @@ package com.libreguardia.service
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import com.libreguardia.config.withTransaction
-import com.libreguardia.db.UserEntity
+import com.libreguardia.utils.withTransaction
+import com.libreguardia.db.model.UserEntity
 import com.libreguardia.repository.UserRepository
 import io.ktor.server.application.Application
 import io.ktor.server.auth.jwt.JWTCredential
@@ -38,7 +38,7 @@ class JwtService(
     fun createAccessToken(
         uuid: UUID,
         role: String
-    ): String = createJwtToken(
+    ): String = createAccessToken(
         uuid = uuid,
         role = role,
         expireIn = 3_600_000
@@ -47,13 +47,13 @@ class JwtService(
     fun createRefreshToken(
         uuid: UUID,
         role: String
-    ): String = createJwtToken(
+    ): String = createAccessToken(
         uuid = uuid,
         role = role,
         expireIn = 86_400_000
     )
 
-    private fun createJwtToken(
+    private fun createAccessToken(
         uuid: UUID,
         role: String,
         expireIn: Int
@@ -64,13 +64,7 @@ class JwtService(
             .withClaim("uuid", uuid.toString())
             .withClaim("role", role)
             .withExpiresAt(Date(System.currentTimeMillis() + expireIn))
-            .sign(
-                //Algorithm.RSA256(
-                //    publicKey =,
-                //    privateKey =
-                //)
-                //Debe de obteners el secret como variable de entorno
-                Algorithm.HMAC256(secret))
+            .sign(Algorithm.HMAC256(secret))
 
     suspend fun customValidator(
         credential: JWTCredential,

@@ -1,37 +1,5 @@
 package com.libreguardia.integration
 
-import com.libreguardia.Testing
-import com.libreguardia.config.*
-import com.libreguardia.db.*
-import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.dto.UserResponseDTO
-import com.libreguardia.repository.*
-import com.libreguardia.routing.UserAPI
-import com.libreguardia.service.UserService
-import io.ktor.client.call.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.resources.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.testing.*
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.jdbc.SizedIterable
-import org.jetbrains.exposed.v1.jdbc.select
-import java.math.BigDecimal
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Duration.Companion.minutes
-
 /*
 class UserIntegrationTest {
     @Test

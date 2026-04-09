@@ -1,0 +1,12 @@
+package com.libreguardia.exception
+
+enum class ErrorCode {
+    USER_ROLE_NOT_FOUND,
+    USER_NOT_FOUND,
+    USER_ALREADY_DELETED,
+    INCORRECT_PASSWORD,
+    INVALID_CREDENTIALS,
+    INVALID_REFRESH_TOKEN,
+    BAD_REQUEST,
+    UNKNOWN_SERVER_ERROR
+}

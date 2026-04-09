@@ -1,33 +1,28 @@
 package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import com.libreguardia.config.UserAlreadyDeletedException
-import com.libreguardia.config.UserNotFoundException
-import com.libreguardia.config.withTransaction
-import com.libreguardia.db.UserRoleEntity
+import com.libreguardia.config.BCRYPT_HASH_COST
+import com.libreguardia.db.model.UserRoleEntity
 import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserResponseDTO
-import com.libreguardia.config.UserRoleNotFoundException
-import com.libreguardia.config.IncorrectPasswordException
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.repository.AbsenceRepository
-import com.libreguardia.repository.RefreshTokenRepository
-import com.libreguardia.repository.ScheduleRepository
-import com.libreguardia.repository.ServiceRepository
-import com.libreguardia.repository.UserRepository
-import com.libreguardia.repository.UserRoleRepository
-import com.libreguardia.validation.validateString
+import com.libreguardia.dto.UserResponseDTO
+import com.libreguardia.exception.IncorrectPasswordException
+import com.libreguardia.exception.UserAlreadyDeletedException
+import com.libreguardia.exception.UserNotFoundException
+import com.libreguardia.exception.UserRoleNotFoundException
+import com.libreguardia.repository.*
+import com.libreguardia.utils.withTransaction
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import java.util.UUID
+import java.util.*
 import kotlin.time.Clock
-
-private const val BCRYPT_HASH_COST = 10
 
 class UserService (
     private val bcryptVerifyer: BCrypt.Verifyer,
+    private val bcryptHasher: BCrypt.Hasher,
+    private val clock: Clock.System,
     private val userRepository: UserRepository,
     private val absenceRepository: AbsenceRepository,
     private val serviceRepository: ServiceRepository,
@@ -35,8 +30,6 @@ class UserService (
     private val userRoleRepository: UserRoleRepository,
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
-    private val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
-
     //[Admin]
     suspend fun getAllUsers(): List<UserResponseDTO> = withTransaction {
         userRepository.getAll()
@@ -46,7 +39,7 @@ class UserService (
         userUUID: UUID
     ): UserResponseDTO {
         return withTransaction {
-            val user = userRepository.getByUUID(userUUID) ?: throw UserNotFoundException(userUUID.toString())
+            val user = userRepository.getByUUID(userUUID) ?: throw UserNotFoundException()
             user
         }
     }
@@ -60,12 +53,9 @@ class UserService (
             userCreateDTO.password.toCharArray()
         )
         withTransaction {
-            val userRoleEntity = UserRoleEntity.findById(userCreateDTO.userRoleUUID) ?: throw UserRoleNotFoundException(
-                userCreateDTO.userRoleUUID.toString()
-            )
+            if (!userRoleRepository.existsByUUID(userCreateDTO.userRoleUUID)) throw UserRoleNotFoundException()
             userRepository.save(
                 userCreateDTO = userCreateDTO,
-                userRoleEntity = userRoleEntity,
                 hashedPassword = hashedPassword
             )
         }
@@ -76,12 +66,10 @@ class UserService (
         userUUID: UUID,
         userEditDTO: UserEditDTO
     ) {
-        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
         withTransaction {
             if (userEditDTO.userRoleUUID != null) {
-                if (!userRoleRepository.existsByUUID(userEditDTO.userRoleUUID)) throw UserRoleNotFoundException(
-                    userEditDTO.userRoleUUID.toString()
-                )
+                if (!userRoleRepository.existsByUUID(userEditDTO.userRoleUUID)) throw UserRoleNotFoundException()
             }
             val hashedPassword = userEditDTO.password?.let { newPassword ->
                 bcryptHasher.hashToString(
@@ -94,7 +82,7 @@ class UserService (
                     userEditDTO = userEditDTO,
                     hashedPassword = hashedPassword
                 )
-            ) throw UserNotFoundException(userUUID.toString())
+            ) throw UserNotFoundException()
             userEditDTO.isEnabled?.let {
                 if (!it) {
                     serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
@@ -113,9 +101,9 @@ class UserService (
     ) {
         withTransaction {
             val userEntity =
-                userRepository.getEntity(userUUID) ?: throw UserNotFoundException(userUUID.toString())
-            if (userEntity.isDeleted && !userEntity.isEnabled) throw UserAlreadyDeletedException(userUUID.toString())
-            val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                userRepository.getEntity(userUUID) ?: throw UserNotFoundException()
+            if (userEntity.isDeleted && !userEntity.isEnabled) throw UserAlreadyDeletedException()
+            val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
             if (
                 absenceRepository.existsAbsenceByUserUUIDPreviousToNow(
                     userUUID = userUUID,
@@ -136,8 +124,8 @@ class UserService (
                 )
                 scheduleRepository.deleteSchedulesByUserUUID(userUUID)
                 refreshTokenRepository.deleteRefreshTokensByUser(userUUID)
-                if (!userRepository.softDeleteUser(userUUID)) throw UserNotFoundException(userUUID.toString())
-            } else if (!userRepository.deleteUser(userUUID)) throw UserNotFoundException(userUUID.toString())
+                if (!userRepository.softDeleteUser(userUUID)) throw UserNotFoundException()
+            } else if (!userRepository.deleteUser(userUUID)) throw UserNotFoundException()
         }
     }
 
@@ -146,13 +134,13 @@ class UserService (
         userUUID: UUID,
         enableOrDisable: Boolean
     ) {
-        val dateTimeNow: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
         withTransaction {
             if (!userRepository.toggleEnableUser(
                     uuid = userUUID,
                     enableOrDisable = enableOrDisable
                 )
-            ) throw UserNotFoundException(userUUID.toString())
+            ) throw UserNotFoundException()
             if (!enableOrDisable) {
                 serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
                     userUUID = userUUID,
@@ -171,7 +159,7 @@ class UserService (
             var hashedPassword: String? = null
             if (userEditProfileDTO.currentPassword != null && userEditProfileDTO.newPassword != null) {
                 val hashedCurrentPassword =
-                    userRepository.getHashedPassword(userUUID) ?: throw UserNotFoundException(userUUID.toString())
+                    userRepository.getHashedPassword(userUUID) ?: throw UserNotFoundException()
                 val verificationResult = bcryptVerifyer.verify(
                     userEditProfileDTO.currentPassword.toByteArray(),
                     hashedCurrentPassword.toByteArray()
@@ -188,7 +176,7 @@ class UserService (
                     userEditProfileDTO = userEditProfileDTO,
                     hashedPassword = hashedPassword
                 )
-            ) throw UserNotFoundException(userUUID.toString())
+            ) throw UserNotFoundException()
         }
     }
 }

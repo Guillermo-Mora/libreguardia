@@ -1,6 +1,6 @@
 package com.libreguardia.repository
 
-import com.libreguardia.db.UserRoleTable
+import com.libreguardia.db.model.UserRoleTable
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.select
 import java.util.UUID

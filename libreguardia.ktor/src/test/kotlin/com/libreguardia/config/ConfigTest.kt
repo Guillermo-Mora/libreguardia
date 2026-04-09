@@ -1,23 +1,25 @@
 package com.libreguardia.config
 
 import com.libreguardia.Testing
-import com.libreguardia.db.AbsenceTable
-import com.libreguardia.db.AcademicYearTable
-import com.libreguardia.db.AppSettingsTable
-import com.libreguardia.db.BuildingTable
-import com.libreguardia.db.CourseTable
-import com.libreguardia.db.GroupTable
-import com.libreguardia.db.PlaceTable
-import com.libreguardia.db.PlaceTypeTable
-import com.libreguardia.db.ProfessionalFamilyTable
-import com.libreguardia.db.ScheduleActivityTable
-import com.libreguardia.db.ScheduleTable
-import com.libreguardia.db.ScheduleTemplateSlotTable
-import com.libreguardia.db.ScheduleTemplateTable
-import com.libreguardia.db.ServiceTable
-import com.libreguardia.db.UserRoleTable
-import com.libreguardia.db.UserTable
-import com.libreguardia.db.ZoneTable
+import com.libreguardia.db.configureDatabase
+import com.libreguardia.db.model.AbsenceTable
+import com.libreguardia.db.model.AcademicYearTable
+import com.libreguardia.db.model.AppSettingsTable
+import com.libreguardia.db.model.BuildingTable
+import com.libreguardia.db.model.CourseTable
+import com.libreguardia.db.model.GroupTable
+import com.libreguardia.db.model.PlaceTable
+import com.libreguardia.db.model.PlaceTypeTable
+import com.libreguardia.db.model.ProfessionalFamilyTable
+import com.libreguardia.db.model.RefreshTokenTable
+import com.libreguardia.db.model.ScheduleActivityTable
+import com.libreguardia.db.model.ScheduleTable
+import com.libreguardia.db.model.ScheduleTemplateSlotTable
+import com.libreguardia.db.model.ScheduleTemplateTable
+import com.libreguardia.db.model.ServiceTable
+import com.libreguardia.db.model.UserRoleTable
+import com.libreguardia.db.model.UserTable
+import com.libreguardia.db.model.ZoneTable
 import io.ktor.server.testing.testApplication
 import org.jetbrains.exposed.v1.jdbc.SchemaUtils
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -58,7 +60,8 @@ class ConfigTest {
                     UserTable,
                     UserRoleTable,
                     ZoneTable,
-                    AppSettingsTable
+                    AppSettingsTable,
+                    RefreshTokenTable
                 )
         }
         missingColStatements.forEach { println(it) }

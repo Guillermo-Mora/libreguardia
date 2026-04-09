@@ -2,16 +2,23 @@ package com.libreguardia
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.*
+import com.libreguardia.db.configureDatabase
+import com.libreguardia.db.configureFlyway
+import com.libreguardia.exception.configureStatusPages
+import com.libreguardia.exception.validation.configureRequestValidation
 import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.RefreshTokenRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.repository.UserRoleRepository
+import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.JwtService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import kotlin.time.Clock
 
 fun main(args: Array<String>) {
     EngineMain.main(args)
@@ -30,16 +37,22 @@ fun Application.module() {
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
     val userRoleRepository = UserRoleRepository()
+    val refreshTokenRepository = RefreshTokenRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
+    val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
+    val clock = Clock.System
 
     val userService = UserService(
         bcryptVerifyer = bcryptVerifyer,
+        bcryptHasher = bcryptHasher,
+        clock = clock,
         userRepository = userRepository,
         absenceRepository = absenceRepository,
         serviceRepository = serviceRepository,
         scheduleRepository = scheduleRepository,
-        userRoleRepository = userRoleRepository
+        userRoleRepository = userRoleRepository,
+        refreshTokenRepository = refreshTokenRepository
     )
     val jwtService = JwtService(
         application = this,
@@ -47,8 +60,11 @@ fun Application.module() {
     )
     val authService = AuthService(
         bcryptVerifyer = bcryptVerifyer,
+        bcryptHasher = bcryptHasher,
+        clock = clock,
         userRepository = userRepository,
-        jwtService = jwtService
+        jwtService = jwtService,
+        refreshTokenRepository = refreshTokenRepository
     )
 
     configureDatabase(
@@ -70,7 +86,6 @@ fun Application.module() {
     configureStatusPages()
     configureRequestValidation()
     configureSerialization()
-    configureAuthentication()
     configureRouting(
         authService = authService,
         userService = userService
