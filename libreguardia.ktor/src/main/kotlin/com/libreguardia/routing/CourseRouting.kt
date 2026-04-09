@@ -4,9 +4,10 @@ import com.libreguardia.dto.CourseRequestDTO
 import com.libreguardia.exception.CourseNotFoundException
 import com.libreguardia.service.CourseService
 import io.ktor.http.*
-import io.ktor.resources.Resource
-import io.ktor.server.request.receive
-import io.ktor.server.response.respond
+import io.ktor.resources.*
+import io.ktor.server.request.*
+import io.ktor.server.resources.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
@@ -17,7 +18,12 @@ import java.util.UUID
 @Resource("/api/courses")
 class CoursesAPI {
     @Resource("{id}")
-    class Id(val parent: CoursesAPI = CoursesAPI(), val id: String)
+    class Id(val parent: CoursesAPI = CoursesAPI(), val id: String) {
+        @Resource("edit")
+        class Edit(val parent: Id)
+        @Resource("delete")
+        class Delete(val parent: Id)
+    }
 }
 
 fun Route.courseRouting(
@@ -49,8 +55,8 @@ fun Route.courseRouting(
         }
     }
 
-    put<CoursesAPI.Id> { params ->
-        val id = UUID.fromString(params.id)
+    put<CoursesAPI.Id.Edit> { params ->
+        val id = UUID.fromString(params.parent.id)
         val request = call.receive<CourseRequestDTO>()
         val errors = request.validate()
         if (errors.isNotEmpty()) {
@@ -65,8 +71,8 @@ fun Route.courseRouting(
         }
     }
 
-    delete<CoursesAPI.Id> { params ->
-        val id = UUID.fromString(params.id)
+    delete<CoursesAPI.Id.Delete> { params ->
+        val id = UUID.fromString(params.parent.id)
         val deleted = service.delete(id)
         if (deleted) {
             call.respond(HttpStatusCode.NoContent)
