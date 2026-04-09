@@ -1,5 +1,7 @@
 package com.libreguardia.config
 
+import com.libreguardia.exception.CourseNotFoundException
+import com.libreguardia.exception.CourseNameAlreadyExistsException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.BadRequestException
@@ -39,6 +41,18 @@ fun Application.configureStatusPages() {
             call.respond(
                 status = HttpStatusCode.BadRequest,
                 message = "Incorrect password"
+            )
+        }
+        exception<CourseNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = "Course not found"
+            )
+        }
+        exception<CourseNameAlreadyExistsException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.Conflict,
+                message = "Course name already exists"
             )
         }
         //TEMPORARY FOR DEBUGGING

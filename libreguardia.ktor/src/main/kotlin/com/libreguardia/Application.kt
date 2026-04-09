@@ -2,10 +2,12 @@ package com.libreguardia
 
 import com.libreguardia.config.*
 import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.CourseRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.repository.UserRoleRepository
+import com.libreguardia.service.CourseService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
@@ -27,6 +29,7 @@ fun Application.module() {
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
     val userRoleRepository = UserRoleRepository()
+    val courseRepository = CourseRepository()
 
     val userService = UserService(
         userRepository = userRepository,
@@ -34,6 +37,9 @@ fun Application.module() {
         serviceRepository = serviceRepository,
         scheduleRepository = scheduleRepository,
         userRoleRepository = userRoleRepository
+    )
+    val courseService = CourseService(
+        repository = courseRepository
     )
 
     configureDatabase(
@@ -53,6 +59,7 @@ fun Application.module() {
     configureSerialization()
     configureAuthentication()
     configureRouting(
-        userService = userService
+        userService = userService,
+        courseService = courseService
     )
 }
