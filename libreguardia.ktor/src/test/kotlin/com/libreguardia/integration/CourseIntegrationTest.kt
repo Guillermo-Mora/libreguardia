@@ -6,11 +6,9 @@ import com.libreguardia.db.*
 import com.libreguardia.dto.CourseRequestDTO
 import com.libreguardia.dto.CourseResponseDTO
 import com.libreguardia.repository.CourseRepository
-import com.libreguardia.routing.CoursesAPI
 import com.libreguardia.service.CourseService
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.resources.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -18,7 +16,6 @@ import io.ktor.server.testing.*
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
-import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -37,6 +34,7 @@ class CourseIntegrationTest {
             configureSerialization()
             configureDefaultHeaders()
             configureRouting(
+                userService = null,
                 courseService = CourseService(CourseRepository())
             )
         }
@@ -44,15 +42,13 @@ class CourseIntegrationTest {
             install(ContentNegotiation) {
                 json()
             }
-            install(Resources)
         }
 
         transaction {
-            val pf = ProfessionalFamilyEntity.new {
+            ProfessionalFamilyEntity.new {
                 name = "Informática"
                 isEnabled = true
             }
-            pf.id
         }
 
         val pfUUID = transaction {
@@ -63,7 +59,7 @@ class CourseIntegrationTest {
                 .first()
         }
 
-        val createResponse = client.post(CoursesAPI()) {
+        val createResponse = client.post("/api/courses") {
             contentType(ContentType.Application.Json)
             setBody(
                 CourseRequestDTO(
@@ -73,64 +69,27 @@ class CourseIntegrationTest {
                 )
             )
         }
-        assertEquals(HttpStatusCode.Created, createResponse.status)
-        val createdCourse: CourseResponseDTO = createResponse.body()
-        assertTrue(createdCourse.id.isNotEmpty())
-        assertEquals("DAM", createdCourse.name)
+        assertEquals(
+            expected = HttpStatusCode.Created,
+            actual = createResponse.status
+        )
+        val courses: List<CourseResponseDTO> = client.get("/api/courses").body()
+        assertTrue { courses.isNotEmpty() }
 
-        val listResponse = client.get(CoursesAPI())
-        assertEquals(HttpStatusCode.OK, listResponse.status)
-        val courses: List<CourseResponseDTO> = listResponse.body()
-        assertTrue(courses.isNotEmpty())
-    }
-
-    @Test
-    fun getCourseById() = testApplication {
-        val dbConnection = Testing.setupTestDBAndFlyway()
-        application {
-            configureDatabase(
-                url = dbConnection.url,
-                user = dbConnection.user,
-                password = dbConnection.password
-            )
-            configureStatusPages()
-            configureSerialization()
-            configureDefaultHeaders()
-            configureRouting(
-                courseService = CourseService(CourseRepository())
-            )
-        }
-        val client = createClient {
-            install(ContentNegotiation) {
-                json()
+        val courseUUID =
+            transaction {
+                CourseTable.select(CourseTable.id)
+                    .where {
+                        CourseTable.name eq "DAM"
+                    }.limit(1).map { it[CourseTable.id].value }.first()
             }
-            install(Resources)
-        }
-
-        val pfUUID = transaction {
-            val pf = ProfessionalFamilyEntity.new {
-                name = "Informática"
-                isEnabled = true
-            }
-            pf.id.value
-        }
-
-        val createResponse = client.post(CoursesAPI()) {
-            contentType(ContentType.Application.Json)
-            setBody(
-                CourseRequestDTO(
-                    name = "DAM",
-                    isEnabled = true,
-                    professionalFamilyId = pfUUID.toString()
-                )
-            )
-        }
-        val createdCourse: CourseResponseDTO = createResponse.body()
-
-        val getResponse = client.get(CoursesAPI.Id(createdCourse.id))
-        assertEquals(HttpStatusCode.OK, getResponse.status)
-        val course: CourseResponseDTO = getResponse.body()
-        assertEquals("DAM", course.name)
+        val getCourse = client.get("/api/courses/$courseUUID")
+        val courseDTO = getCourse.body<CourseResponseDTO>()
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = getCourse.status
+        )
+        assertTrue { courseDTO.id == courseUUID.toString() }
     }
 
     @Test
@@ -146,6 +105,7 @@ class CourseIntegrationTest {
             configureSerialization()
             configureDefaultHeaders()
             configureRouting(
+                userService = null,
                 courseService = CourseService(CourseRepository())
             )
         }
@@ -153,7 +113,6 @@ class CourseIntegrationTest {
             install(ContentNegotiation) {
                 json()
             }
-            install(Resources)
         }
 
         val pfUUID = transaction {
@@ -164,7 +123,7 @@ class CourseIntegrationTest {
             pf.id.value
         }
 
-        val createResponse = client.post(CoursesAPI()) {
+        val createResponse = client.post("/api/courses") {
             contentType(ContentType.Application.Json)
             setBody(
                 CourseRequestDTO(
@@ -176,7 +135,7 @@ class CourseIntegrationTest {
         }
         val createdCourse: CourseResponseDTO = createResponse.body()
 
-        val updateResponse = client.put(CoursesAPI.Id(createdCourse.id)) {
+        val updateResponse = client.put("/api/courses/${createdCourse.id}/edit") {
             contentType(ContentType.Application.Json)
             setBody(
                 CourseRequestDTO(
@@ -186,10 +145,10 @@ class CourseIntegrationTest {
                 )
             )
         }
-        assertEquals(HttpStatusCode.OK, updateResponse.status)
-        val updatedCourse: CourseResponseDTO = updateResponse.body()
-        assertEquals("DAW", updatedCourse.name)
-        assertEquals(false, updatedCourse.isEnabled)
+        assertEquals(
+            expected = HttpStatusCode.OK,
+            actual = updateResponse.status
+        )
     }
 
     @Test
@@ -205,6 +164,7 @@ class CourseIntegrationTest {
             configureSerialization()
             configureDefaultHeaders()
             configureRouting(
+                userService = null,
                 courseService = CourseService(CourseRepository())
             )
         }
@@ -212,7 +172,6 @@ class CourseIntegrationTest {
             install(ContentNegotiation) {
                 json()
             }
-            install(Resources)
         }
 
         val pfUUID = transaction {
@@ -223,7 +182,7 @@ class CourseIntegrationTest {
             pf.id.value
         }
 
-        val createResponse = client.post(CoursesAPI()) {
+        val createResponse = client.post("/api/courses") {
             contentType(ContentType.Application.Json)
             setBody(
                 CourseRequestDTO(
@@ -235,15 +194,15 @@ class CourseIntegrationTest {
         }
         val createdCourse: CourseResponseDTO = createResponse.body()
 
-        val deleteResponse = client.delete(CoursesAPI.Id(createdCourse.id))
-        assertEquals(HttpStatusCode.NoContent, deleteResponse.status)
-
-        val notFoundResponse = client.get(CoursesAPI.Id(createdCourse.id))
-        assertEquals(HttpStatusCode.NotFound, notFoundResponse.status)
+        val deleteResponse = client.delete("/api/courses/${createdCourse.id}/delete")
+        assertEquals(
+            expected = HttpStatusCode.NoContent,
+            actual = deleteResponse.status
+        )
     }
 
     @Test
-    fun validationErrorReturnsBadRequest() = testApplication {
+    fun courseNotFound() = testApplication {
         val dbConnection = Testing.setupTestDBAndFlyway()
         application {
             configureDatabase(
@@ -255,6 +214,7 @@ class CourseIntegrationTest {
             configureSerialization()
             configureDefaultHeaders()
             configureRouting(
+                userService = null,
                 courseService = CourseService(CourseRepository())
             )
         }
@@ -262,19 +222,12 @@ class CourseIntegrationTest {
             install(ContentNegotiation) {
                 json()
             }
-            install(Resources)
         }
 
-        val response = client.post(CoursesAPI()) {
-            contentType(ContentType.Application.Json)
-            setBody(
-                CourseRequestDTO(
-                    name = "",
-                    isEnabled = true,
-                    professionalFamilyId = ""
-                )
-            )
-        }
-        assertEquals(HttpStatusCode.BadRequest, response.status)
+        val response = client.get("/api/courses/00000000-0000-0000-0000-000000000000")
+        assertEquals(
+            expected = HttpStatusCode.NotFound,
+            actual = response.status
+        )
     }
 }

@@ -11,18 +11,22 @@ import io.ktor.server.resources.Resources
 import io.ktor.server.routing.*
 
 fun Application.configureRouting(
-    userService: UserService,
-    courseService: CourseService
+    userService: UserService? = null,
+    courseService: CourseService? = null
 ) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     install(Resources)
     routing {
-        userRouting(
-            userService = userService
-        )
-        courseRouting(
-            service = courseService
-        )
+        userService?.let {
+            userRouting(
+                userService = it
+            )
+        }
+        courseService?.let {
+            courseRouting(
+                service = it
+            )
+        }
 
 
         // Static plugin. Try to access `/static/index.html`
