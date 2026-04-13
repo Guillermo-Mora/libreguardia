@@ -22,8 +22,6 @@ fun Application.configureRouting(
         userRouting(
             userService = userService
         )
-
-
         // Static plugin. Try to access `/static/index.html`
         staticResources("/static", "static")
     }
