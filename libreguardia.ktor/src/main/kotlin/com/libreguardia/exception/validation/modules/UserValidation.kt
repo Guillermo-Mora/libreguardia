@@ -8,6 +8,7 @@ import com.libreguardia.exception.validation.validateNewPassword
 import com.libreguardia.exception.validation.validatePassword
 import com.libreguardia.exception.validation.validatePhoneNumber
 import com.libreguardia.exception.validation.validateResult
+import com.libreguardia.exception.validation.validateRole
 import com.libreguardia.exception.validation.validateString
 import io.ktor.server.plugins.requestvalidation.*
 
@@ -19,6 +20,7 @@ fun RequestValidationConfig.userValidation() {
         validatePassword(it.password)?.let { error -> errors.add(error) }
         validateEmail(it.email)?.let { error -> errors.add(error) }
         validatePhoneNumber(it.phoneNumber)?.let { error -> errors.add(error) }
+        validateRole(it.role)?.let { error -> errors.add(error) }
         return@validate validateResult(errors)
     }
     validate<UserEditDTO> {
@@ -28,6 +30,7 @@ fun RequestValidationConfig.userValidation() {
         it.password?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
         it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
         it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
+        it.role?.let { field -> validateRole(field) }?.let { error -> errors.add(error) }
         return@validate validateResult(errors)
     }
     validate<UserEditProfileDTO> {

@@ -1,6 +1,6 @@
 package com.libreguardia.dto
 
-import com.libreguardia.utils.UUIDSerializer
+import com.libreguardia.util.UUIDSerializer
 import com.libreguardia.db.model.UserEntity
 import com.libreguardia.repository.UserRepository
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ data class UserResponseDTO(
     val phoneNumber: String,
     val isEnabled: Boolean,
     val isDeleted: Boolean,
-    val userRole: String
+    val role: String
 )
 
 @Serializable
@@ -27,8 +27,7 @@ data class UserCreateDTO(
     val phoneNumber: String,
     val password: String,
     val isEnabled: Boolean,
-    @Serializable(with = UUIDSerializer::class)
-    val userRoleUUID: UUID
+    val role: String
 )
 
 @Serializable
@@ -39,8 +38,7 @@ data class UserEditDTO(
     val phoneNumber: String? = null,
     val password: String? = null,
     val isEnabled: Boolean? = null,
-    @Serializable(with = UUIDSerializer::class)
-    val userRoleUUID: UUID? = null
+    val role: String? = null
 )
 
 @Serializable
@@ -56,9 +54,9 @@ fun UserRepository.entityToResponse(
     id = entity.id.value,
     name = entity.name,
     surname = entity.surname,
-    email =entity.email,
+    email = entity.email,
     phoneNumber = entity.phoneNumber,
     isEnabled = entity.isEnabled,
     isDeleted = entity.isDeleted,
-    userRole = entity.userRole.name
+    role = entity.role.toString()
 )

@@ -1,5 +1,7 @@
 package com.libreguardia.db.model
 
+import com.libreguardia.db.Role
+import com.libreguardia.db.WeekDay
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
@@ -36,11 +38,9 @@ object UserTable: UUIDTable(
     val isDeleted = bool(
         name = "is_deleted"
     ).default(false)
-    val userRole = reference(
-        name = "user_role_id",
-        foreign = UserRoleTable,
-        onDelete = ReferenceOption.RESTRICT,
-        onUpdate = ReferenceOption.RESTRICT,
+    val role = enumerationByName<Role>(
+        name = "role",
+        length = 60
     )
 }
 
@@ -54,7 +54,7 @@ class UserEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var password by UserTable.password
     var isEnabled by UserTable.isEnabled
     var isDeleted by UserTable.isDeleted
-    var userRole by UserRoleEntity referencedOn UserTable.userRole
+    var role by UserTable.role
     val schedules by ScheduleEntity referrersOn ScheduleTable.user
     val absences by AbsenceEntity optionalReferrersOn AbsenceTable.user
     val servicesCovered by ServiceEntity optionalReferrersOn ServiceTable.coverUser
