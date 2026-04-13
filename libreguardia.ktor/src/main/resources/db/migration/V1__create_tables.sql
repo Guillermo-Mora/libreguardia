@@ -48,11 +48,6 @@ CREATE TABLE building (
                           is_enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE user_role (
-                           id UUID PRIMARY KEY,
-                           name VARCHAR(50) NOT NULL UNIQUE
-);
-
 CREATE TABLE schedule_activity (
                                    id UUID PRIMARY KEY,
                                    name VARCHAR(50) NOT NULL UNIQUE,
@@ -83,7 +78,7 @@ CREATE TABLE user_tbl (
                           password VARCHAR(60) NOT NULL,
                           is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
                           is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-                          user_role_id UUID NOT NULL REFERENCES user_role(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+                          role VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE course (
@@ -109,7 +104,7 @@ CREATE TABLE schedule (
                           group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                           schedule_activity_id UUID NOT NULL REFERENCES schedule_activity(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                           place_id UUID NOT NULL REFERENCES place(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                          user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                          user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                           CONSTRAINT uq_schedule UNIQUE (week_day, start_time, end_time, user_id)
 );
 
@@ -133,7 +128,7 @@ CREATE TABLE absence (
                          group_id UUID REFERENCES group_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          schedule_activity_id UUID NOT NULL REFERENCES schedule_activity(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                          place_id UUID NOT NULL REFERENCES place(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                         user_id UUID REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                         user_id UUID REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                          CONSTRAINT uq_absence UNIQUE (date, start_time, end_time, user_id)
 );
 
@@ -142,5 +137,14 @@ CREATE TABLE service_tbl (
                              points_obtained DECIMAL(8,1) NOT NULL,
                              absence_id UUID NOT NULL UNIQUE REFERENCES absence(id) ON DELETE CASCADE ON UPDATE RESTRICT,
                              cover_user_id UUID DEFAULT NULL REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                             assigned_user_id UUID REFERENCES user_tbl(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+                             assigned_user_id UUID REFERENCES user_tbl(id) ON DELETE SET NULL ON UPDATE RESTRICT
+);
+
+CREATE TABLE refresh_token (
+                               id UUID PRIMARY KEY,
+                               refresh_token_prefix VARCHAR(60) NOT NULL,
+                               refresh_token_hash VARCHAR(60) NOT NULL,
+                               expires_at TIMESTAMP NOT NULL,
+                               user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
+                               CONSTRAINT uq_refresh_token UNIQUE (refresh_token_prefix, refresh_token_hash, user_id)
 );
