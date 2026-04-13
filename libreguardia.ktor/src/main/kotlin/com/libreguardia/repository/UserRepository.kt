@@ -1,15 +1,12 @@
 package com.libreguardia.repository
 
-import com.libreguardia.db.UserEntity
-import com.libreguardia.db.UserRoleEntity
-import com.libreguardia.db.UserTable
-import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.dto.UserResponseDTO
-import com.libreguardia.dto.entityToResponse
+import com.libreguardia.db.Role
+import com.libreguardia.db.model.UserEntity
+import com.libreguardia.db.model.UserTable
+import com.libreguardia.dto.*
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
@@ -23,25 +20,30 @@ class UserRepository {
         return UserEntity.findById(uuid)?.let { entityToResponse(it) }
     }
 
-    fun getEntityByUUID(
+    fun getEntity(
         uuid: UUID
     ): UserEntity? {
         return UserEntity.findById(uuid)
     }
 
+    fun getEntity(
+        email: String
+    ): UserEntity? {
+        return UserEntity.find { UserTable.email eq email }.limit(1).firstOrNull()
+    }
+
     fun save(
         userCreateDTO: UserCreateDTO,
-        userRoleEntity: UserRoleEntity,
         hashedPassword: String
     ) {
-        UserEntity.new {
-            this.name = userCreateDTO.name
-            surname = userCreateDTO.surname
-            email = userCreateDTO.email
-            phoneNumber = userCreateDTO.phoneNumber
-            password = hashedPassword
-            isEnabled = userCreateDTO.isEnabled
-            userRole = userRoleEntity
+        UserTable.insert {
+            it[name] = userCreateDTO.name
+            it[surname] = userCreateDTO.surname
+            it[email] = userCreateDTO.email
+            it[phoneNumber] = userCreateDTO.phoneNumber
+            it[password] = hashedPassword
+            it[isEnabled] = userCreateDTO.isEnabled
+            it[role] = Role.valueOf(userCreateDTO.role)
         }
     }
 
@@ -57,7 +59,7 @@ class UserRepository {
             userEditDTO.phoneNumber?.let { userUpdated[phoneNumber] = it }
             hashedPassword?.let { userUpdated[password] = it }
             userEditDTO.isEnabled?.let { userUpdated[isEnabled] = it }
-            userEditDTO.userRoleUUID?.let { userUpdated[userRole] = it }
+            userEditDTO.role?.let { userUpdated[role] = Role.valueOf(it) }
         } == 1
     }
 
@@ -85,10 +87,6 @@ class UserRepository {
         } == 1
     }
 
-    fun userExists(
-        uuid: UUID
-    ): Boolean = UserTable.select(UserTable.id eq uuid).limit(1).any()
-
     fun editUserProfileByUUID(
         userUUID: UUID,
         userEditProfileDTO: UserEditProfileDTO,
@@ -107,7 +105,9 @@ class UserRepository {
             .select(UserTable.password)
             .where {
                 UserTable.id eq userUUID
-            }.limit(1)
-            .firstOrNull()?.get(UserTable.password)
+            }
+            .limit(1)
+            .map { it[UserTable.password] }
+            .firstOrNull()
     }
 }

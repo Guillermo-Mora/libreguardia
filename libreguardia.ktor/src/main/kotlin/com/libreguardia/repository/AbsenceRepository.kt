@@ -1,6 +1,6 @@
 package com.libreguardia.repository
 
-import com.libreguardia.db.AbsenceTable
+import com.libreguardia.db.model.AbsenceTable
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.v1.core.*
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
