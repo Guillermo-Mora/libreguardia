@@ -13,3 +13,8 @@ data class LoginResponseDTO(
     val accessToken: String,
     val refreshToken: String
 )
+
+@Serializable
+data class RefreshTokenDTO(
+    val refreshToken: String
+)
