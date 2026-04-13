@@ -11,7 +11,6 @@ import com.libreguardia.repository.RefreshTokenRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
-import com.libreguardia.repository.UserRoleRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.JwtService
@@ -24,8 +23,6 @@ fun main(args: Array<String>) {
     EngineMain.main(args)
 }
 
-//It would be better to separate the app in different modules in the future. For better responsability
-// separations.
 fun Application.module() {
     val config = environment.config
     val dbUrl = config.property("storage.jdbcURL").getString()
@@ -36,7 +33,6 @@ fun Application.module() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
-    val userRoleRepository = UserRoleRepository()
     val refreshTokenRepository = RefreshTokenRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
@@ -51,11 +47,10 @@ fun Application.module() {
         absenceRepository = absenceRepository,
         serviceRepository = serviceRepository,
         scheduleRepository = scheduleRepository,
-        userRoleRepository = userRoleRepository,
         refreshTokenRepository = refreshTokenRepository
     )
     val jwtService = JwtService(
-        application = this,
+        //application = this,
         userRepository = userRepository
     )
     val authService = AuthService(
