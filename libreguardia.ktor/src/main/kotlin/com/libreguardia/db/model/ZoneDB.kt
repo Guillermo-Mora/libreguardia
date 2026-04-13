@@ -1,6 +1,6 @@
 package com.libreguardia.db.model
 
-import com.libreguardia.utils.UUIDSerializer
+import com.libreguardia.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
