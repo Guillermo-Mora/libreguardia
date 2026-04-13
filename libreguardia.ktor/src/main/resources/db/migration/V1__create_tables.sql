@@ -48,11 +48,6 @@ CREATE TABLE building (
                           is_enabled BOOLEAN NOT NULL DEFAULT TRUE
 );
 
-CREATE TABLE user_role (
-                           id UUID PRIMARY KEY,
-                           name VARCHAR(50) NOT NULL UNIQUE
-);
-
 CREATE TABLE schedule_activity (
                                    id UUID PRIMARY KEY,
                                    name VARCHAR(50) NOT NULL UNIQUE,
@@ -83,7 +78,7 @@ CREATE TABLE user_tbl (
                           password VARCHAR(60) NOT NULL,
                           is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
                           is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-                          user_role_id UUID NOT NULL REFERENCES user_role(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+                          role VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE course (
