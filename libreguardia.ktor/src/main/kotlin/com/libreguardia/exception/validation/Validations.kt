@@ -1,5 +1,6 @@
 package com.libreguardia.exception.validation
 
+import com.libreguardia.db.Role
 import io.ktor.server.plugins.requestvalidation.*
 
 fun validateResult(errors: List<String>): ValidationResult =
@@ -20,3 +21,7 @@ fun validateEmail(field: String): String? =
         .matches(field)) "Invalid email format" else null
 fun validatePhoneNumber(field: String): String? =
     if (!Regex("^[0-9]{1,20}$").matches(field)) "Invalid phone number format" else null
+fun validateRole(field: String): String? =
+    if (Role.entries.firstOrNull { it.name == field } == null) "Invalid role" else null
+fun validateRefreshToken(field: String) : String? =
+    if (field.length != 32) "Invalid refresh token" else null
