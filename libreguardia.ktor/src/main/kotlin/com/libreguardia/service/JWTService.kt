@@ -3,17 +3,16 @@ package com.libreguardia.service
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import com.libreguardia.utils.withTransaction
+import com.libreguardia.db.Role
 import com.libreguardia.db.model.UserEntity
+import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.repository.UserRepository
-import io.ktor.server.application.Application
-import io.ktor.server.auth.jwt.JWTCredential
-import io.ktor.server.auth.jwt.JWTPrincipal
-import java.util.Date
-import java.util.UUID
+import com.libreguardia.util.withTransaction
+import io.ktor.server.auth.jwt.*
+import java.util.*
 
 class JwtService(
-    private val application: Application,
+    //private val application: Application,
     private val userRepository: UserRepository
 ) {
     //private val secret = getConfigProperty("jwt.secret")
@@ -37,64 +36,26 @@ class JwtService(
 
     fun createAccessToken(
         uuid: UUID,
-        role: String
-    ): String = createAccessToken(
-        uuid = uuid,
-        role = role,
-        expireIn = 3_600_000
-    )
-
-    fun createRefreshToken(
-        uuid: UUID,
-        role: String
-    ): String = createAccessToken(
-        uuid = uuid,
-        role = role,
-        expireIn = 86_400_000
-    )
-
-    private fun createAccessToken(
-        uuid: UUID,
-        role: String,
-        expireIn: Int
+        role: Role,
+        //1 hour duration
+        expireIn: Int = 3_600_000
     ): String =
         JWT.create()
             .withAudience(audience)
             .withIssuer(issuer)
             .withClaim("uuid", uuid.toString())
-            .withClaim("role", role)
+            .withClaim("role", role.toString())
             .withExpiresAt(Date(System.currentTimeMillis() + expireIn))
             .sign(Algorithm.HMAC256(secret))
 
     suspend fun customValidator(
         credential: JWTCredential,
-    ): JWTPrincipal? {
-        val uuid: String? = extractUuid(credential)
-        val foundUser: UserEntity? = uuid?.let(withTransaction { userRepository::getEntityWithRoleLoaded })
-
-        return foundUser?.let {
-            if (audienceMatches(credential))
-                JWTPrincipal(credential.payload)
-            else
-                null
+    ): JWTPrincipal {
+        val uuid = credential.payload.getClaim("uuid").asString()
+        withTransaction {
+            val user: UserEntity = userRepository.getEntity(UUID.fromString(uuid)) ?: throw UserNotFoundException()
+            if (!user.isEnabled || user.isDeleted) throw UserNotFoundException()
         }
+        return JWTPrincipal(credential.payload)
     }
-
-    private fun audienceMatches(
-        credential: JWTCredential,
-    ): Boolean =
-        credential.payload.audience.contains(audience)
-
-    fun audienceMatches(
-        audience: String
-    ): Boolean =
-        this.audience == audience
-
-    private fun getConfigProperty(
-        path: String
-    ) = application.environment.config.property(path).getString()
-
-    private fun extractUuid(
-        credential: JWTCredential
-    ): String? = credential.payload.getClaim("uuid").asString()
 }
