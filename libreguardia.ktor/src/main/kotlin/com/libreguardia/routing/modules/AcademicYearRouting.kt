@@ -26,7 +26,10 @@ class AcademicYearAPI
 @Resource("/api/academic-year/{uuid}")
 class AcademicYearByUUID(
     @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-)
+) {
+    @Resource("toggle-enabled")
+    class ToggleEnabled(val parent: AcademicYearByUUID)
+}
 
 fun Route.academicYearRouting(service: AcademicYearService) {
     authenticate {
@@ -50,6 +53,11 @@ fun Route.academicYearRouting(service: AcademicYearService) {
             delete<AcademicYearByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
+            }
+            patch<AcademicYearByUUID.ToggleEnabled> {
+                val enableOrDisable = call.receive<Boolean>()
+                service.toggleEnabled(it.parent.uuid, enableOrDisable)
+                call.respond(HttpStatusCode.OK)
             }
         }
     }

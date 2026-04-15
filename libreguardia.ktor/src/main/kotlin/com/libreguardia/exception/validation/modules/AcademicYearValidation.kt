@@ -15,7 +15,7 @@ fun RequestValidationConfig.academicYearValidation() {
     validate<AcademicYearEditDTO> { dto ->
         when {
             dto.name != null && dto.name.isBlank() -> ValidationResult.Invalid("Name cannot be blank")
-            dto.startDate != null && dto.endDate != null && dto.startDate!! > dto.endDate!! -> 
+            dto.startDate != null && dto.endDate != null && dto.startDate > dto.endDate -> 
                 ValidationResult.Invalid("Start date must be before end date")
             else -> ValidationResult.Valid
         }
