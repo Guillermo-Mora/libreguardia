@@ -5,11 +5,12 @@ import com.libreguardia.config.*
 import com.libreguardia.db.configureDatabase
 import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
-import com.libreguardia.exception.validation.configureRequestValidation
+import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.RefreshTokenRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
+import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AuthService
@@ -19,11 +20,9 @@ import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlin.time.Clock
 
-fun main(args: Array<String>) {
-    EngineMain.main(args)
-}
+fun main(args: Array<String>) { EngineMain.main(args) }
 
-fun Application.module() {
+fun Application.main() {
     val config = environment.config
     val dbUrl = config.property("storage.jdbcURL").getString()
     val dbUser = config.property("storage.user").getString()
@@ -34,6 +33,7 @@ fun Application.module() {
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
     val refreshTokenRepository = RefreshTokenRepository()
+    val sessionRepository = SessionRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
@@ -59,7 +59,7 @@ fun Application.module() {
         clock = clock,
         userRepository = userRepository,
         jwtService = jwtService,
-        refreshTokenRepository = refreshTokenRepository
+        sessionRepository = sessionRepository,
     )
 
     configureDatabase(
@@ -73,7 +73,7 @@ fun Application.module() {
         password = dbPassword
     )
     configureSecurity(
-        jwtService = jwtService
+        authService = authService
     )
     configureMonitoring()
     configureDefaultHeaders()
