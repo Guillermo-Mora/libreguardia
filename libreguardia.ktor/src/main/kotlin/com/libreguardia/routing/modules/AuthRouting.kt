@@ -1,22 +1,23 @@
 package com.libreguardia.routing.modules
 
+import com.libreguardia.config.UserSession
 import com.libreguardia.db.Role
-import com.libreguardia.dto.LoginDTO
-import com.libreguardia.exception.InvalidCredentialsException
-import com.libreguardia.config.authorized
 import com.libreguardia.dto.RefreshTokenDTO
+import com.libreguardia.exception.InvalidCredentialsException
 import com.libreguardia.service.AuthService
+import com.libreguardia.util.userPrincipal
 import com.libreguardia.util.userUuidFromJwt
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
+import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
 import io.ktor.server.request.*
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
-import java.util.UUID
+import io.ktor.server.sessions.sessions
+import io.ktor.server.sessions.set
 
 @Resource("/api/auth")
 class AuthAPI {
@@ -33,28 +34,25 @@ class AuthAPI {
 fun Route.authRouting(
     authService: AuthService
 ) {
-    post<AuthAPI.Login> {
-        val credentials = call.receive<LoginDTO>()
-        val tokens = authService.validateLogin(
-            credentials = credentials
-        )
-        call.respond(tokens)
+    authenticate("auth-form") {
+        post<AuthAPI.Login> {
+            val userEmail: String =
+                call.principal<UserIdPrincipal>()?.name ?: throw InvalidCredentialsException()
+            val userSession = authService.saveSession(userEmail = userEmail)
+            call.sessions.set(userSession)
+            call.respondRedirect("/")
+        }
     }
-    post<AuthAPI.RefreshToken> {
-        val currentRefreshToken = call.receive<RefreshTokenDTO>()
-        val tokens = authService.refreshToken(
-            refreshTokenDTO = currentRefreshToken
-        )
-        call.respond(tokens)
-    }
+}
+/*
     authenticate {
         authorized(Role.USER, Role.ADMIN) {
             post<AuthAPI.Logout> {
                 val refreshToken = call.receive<RefreshTokenDTO>()
-                val userUuid = call.userUuidFromJwt()
+                val userPrincipal = call.userPrincipal()
                 authService.logout(
                     refreshTokenDTO = refreshToken,
-                    userUuid = userUuid
+                    userUuid = userPrincipal.uuid
                 )
                 call.respond(HttpStatusCode.NoContent)
             }
@@ -67,4 +65,5 @@ fun Route.authRouting(
             }
         }
     }
-}
+
+ */
