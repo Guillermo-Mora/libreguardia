@@ -1,4 +1,4 @@
-package com.libreguardia.exception.validation
+package com.libreguardia.validation
 
 import com.libreguardia.db.Role
 import io.ktor.server.plugins.requestvalidation.*
