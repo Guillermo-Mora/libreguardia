@@ -4,6 +4,8 @@ import com.libreguardia.db.Role
 import com.libreguardia.db.model.UserEntity
 import com.libreguardia.db.model.UserTable
 import com.libreguardia.dto.*
+import com.libreguardia.model.UserModel
+import com.libreguardia.model.entityToModel
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -11,13 +13,12 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
-
 class UserRepository {
-    fun getAll(): List<UserResponseDTO> = UserEntity.all().map(::entityToResponse)
+    fun getAll(): List<UserModel> = UserEntity.all().map(::entityToModel)
     fun getByUUID(
         uuid: UUID
-    ): UserResponseDTO? {
-        return UserEntity.findById(uuid)?.let { entityToResponse(it) }
+    ): UserModel? {
+        return UserEntity.findById(uuid)?.let { entityToModel(it) }
     }
 
     fun getEntity(
@@ -103,11 +104,20 @@ class UserRepository {
     ): String? {
         return UserTable
             .select(UserTable.password)
-            .where {
-                UserTable.id eq userUUID
-            }
+            .where { UserTable.id eq userUUID }
             .limit(1)
             .map { it[UserTable.password] }
+            .firstOrNull()
+    }
+
+    fun getUserUuid(
+        email: String
+    ): UUID? {
+        return UserTable
+            .select(UserTable.id)
+            .where { UserTable.email eq email }
+            .limit(1)
+            .map { it[UserTable.id].value }
             .firstOrNull()
     }
 }
