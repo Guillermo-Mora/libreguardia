@@ -5,10 +5,10 @@ import com.libreguardia.config.BCRYPT_HASH_COST
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.exception.IncorrectPasswordException
 import com.libreguardia.exception.UserAlreadyDeletedException
 import com.libreguardia.exception.UserNotFoundException
+import com.libreguardia.model.UserModel
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
 import kotlinx.datetime.LocalDateTime
@@ -27,7 +27,7 @@ class UserService (
     private val scheduleRepository: ScheduleRepository,
     private val refreshTokenRepository: RefreshTokenRepository
 ) {
-    suspend fun getAllUsers(): List<UserResponseDTO> =
+    suspend fun getAllUsers(): List<UserModel> =
         withTransaction { userRepository.getAll() }
 
     suspend fun getUser(
