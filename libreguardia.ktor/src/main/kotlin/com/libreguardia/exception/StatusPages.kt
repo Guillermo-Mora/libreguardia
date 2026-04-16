@@ -63,13 +63,16 @@ fun Application.configureStatusPages() {
                 )
             }
         }
-        //En vez de responder así, se podría responder enviando una página htmx, cómo la del login.
+        //En vez de responder así, se podría responder enviando una página frontend, cómo la del login.
         // Y así redirigirlo ahí.
         exception<InvalidRefreshTokenException> { call, _ ->
             call.respond(
                 status = HttpStatusCode.Unauthorized,
                 message = ErrorCode.INVALID_REFRESH_TOKEN
             )
+        }
+        exception<InvalidSessionException> { call, _ ->
+            call.respondRedirect("/login")
         }
         exception<InsufficientPermissionsException> { call, _ ->
             call.respond(
