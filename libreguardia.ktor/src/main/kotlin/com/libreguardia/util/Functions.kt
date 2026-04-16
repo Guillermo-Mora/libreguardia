@@ -1,5 +1,6 @@
 package com.libreguardia.util
 
+import com.libreguardia.config.UserSession
 import com.libreguardia.exception.InvalidCredentialsException
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.jwt.JWTPrincipal
@@ -19,4 +20,8 @@ fun ApplicationCall.userUuidFromJwt(): UUID {
         ?.getClaim("uuid", String::class)
         ?.let(UUID::fromString)
         ?: throw InvalidCredentialsException()
+}
+
+fun ApplicationCall.userPrincipal(): UserSession {
+    return principal<UserSession>() ?: throw InvalidCredentialsException()
 }
