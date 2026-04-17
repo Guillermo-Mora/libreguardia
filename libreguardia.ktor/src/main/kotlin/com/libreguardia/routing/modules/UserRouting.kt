@@ -83,7 +83,7 @@ fun Route.userRouting(
         }
     }
     authenticate(AUTH_SESSION) {
-        authorized(Role.USER, Role.ADMIN) {
+        authorized(Role.ADMIN, Role.USER, Role.VISUALIZER) {
             get<UserAPI.UUID> { user ->
                 val user = userService.getUser(user.uuid)
                 call.respond(user)
