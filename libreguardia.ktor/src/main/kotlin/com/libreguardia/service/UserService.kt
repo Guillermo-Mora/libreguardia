@@ -30,9 +30,14 @@ class UserService (
         withTransaction { userRepository.getAll() }
 
     suspend fun getUser(
-        userUUID: UUID
+        userUuid: UUID
     ) =
-        withTransaction { userRepository.getByUUID(userUUID) ?: throw UserNotFoundException() }
+        withTransaction { userRepository.getByUUID(userUuid) ?: throw UserNotFoundException() }
+
+    suspend fun getUserProfile(
+        userUuid: UUID
+    ) =
+        withTransaction { userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
 
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
