@@ -7,11 +7,13 @@ import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.exception.validation.configureRequestValidation
 import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.AcademicYearRepository
 import com.libreguardia.repository.RefreshTokenRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.configureRouting
+import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.JwtService
 import com.libreguardia.service.UserService
@@ -34,6 +36,7 @@ fun Application.module() {
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
     val refreshTokenRepository = RefreshTokenRepository()
+    val academicYearRepository = AcademicYearRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
@@ -61,6 +64,9 @@ fun Application.module() {
         jwtService = jwtService,
         refreshTokenRepository = refreshTokenRepository
     )
+    val academicYearService = AcademicYearService(
+        repository = academicYearRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -83,6 +89,7 @@ fun Application.module() {
     configureSerialization()
     configureRouting(
         authService = authService,
+        academicYearService = academicYearService,
         userService = userService
     )
 }
