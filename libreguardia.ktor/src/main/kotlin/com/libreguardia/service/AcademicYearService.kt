@@ -21,14 +21,20 @@ class AcademicYearService(
     }
 
     suspend fun update(uuid: UUID, dto: AcademicYearEditDTO) {
-        if (withTransaction { repository.update(uuid, dto) }.not()) throw AcademicYearNotFoundException()
+        withTransaction {
+            if (!repository.update(uuid, dto)) throw AcademicYearNotFoundException()
+        }
     }
 
     suspend fun delete(uuid: UUID) {
-        if (withTransaction { repository.delete(uuid) }.not()) throw AcademicYearNotFoundException()
+        withTransaction {
+            if (!repository.delete(uuid)) throw AcademicYearNotFoundException()
+        }
     }
 
     suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        if (withTransaction { repository.toggleEnabled(uuid, enabled) }.not()) throw AcademicYearNotFoundException()
+        withTransaction {
+            if (!repository.toggleEnabled(uuid, enabled)) throw AcademicYearNotFoundException()
+        }
     }
 }
