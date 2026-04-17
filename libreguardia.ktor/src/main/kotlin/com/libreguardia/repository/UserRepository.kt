@@ -5,7 +5,9 @@ import com.libreguardia.db.model.UserEntity
 import com.libreguardia.db.model.UserTable
 import com.libreguardia.dto.*
 import com.libreguardia.model.UserModel
+import com.libreguardia.model.UserProfileModel
 import com.libreguardia.model.entityToModel
+import com.libreguardia.model.entityToProfileModel
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -21,11 +23,12 @@ class UserRepository {
         return UserEntity.findById(uuid)?.let { entityToModel(it) }
     }
 
-    fun getEntity(
+    fun getProfileByUUID(
         uuid: UUID
-    ): UserEntity? {
-        return UserEntity.findById(uuid)
+    ): UserProfileModel? {
+        return UserEntity.findById(uuid)?.let { entityToProfileModel(it) }
     }
+
 
     fun getEntity(
         email: String
