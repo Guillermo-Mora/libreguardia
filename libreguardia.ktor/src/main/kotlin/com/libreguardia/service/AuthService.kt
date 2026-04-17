@@ -2,10 +2,10 @@ package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.COOKIE_DURATION
+import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.UserSession
+import com.libreguardia.db.Role
 import com.libreguardia.exception.InvalidCredentialsException
-import com.libreguardia.exception.InvalidRefreshTokenException
-import com.libreguardia.exception.InvalidSessionException
 import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.util.withTransaction
@@ -39,36 +39,39 @@ class AuthService(
 
     suspend fun validateSession(
         userSession: UserSession
-    ): Boolean {
+    ): UserPrincipal? {
+        //Esta función debería de devolver de alguna forma el rol y el uuid del usuario,
+        // para que el plugin custom de roles, y las páginas puedan usarlo para mostrar el contenido adecuado
         return withTransaction {
             val sessionEntity = sessionRepository.getSessionEntityWithUserLoaded(uuid = userSession.uuid)
-                ?: return@withTransaction false
+                ?: return@withTransaction null
             if (
                 sessionEntity.expiresAt <= clock.now() ||
                 !sessionEntity.user.isEnabled ||
                 sessionEntity.user.isDeleted
-            ) return@withTransaction false
-            true
+            ) return@withTransaction null
+            UserPrincipal(
+                userUuid = sessionEntity.user.id.value,
+                userRole = sessionEntity.user.role
+            )
         }
     }
 
     suspend fun saveSession(
         userEmail: String
     ): UserSession {
-        val userUuid =
-            withTransaction { userRepository.getUserUuid(email = userEmail) } ?: throw InvalidCredentialsException()
-        val sessionUuid = UUID.randomUUID()
-        withTransaction {
+        return withTransaction {
+            val userUuid = userRepository.getUserUuid(email = userEmail) ?: throw InvalidCredentialsException()
+            val sessionUuid = UUID.randomUUID()
             sessionRepository.save(
                 uuid = sessionUuid,
                 userUuid = userUuid,
                 expiration = clock.now().plus(COOKIE_DURATION.toDuration(DurationUnit.SECONDS)),
             )
+            UserSession(
+                uuid = sessionUuid
+            )
         }
-        return UserSession(
-            uuid = sessionUuid,
-            userUuid = userUuid
-        )
     }
 }
 
