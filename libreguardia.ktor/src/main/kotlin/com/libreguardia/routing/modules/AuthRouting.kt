@@ -1,40 +1,38 @@
 package com.libreguardia.routing.modules
 
+import com.libreguardia.config.AUTH_FORM
+import com.libreguardia.config.AUTH_SESSION
+import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.UserSession
+import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.RefreshTokenDTO
 import com.libreguardia.exception.InvalidCredentialsException
+import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.service.AuthService
-import com.libreguardia.util.userPrincipal
-import com.libreguardia.util.userUuidFromJwt
-import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
-import io.ktor.server.auth.UserIdPrincipal
-import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.principal
-import io.ktor.server.request.*
+import io.ktor.server.auth.*
+import io.ktor.server.request.receive
 import io.ktor.server.resources.post
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
-import io.ktor.server.sessions.sessions
-import io.ktor.server.sessions.set
+import io.ktor.server.sessions.*
 
-@Resource("/api/auth")
+@Resource("/auth")
 class AuthAPI {
     @Resource("login")
-    class Login (val parent: AuthAPI = AuthAPI())
+    class Login(val parent: AuthAPI = AuthAPI())
+
     @Resource("logout")
-    class Logout (val parent: AuthAPI = AuthAPI())
+    class Logout(val parent: AuthAPI = AuthAPI())
+
     @Resource("logout-all-devices")
-    class LogoutAllDevices (val parent: AuthAPI = AuthAPI())
-    @Resource("refresh-token")
-    class RefreshToken (val parent: AuthAPI = AuthAPI())
+    class LogoutAllDevices(val parent: AuthAPI = AuthAPI())
 }
 
 fun Route.authRouting(
     authService: AuthService
 ) {
-    authenticate("auth-form") {
+    authenticate(AUTH_FORM) {
         post<AuthAPI.Login> {
             val userEmail: String =
                 call.principal<UserIdPrincipal>()?.name ?: throw InvalidCredentialsException()
@@ -43,27 +41,25 @@ fun Route.authRouting(
             call.respondRedirect("/")
         }
     }
-}
-/*
-    authenticate {
+    authenticate(AUTH_SESSION) {
         authorized(Role.USER, Role.ADMIN) {
             post<AuthAPI.Logout> {
-                val refreshToken = call.receive<RefreshTokenDTO>()
-                val userPrincipal = call.userPrincipal()
+                //TEMPORARY ERROR THROWN, THIS SHOULD BE HANDLED IN A BETTER WAY
+                val sessionUuid = call.sessions.get<UserSession>()?.uuid ?: throw UserNotFoundException()
                 authService.logout(
-                    refreshTokenDTO = refreshToken,
-                    userUuid = userPrincipal.uuid
+                    sessionUuid = sessionUuid
                 )
-                call.respond(HttpStatusCode.NoContent)
+                call.response.headers.append("HX-Redirect", "/login")
             }
             post<AuthAPI.LogoutAllDevices> {
-                val userUuid = call.userUuidFromJwt()
+                //TEMPORARY ERROR THROWN, THIS SHOULD BE HANDLED IN A BETTER WAY
+                println(call.principal<UserPrincipal>())
+                val userUuid = call.principal<UserPrincipal>()?.userUuid ?: throw UserNotFoundException()
                 authService.logoutAllDevices(
                     userUuid = userUuid
                 )
-                call.respond(HttpStatusCode.NoContent)
+                call.response.headers.append("HX-Redirect", "/login")
             }
         }
     }
-
- */
+}
