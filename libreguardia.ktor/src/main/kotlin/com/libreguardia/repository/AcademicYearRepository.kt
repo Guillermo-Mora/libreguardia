@@ -17,13 +17,12 @@ class AcademicYearRepository {
 
     fun getByUUID(uuid: UUID): AcademicYearResponseDTO? = AcademicYearEntity.findById(uuid)?.toResponseDTO()
 
-    fun save(dto: AcademicYearCreateDTO): AcademicYearResponseDTO {
-        val id = AcademicYearTable.insert {
+    fun save(dto: AcademicYearCreateDTO) {
+        AcademicYearTable.insert {
             it[name] = dto.name
             it[startDate] = dto.startDate
             it[endDate] = dto.endDate
-        } get AcademicYearTable.id
-        return getByUUID(id.value)!!
+        }
     }
 
     fun update(uuid: UUID, dto: AcademicYearEditDTO): Boolean =

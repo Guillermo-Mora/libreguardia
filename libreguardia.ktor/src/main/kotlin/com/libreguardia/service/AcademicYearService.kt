@@ -16,8 +16,9 @@ class AcademicYearService(
     suspend fun getByUUID(uuid: UUID): AcademicYearResponseDTO =
         withTransaction { repository.getByUUID(uuid) } ?: throw AcademicYearNotFoundException()
 
-    suspend fun create(dto: AcademicYearCreateDTO): AcademicYearResponseDTO =
+    suspend fun create(dto: AcademicYearCreateDTO) {
         withTransaction { repository.save(dto) }
+    }
 
     suspend fun update(uuid: UUID, dto: AcademicYearEditDTO) {
         if (withTransaction { repository.update(uuid, dto) }.not()) throw AcademicYearNotFoundException()
