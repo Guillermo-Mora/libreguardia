@@ -13,6 +13,19 @@ application {
     mainClass = "io.ktor.server.netty.EngineMain"
 }
 
+tasks.withType<ProcessResources> {
+    val wasmOutput = file("../web/build/dist/wasmJs/productionExecutable")
+    if (wasmOutput.exists()) {
+        inputs.dir(wasmOutput)
+    }
+
+    from("../web/build/dist/wasmJs/productionExecutable") {
+        into("web")
+        include("**/*")
+    }
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
 kotlin {
     jvmToolchain(21)
 }
@@ -32,12 +45,18 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.ktor.server.compression)
     implementation(libs.ktor.server.auth)
+    implementation(libs.ktor.server.sessions)
     implementation(libs.ktor.server.auth.jwt)
     implementation(libs.ktor.server.call.logging)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.resources)
     implementation(libs.ktor.server.request.validation)
-    implementation("org.flywaydb:flyway-database-postgresql:12.2.0")
+    implementation(libs.ktor.server.html.builder)
+    implementation(libs.kotlinx.html)
+    implementation(libs.kotlin.css)
+    implementation(libs.ktor.server.htmx)
+    implementation(libs.ktor.htmx.html)
+    implementation("org.flywaydb:flyway-database-postgresql:12.3.0")
     implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.1.1")
     implementation("org.jetbrains.exposed:exposed-migration-core:1.1.1")
     implementation("org.jetbrains.exposed:exposed-migration-jdbc:1.1.1")

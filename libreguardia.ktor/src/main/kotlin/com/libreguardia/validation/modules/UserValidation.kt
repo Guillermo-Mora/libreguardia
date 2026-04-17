@@ -1,15 +1,15 @@
-package com.libreguardia.exception.validation.modules
+package com.libreguardia.validation.modules
 
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.exception.validation.validateEmail
-import com.libreguardia.exception.validation.validateNewPassword
-import com.libreguardia.exception.validation.validatePassword
-import com.libreguardia.exception.validation.validatePhoneNumber
-import com.libreguardia.exception.validation.validateResult
-import com.libreguardia.exception.validation.validateRole
-import com.libreguardia.exception.validation.validateString
+import com.libreguardia.validation.validateEmail
+import com.libreguardia.validation.validateNewPassword
+import com.libreguardia.validation.validatePassword
+import com.libreguardia.validation.validatePhoneNumber
+import com.libreguardia.validation.validateResult
+import com.libreguardia.validation.validateRole
+import com.libreguardia.validation.validateString
 import io.ktor.server.plugins.requestvalidation.*
 
 fun RequestValidationConfig.userValidation() {

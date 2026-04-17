@@ -1,11 +1,20 @@
 [versions]
 exposed = "1.1.1"
 kotlin = "2.3.0"
+kotlinx-browser = "0.5.0"
+kotlinx-html = "0.12.0"
 ktor = "3.4.2"
 postgres = "42.7.10"
 logback = "1.5.32"
 
 [libraries]
+ktor-server-html-builder = { module = "io.ktor:ktor-server-html-builder", version.ref = "ktor" }
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html", version.ref = "kotlinx-html" }
+kotlin-css = { module = "org.jetbrains.kotlin-wrappers:kotlin-css-jvm", version = "2025.6.4" }
+ktor-server-htmx = { module = "io.ktor:ktor-server-htmx", version.ref = "ktor" }
+ktor-htmx-html = { module = "io.ktor:ktor-htmx-html", version.ref = "ktor" }
+kotlinx-browser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinx-browser" }
+ktor-server-sessions = { module = "io.ktor:ktor-server-sessions", version.ref = "ktor" }
 ktor-server-resources = { module = "io.ktor:ktor-server-resources", version.ref = "ktor" }
 ktor-server-request-validation = { module = "io.ktor:ktor-server-request-validation", version.ref = "ktor" }
 ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
@@ -33,3 +42,4 @@ ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", versio
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

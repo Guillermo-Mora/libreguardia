@@ -140,11 +140,8 @@ CREATE TABLE service_tbl (
                              assigned_user_id UUID REFERENCES user_tbl(id) ON DELETE SET NULL ON UPDATE RESTRICT
 );
 
-CREATE TABLE refresh_token (
-                               id UUID PRIMARY KEY,
-                               refresh_token_prefix VARCHAR(60) NOT NULL,
-                               refresh_token_hash VARCHAR(60) NOT NULL,
-                               expires_at TIMESTAMP NOT NULL,
-                               user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT,
-                               CONSTRAINT uq_refresh_token UNIQUE (refresh_token_prefix, refresh_token_hash, user_id)
+CREATE TABLE session (
+                         id UUID PRIMARY KEY,
+                         expires_at TIMESTAMP NOT NULL,
+                         user_id UUID NOT NULL REFERENCES user_tbl(id) ON DELETE CASCADE ON UPDATE RESTRICT
 );
