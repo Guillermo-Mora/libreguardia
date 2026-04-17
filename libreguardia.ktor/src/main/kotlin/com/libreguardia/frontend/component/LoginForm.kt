@@ -16,7 +16,7 @@ import kotlinx.html.label
 fun FlowContent.loginForm() {
     form {
         attributes.hx {
-            post = "/api/auth/login"
+            post = "/auth/login"
             replaceUrl = "true"
             pushUrl = "true"
         }
