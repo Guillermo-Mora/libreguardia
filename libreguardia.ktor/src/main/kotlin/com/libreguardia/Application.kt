@@ -5,22 +5,26 @@ import com.libreguardia.config.*
 import com.libreguardia.db.configureDatabase
 import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
-import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.AbsenceRepository
+import com.libreguardia.repository.AcademicYearRepository
+import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.configureRouting
+import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlin.time.Clock
 
-fun main(args: Array<String>) { EngineMain.main(args) }
+fun main(args: Array<String>) {
+    EngineMain.main(args)
+}
 
-fun Application.main() {
+fun Application.module() {
     val config = environment.config
     val dbUrl = config.property("storage.jdbcURL").getString()
     val dbUser = config.property("storage.user").getString()
@@ -30,8 +34,9 @@ fun Application.main() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
-    val sessionRepository = SessionRepository()
 
+    val sessionRepository = SessionRepository()
+    val academicYearRepository = AcademicYearRepository()
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
     val clock = Clock.System
@@ -52,6 +57,9 @@ fun Application.main() {
         clock = clock,
         userRepository = userRepository,
         sessionRepository = sessionRepository,
+    )
+    val academicYearService = AcademicYearService(
+        repository = academicYearRepository
     )
 
     configureDatabase(
@@ -75,6 +83,7 @@ fun Application.main() {
     configureSerialization()
     configureRouting(
         authService = authService,
-        userService = userService
+        academicYearService = academicYearService,
+        userService = userService,
     )
 }

@@ -64,6 +64,12 @@ fun Application.configureStatusPages() {
                errorPage(ErrorCode.INSUFFICIENT_PERMISSIONS)
            }
         }
+        exception<AcademicYearNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.ACADEMIC_YEAR_NOT_FOUND
+            )
+        }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
             call.respond(
