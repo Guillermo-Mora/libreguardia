@@ -1,24 +1,29 @@
 package com.libreguardia.frontend.component
 
+import io.ktor.htmx.html.hx
+import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.FlowContent
 import kotlinx.html.a
 import kotlinx.html.div
 import kotlinx.html.header
 import kotlinx.html.nav
 
-private val headerMenuOptions = listOf(
-    "My profile"
-)
 
+
+@OptIn(ExperimentalKtorApi::class)
 fun FlowContent.appHeader() {
     header {
         nav {
-            headerMenuOptions.forEach {
-                div {
-                    a {
-                        href = ""
-                        text(it)
+            div {
+                a {
+                    attributes.hx {
+                        get = "/user/profile"
+                        replaceUrl = "true"
+                        pushUrl = "true"
+                        target = "#main-content"
+                        swap = "innerHTML"
                     }
+                    text("My profile")
                 }
             }
         }

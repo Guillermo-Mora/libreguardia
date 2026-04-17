@@ -16,6 +16,7 @@ fun HTML.mainPage(role: Role) {
     body {
         appHeader()
         main {
+            id = "main-content"
             appAsideMenu(role = role)
         }
         htmxScript()
