@@ -37,4 +37,10 @@ class SessionRepository {
         SessionTable
             .deleteWhere { SessionTable.user eq userUuid }
     }
+
+    fun deleteSession(
+        uuid: UUID
+    ) {
+        SessionTable.deleteWhere { SessionTable.id eq uuid }
+    }
 }
