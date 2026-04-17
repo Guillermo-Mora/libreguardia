@@ -13,7 +13,6 @@ import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AuthService
-import com.libreguardia.service.JwtService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
@@ -47,16 +46,11 @@ fun Application.main() {
         scheduleRepository = scheduleRepository,
         sessionRepository = sessionRepository
     )
-    val jwtService = JwtService(
-        //application = this,
-        userRepository = userRepository
-    )
     val authService = AuthService(
         bcryptVerifyer = bcryptVerifyer,
         bcryptHasher = bcryptHasher,
         clock = clock,
         userRepository = userRepository,
-        jwtService = jwtService,
         sessionRepository = sessionRepository,
     )
 
