@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
     EngineMain.main(args)
 }
 
-fun Application.module() {
+fun Application.main() {
     val config = environment.config
     val dbUrl = config.property("storage.jdbcURL").getString()
     val dbUser = config.property("storage.user").getString()

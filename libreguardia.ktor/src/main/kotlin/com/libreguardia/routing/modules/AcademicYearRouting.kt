@@ -1,5 +1,6 @@
 package com.libreguardia.routing.modules
 
+import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.AcademicYearCreateDTO
@@ -32,7 +33,7 @@ class AcademicYearByUUID(
 }
 
 fun Route.academicYearRouting(service: AcademicYearService) {
-    authenticate {
+    authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
             get<AcademicYearAPI> {
                 call.respond(service.getAll())

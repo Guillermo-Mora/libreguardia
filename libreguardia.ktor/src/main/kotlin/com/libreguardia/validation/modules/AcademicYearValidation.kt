@@ -1,10 +1,10 @@
-package com.libreguardia.exception.validation.modules
+package com.libreguardia.validation.modules
 
 import com.libreguardia.dto.AcademicYearCreateDTO
 import com.libreguardia.dto.AcademicYearEditDTO
-import com.libreguardia.exception.validation.validateAcademicYearDates
-import com.libreguardia.exception.validation.validateResult
-import com.libreguardia.exception.validation.validateString
+import com.libreguardia.validation.validateAcademicYearDates
+import com.libreguardia.validation.validateResult
+import com.libreguardia.validation.validateString
 import io.ktor.server.plugins.requestvalidation.*
 
 fun RequestValidationConfig.academicYearValidation() {
