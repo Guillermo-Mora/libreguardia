@@ -1,7 +1,9 @@
 package com.libreguardia.exception
 
+import com.libreguardia.frontend.page.errorPage
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.html.respondHtml
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
@@ -27,12 +29,6 @@ fun Application.configureStatusPages() {
             call.respond(
                 status = HttpStatusCode.NotFound,
                 message = ErrorCode.USER_NOT_FOUND
-            )
-        }
-        exception<UserAlreadyDeletedException> { call, _ ->
-            call.respond(
-                status = HttpStatusCode.Conflict,
-                message = ErrorCode.USER_ALREADY_DELETED
             )
         }
         exception<IncorrectPasswordException> { call, _ ->
@@ -63,18 +59,15 @@ fun Application.configureStatusPages() {
                 )
             }
         }
-        //En vez de responder así, se podría responder enviando una página htmx, cómo la del login.
-        // Y así redirigirlo ahí.
-        exception<InvalidRefreshTokenException> { call, _ ->
-            call.respond(
-                status = HttpStatusCode.Unauthorized,
-                message = ErrorCode.INVALID_REFRESH_TOKEN
-            )
-        }
         exception<InsufficientPermissionsException> { call, _ ->
+           call.respondHtml {
+               errorPage(ErrorCode.INSUFFICIENT_PERMISSIONS)
+           }
+        }
+        exception<AcademicYearNotFoundException> { call, _ ->
             call.respond(
-                status = HttpStatusCode.Forbidden,
-                message = ErrorCode.INSUFFICIENT_PERMISSIONS
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.ACADEMIC_YEAR_NOT_FOUND
             )
         }
         //TEMPORARY FOR DEBUGGING

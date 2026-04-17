@@ -5,10 +5,9 @@ import com.libreguardia.config.BCRYPT_HASH_COST
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.dto.UserResponseDTO
 import com.libreguardia.exception.IncorrectPasswordException
-import com.libreguardia.exception.UserAlreadyDeletedException
 import com.libreguardia.exception.UserNotFoundException
+import com.libreguardia.model.UserModel
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
 import kotlinx.datetime.LocalDateTime
@@ -25,15 +24,20 @@ class UserService (
     private val absenceRepository: AbsenceRepository,
     private val serviceRepository: ServiceRepository,
     private val scheduleRepository: ScheduleRepository,
-    private val refreshTokenRepository: RefreshTokenRepository
+    private val sessionRepository: SessionRepository
 ) {
-    suspend fun getAllUsers(): List<UserResponseDTO> =
+    suspend fun getAllUsers(): List<UserModel> =
         withTransaction { userRepository.getAll() }
 
     suspend fun getUser(
-        userUUID: UUID
+        userUuid: UUID
     ) =
-        withTransaction { userRepository.getByUUID(userUUID) ?: throw UserNotFoundException() }
+        withTransaction { userRepository.getByUUID(userUuid) ?: throw UserNotFoundException() }
+
+    suspend fun getUserProfile(
+        userUuid: UUID
+    ) =
+        withTransaction { userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
 
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
@@ -51,7 +55,7 @@ class UserService (
     }
 
     suspend fun editUser(
-        userUUID: UUID,
+        userUuid: UUID,
         userEditDTO: UserEditDTO
     ) {
         val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -64,84 +68,81 @@ class UserService (
         val shouldCloseSessions = userEditDTO.isEnabled == false || userEditDTO.role != null
         withTransaction {
             if (!userRepository.editByUUID(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     userEditDTO = userEditDTO,
                     hashedPassword = hashedPassword
                 )
             ) throw UserNotFoundException()
             if (userEditDTO.isEnabled == false) {
                 serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 )
             }
-            if (shouldCloseSessions) refreshTokenRepository.deleteRefreshTokensByUser(userUUID = userUUID)
+            if (shouldCloseSessions) sessionRepository.deleteSessionsFromUser(userUuid = userUuid)
         }
     }
 
     suspend fun deleteUser(
-        userUUID: UUID
+        userUuid: UUID
     ) {
         withTransaction {
-            val userEntity =
-                userRepository.getEntity(userUUID) ?: throw UserNotFoundException()
-            if (userEntity.isDeleted && !userEntity.isEnabled) throw UserAlreadyDeletedException()
             val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
             if (
                 absenceRepository.existsAbsenceByUserUUIDPreviousToNow(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 ) ||
                 serviceRepository.existsServiceAssignedOrCoveredByUserUUIDPreviousToNow(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 )
             ) {
                 serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 )
                 absenceRepository.deleteAbsencesByUserUUIDAfterNow(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 )
-                scheduleRepository.deleteSchedulesByUserUUID(userUUID)
-                refreshTokenRepository.deleteRefreshTokensByUser(userUUID)
-                if (!userRepository.softDeleteUser(userUUID)) throw UserNotFoundException()
-            } else if (!userRepository.deleteUser(userUUID)) throw UserNotFoundException()
+                scheduleRepository.deleteSchedulesByUserUUID(userUuid)
+                sessionRepository.deleteSessionsFromUser(userUuid = userUuid)
+                if (!userRepository.softDeleteUser(userUuid)) throw UserNotFoundException()
+            } else if (!userRepository.deleteUser(userUuid)) throw UserNotFoundException()
         }
     }
 
     suspend fun toggleEnableUser(
-        userUUID: UUID,
+        userUuid: UUID,
         enableOrDisable: Boolean
     ) {
         val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
         withTransaction {
             if (!userRepository.toggleEnableUser(
-                    uuid = userUUID,
+                    uuid = userUuid,
                     enableOrDisable = enableOrDisable
                 )
             ) throw UserNotFoundException()
             if (!enableOrDisable) {
                 serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 )
-                refreshTokenRepository.deleteRefreshTokensByUser(userUUID)
+                sessionRepository.deleteSessionsFromUser(userUuid = userUuid)
             }
         }
     }
 
     suspend fun editUserProfile(
-        userUUID: UUID,
+        userUuid: UUID,
         userEditProfileDTO: UserEditProfileDTO
     ) {
         withTransaction {
             var hashedPassword: String? = null
             if (userEditProfileDTO.currentPassword != null && userEditProfileDTO.newPassword != null) {
                 val hashedCurrentPassword =
-                    userRepository.getHashedPassword(userUUID) ?: throw UserNotFoundException()
+                    userRepository.getHashedPassword(userUuid) ?: throw UserNotFoundException()
                 val verificationResult = bcryptVerifyer.verify(
                     userEditProfileDTO.currentPassword.toByteArray(),
                     hashedCurrentPassword.toByteArray()
@@ -154,7 +155,7 @@ class UserService (
                     )
             }
             if (!userRepository.editUserProfileByUUID(
-                    userUUID = userUUID,
+                    userUUID = userUuid,
                     userEditProfileDTO = userEditProfileDTO,
                     hashedPassword = hashedPassword
                 )

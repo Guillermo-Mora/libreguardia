@@ -2,5 +2,6 @@ package com.libreguardia.db
 
 enum class Role {
     USER,
-    ADMIN
+    ADMIN,
+    VISUALIZER
 }
