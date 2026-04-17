@@ -42,7 +42,7 @@ fun Route.authRouting(
         }
     }
     authenticate(AUTH_SESSION) {
-        authorized(Role.USER, Role.ADMIN) {
+        authorized(Role.ADMIN, Role.USER, Role.VISUALIZER) {
             post<AuthAPI.Logout> {
                 //TEMPORARY ERROR THROWN, THIS SHOULD BE HANDLED IN A BETTER WAY
                 val sessionUuid = call.sessions.get<UserSession>()?.uuid ?: throw UserNotFoundException()
