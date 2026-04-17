@@ -7,43 +7,39 @@ import com.libreguardia.dto.AcademicYearEditDTO
 import com.libreguardia.dto.AcademicYearResponseDTO
 import com.libreguardia.dto.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 
 class AcademicYearRepository {
-    fun getAll(): List<AcademicYearResponseDTO> = transaction {
-        AcademicYearEntity.all().map { it.toResponseDTO() }
+    fun getAll(): List<AcademicYearResponseDTO> = AcademicYearEntity.all().map { it.toResponseDTO() }
+
+    fun getByUUID(uuid: UUID): AcademicYearResponseDTO? = AcademicYearEntity.findById(uuid)?.toResponseDTO()
+
+    fun save(dto: AcademicYearCreateDTO): AcademicYearResponseDTO {
+        val id = AcademicYearTable.insert {
+            it[name] = dto.name
+            it[startDate] = dto.startDate
+            it[endDate] = dto.endDate
+        } get AcademicYearTable.id
+        return getByUUID(id.value)!!
     }
 
-    fun getByUUID(uuid: UUID): AcademicYearResponseDTO? = transaction {
-        AcademicYearEntity.findById(uuid)?.toResponseDTO()
-    }
+    fun update(uuid: UUID, dto: AcademicYearEditDTO): Boolean =
+        AcademicYearTable.update({ AcademicYearTable.id eq uuid }) { updated ->
+            dto.name?.let { updated[name] = it }
+            dto.startDate?.let { updated[startDate] = it }
+            dto.endDate?.let { updated[endDate] = it }
+        } == 1
 
-    fun save(dto: AcademicYearCreateDTO): AcademicYearResponseDTO = transaction {
-        AcademicYearEntity.new {
-            name = dto.name
-            startDate = dto.startDate
-            endDate = dto.endDate
-        }.toResponseDTO()
-    }
+    fun delete(uuid: UUID): Boolean =
+        AcademicYearTable.update({ AcademicYearTable.id eq uuid }) {
+            it[isEnabled] = false
+        } == 1
 
-    fun update(uuid: UUID, dto: AcademicYearEditDTO): Boolean = transaction {
-        val entity = AcademicYearEntity.findById(uuid) ?: return@transaction false
-        dto.name?.let { entity.name = it }
-        dto.startDate?.let { entity.startDate = it }
-        dto.endDate?.let { entity.endDate = it }
-        true
-    }
-
-    fun delete(uuid: UUID): Boolean = transaction {
-        val entity = AcademicYearEntity.findById(uuid) ?: return@transaction false
-        entity.isEnabled = false
-        true
-    }
-
-    fun toggleEnabled(uuid: UUID, enabled: Boolean): Boolean = transaction {
-        val entity = AcademicYearEntity.findById(uuid) ?: return@transaction false
-        entity.isEnabled = enabled
-        true
-    }
+    fun toggleEnabled(uuid: UUID, enabled: Boolean): Boolean =
+        AcademicYearTable.update({ AcademicYearTable.id eq uuid }) {
+            it[isEnabled] = enabled
+        } == 1
 }
