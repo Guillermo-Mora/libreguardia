@@ -1,7 +1,9 @@
 package com.libreguardia.exception
 
+import com.libreguardia.frontend.page.errorPage
 import io.ktor.http.*
 import io.ktor.server.application.*
+import io.ktor.server.html.respondHtml
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
@@ -57,22 +59,10 @@ fun Application.configureStatusPages() {
                 )
             }
         }
-        //En vez de responder así, se podría responder enviando una página frontend, cómo la del login.
-        // Y así redirigirlo ahí.
-        exception<InvalidRefreshTokenException> { call, _ ->
-            call.respond(
-                status = HttpStatusCode.Unauthorized,
-                message = ErrorCode.INVALID_REFRESH_TOKEN
-            )
-        }
-        exception<InvalidSessionException> { call, _ ->
-            call.respondRedirect("/login")
-        }
         exception<InsufficientPermissionsException> { call, _ ->
-            call.respond(
-                status = HttpStatusCode.Forbidden,
-                message = ErrorCode.INSUFFICIENT_PERMISSIONS
-            )
+           call.respondHtml {
+               errorPage(ErrorCode.INSUFFICIENT_PERMISSIONS)
+           }
         }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
