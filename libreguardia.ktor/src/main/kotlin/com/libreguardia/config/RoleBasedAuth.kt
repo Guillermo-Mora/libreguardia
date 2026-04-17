@@ -8,16 +8,15 @@ import io.ktor.server.routing.*
 
 class RbacPluginConfiguration (var roles: Set<Role> = emptySet())
 
-/*
 val RoleBasedAuthorizationPlugin = createRouteScopedPlugin(
     name = "RbacPlugin",
     createConfiguration = ::RbacPluginConfiguration
 ) {
     val roles = pluginConfig.roles
     on(AuthenticationChecked) { call ->
-        val role = call.principal<UserSession>()
-            ?.role ?: throw InsufficientPermissionsException()
-        roles.firstOrNull { it == role } ?: throw InsufficientPermissionsException()
+        val role = call.principal<UserPrincipal>()
+            ?.userRole ?: throw InsufficientPermissionsException()
+        if (role !in roles) throw InsufficientPermissionsException()
     }
 }
 
@@ -29,5 +28,3 @@ fun Route.authorized(
     build()
 
 }
-
- */
