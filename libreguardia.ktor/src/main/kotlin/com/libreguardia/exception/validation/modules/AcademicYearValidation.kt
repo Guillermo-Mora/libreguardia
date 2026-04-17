@@ -8,20 +8,20 @@ import com.libreguardia.exception.validation.validateResult
 import io.ktor.server.plugins.requestvalidation.*
 
 fun RequestValidationConfig.academicYearValidation() {
-    validate<AcademicYearCreateDTO> { dto ->
+    validate<AcademicYearCreateDTO> {
         val errors = mutableListOf<String>()
-        validateAcademicYearName(dto.name)?.let { errors.add(it) }
-        validateAcademicYearDates(dto.startDate, dto.endDate)?.let { errors.add(it) }
-        validateResult(errors)
+        validateAcademicYearName(it.name)?.let { error -> errors.add(error) }
+        validateAcademicYearDates(it.startDate, it.endDate)?.let { error -> errors.add(error) }
+        return@validate validateResult(errors)
     }
-    validate<AcademicYearEditDTO> { dto ->
+    validate<AcademicYearEditDTO> {
         val errors = mutableListOf<String>()
-        dto.name?.let { validateAcademicYearName(it) }?.let { errors.add(it) }
-        dto.startDate?.let { start ->
-            dto.endDate?.let { end ->
-                validateAcademicYearDates(start, end)?.let { errors.add(it) }
+        it.name?.let { field -> validateAcademicYearName(field) }?.let { error -> errors.add(error) }
+        it.startDate?.let { start ->
+            it.endDate?.let { end ->
+                validateAcademicYearDates(start, end)?.let { error -> errors.add(error) }
             }
         }
-        validateResult(errors)
+        return@validate validateResult(errors)
     }
 }
