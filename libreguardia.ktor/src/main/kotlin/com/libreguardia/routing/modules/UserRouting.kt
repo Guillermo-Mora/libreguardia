@@ -55,21 +55,21 @@ fun Route.userRouting(
             patch<UserAPI.UUID> { user ->
                 val userEdit = call.receive<UserEditDTO>()
                 userService.editUser(
-                    userUUID = user.uuid,
+                    userUuid = user.uuid,
                     userEditDTO = userEdit
                 )
                 call.respond(HttpStatusCode.OK)
             }
             delete<UserAPI.UUID> { user ->
                 userService.deleteUser(
-                    userUUID = user.uuid
+                    userUuid = user.uuid
                 )
                 call.respond(HttpStatusCode.NoContent)
             }
             patch<UserAPI.UUID.ToggleEnabled> { user ->
                 val enableOrDisable = call.receive<Boolean>()
                 userService.toggleEnableUser(
-                    userUUID = user.parent.uuid,
+                    userUuid = user.parent.uuid,
                     enableOrDisable = enableOrDisable
                 )
                 call.respond(HttpStatusCode.OK)
@@ -86,7 +86,7 @@ fun Route.userRouting(
                 val userEditProfile = call.receive<UserEditProfileDTO>()
                 val userUuid = call.userUuidFromJwt()
                 userService.editUserProfile(
-                    userUUID = userUuid,
+                    userUuid = userUuid,
                     userEditProfileDTO = userEditProfile
                 )
                 call.respond(HttpStatusCode.OK)
