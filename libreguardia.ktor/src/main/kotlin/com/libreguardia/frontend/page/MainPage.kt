@@ -14,10 +14,19 @@ fun HTML.mainPage(role: Role) {
         link { rel = "stylesheet"; href = "/static/frontend/css/style.css" }
     }
     body {
-        appHeader()
-        main {
-            id = "main-content"
-            appAsideMenu(role = role)
+        //TEMPORARY FOR TESTING
+        if (role == Role.VISUALIZER) {
+            appHeader()
+            main {
+                id = "main-content"
+                p { text("LIVE SERVICES VISUALIZATION PAGE HERE") }
+            }
+        } else {
+            appHeader()
+            main {
+                id = "main-content"
+                appAsideMenu(role = role)
+            }
         }
         htmxScript()
     }
