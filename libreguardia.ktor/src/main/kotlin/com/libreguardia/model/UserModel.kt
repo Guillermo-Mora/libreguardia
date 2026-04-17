@@ -30,3 +30,23 @@ fun UserRepository.entityToModel(
     isDeleted = entity.isDeleted,
     role = entity.role.toString()
 )
+
+data class UserProfileModel(
+    val name: String,
+    val surname: String,
+    val email: String,
+    val phoneNumber: String,
+    val role: String
+    //SCHEDULE HERE STILL TO IMPLEMENT
+)
+
+fun UserRepository.entityToProfileModel(
+    entity: UserEntity
+) = UserProfileModel(
+    name = entity.name,
+    surname = entity.surname,
+    email = entity.email,
+    phoneNumber = entity.phoneNumber,
+    role = entity.role.toString()
+)
+
