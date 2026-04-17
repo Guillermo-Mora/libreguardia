@@ -14,14 +14,3 @@ import java.util.UUID
 suspend fun <T> withTransaction(block: suspend JdbcTransaction.() -> T): T = withContext(Dispatchers.IO) {
     suspendTransaction { block() }
 }
-
-fun ApplicationCall.userUuidFromJwt(): UUID {
-    return principal<JWTPrincipal>()
-        ?.getClaim("uuid", String::class)
-        ?.let(UUID::fromString)
-        ?: throw InvalidCredentialsException()
-}
-
-fun ApplicationCall.userPrincipal(): UserSession {
-    return principal<UserSession>() ?: throw InvalidCredentialsException()
-}
