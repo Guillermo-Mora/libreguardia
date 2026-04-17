@@ -1,5 +1,6 @@
 package com.libreguardia.config
 
+import com.libreguardia.db.Role
 import com.libreguardia.exception.ErrorCode
 import com.libreguardia.service.AuthService
 import com.libreguardia.util.UUIDSerializer
@@ -53,9 +54,7 @@ fun Application.configureSecurity(
             name = "auth-session"
         ) {
             validate { session ->
-                if (authService.validateSession(session))
-                    session
-                else null
+                authService.validateSession(session)
             }
             challenge {
                 call.respondRedirect("/login")
@@ -67,8 +66,10 @@ fun Application.configureSecurity(
 @Serializable
 data class UserSession (
     @Serializable(with = UUIDSerializer::class)
-    val uuid: UUID,
-    @Serializable(with = UUIDSerializer::class)
-    val userUuid: UUID
+    val uuid: UUID
 )
 
+data class UserPrincipal (
+    val userUuid: UUID,
+    val userRole: Role
+)
