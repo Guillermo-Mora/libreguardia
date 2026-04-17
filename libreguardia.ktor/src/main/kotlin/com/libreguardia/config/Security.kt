@@ -14,6 +14,8 @@ import kotlinx.serialization.Serializable
 import java.util.*
 
 const val COOKIE_DURATION: Long = 2_592_000
+const val AUTH_FORM = "auth_form"
+const val AUTH_SESSION = "auth_session"
 const val BCRYPT_HASH_COST = 10
 fun Application.configureSecurity(
     authService: AuthService
@@ -33,7 +35,7 @@ fun Application.configureSecurity(
 
     install(Authentication) {
         form(
-            name = "auth-form"
+            name = AUTH_FORM
         ) {
             userParamName = "email"
             passwordParamName = "password"
@@ -51,7 +53,7 @@ fun Application.configureSecurity(
         }
 
         session<UserSession>(
-            name = "auth-session"
+            name = AUTH_SESSION
         ) {
             validate { session ->
                 authService.validateSession(session)
