@@ -7,7 +7,6 @@ import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.AbsenceRepository
-import com.libreguardia.repository.RefreshTokenRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
@@ -32,7 +31,6 @@ fun Application.main() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
-    val refreshTokenRepository = RefreshTokenRepository()
     val sessionRepository = SessionRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
@@ -47,7 +45,7 @@ fun Application.main() {
         absenceRepository = absenceRepository,
         serviceRepository = serviceRepository,
         scheduleRepository = scheduleRepository,
-        refreshTokenRepository = refreshTokenRepository
+        sessionRepository = sessionRepository
     )
     val jwtService = JwtService(
         //application = this,
