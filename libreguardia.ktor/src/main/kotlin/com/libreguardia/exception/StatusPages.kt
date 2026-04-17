@@ -29,12 +29,6 @@ fun Application.configureStatusPages() {
                 message = ErrorCode.USER_NOT_FOUND
             )
         }
-        exception<UserAlreadyDeletedException> { call, _ ->
-            call.respond(
-                status = HttpStatusCode.Conflict,
-                message = ErrorCode.USER_ALREADY_DELETED
-            )
-        }
         exception<IncorrectPasswordException> { call, _ ->
             call.respond(
                 status = HttpStatusCode.BadRequest,
