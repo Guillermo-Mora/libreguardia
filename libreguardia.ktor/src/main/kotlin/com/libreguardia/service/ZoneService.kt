@@ -13,9 +13,6 @@ class ZoneService(
 ) {
     suspend fun getAll(): List<ZoneResponseDTO> = withTransaction { repository.getAll() }
 
-    suspend fun getByUUID(uuid: UUID): ZoneResponseDTO =
-        withTransaction { repository.getByUUID(uuid) } ?: throw ZoneNotFoundException()
-
     suspend fun create(dto: ZoneCreateDTO) {
         withTransaction { repository.save(dto) }
     }
