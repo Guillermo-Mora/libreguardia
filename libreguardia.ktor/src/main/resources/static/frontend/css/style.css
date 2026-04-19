@@ -18,3 +18,11 @@ body {
     align-items: center;
     gap: 20px;
 }
+
+.schedule-table {
+    border-collapse: collapse;
+    th, td.td-filled {
+        border: 1px solid black;
+        padding: 8px;
+    }
+}
