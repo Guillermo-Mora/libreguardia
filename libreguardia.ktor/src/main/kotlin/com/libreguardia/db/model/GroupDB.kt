@@ -11,8 +11,8 @@ import java.util.UUID
 object GroupTable: UUIDTable(
     name = "group_tbl"
 ) {
-    val name = varchar(
-        name = "name",
+    val code = varchar(
+        name = "code",
         length = 50
     ).uniqueIndex()
     val pointsMultiplier = decimal(
@@ -34,7 +34,7 @@ object GroupTable: UUIDTable(
 class GroupEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<GroupEntity>(GroupTable)
 
-    var name by GroupTable.name
+    var code by GroupTable.code
     var pointsMultiplier by GroupTable.pointsMultiplier
     var isEnabled by GroupTable.isEnabled
     var course by CourseEntity referencedOn GroupTable.course
