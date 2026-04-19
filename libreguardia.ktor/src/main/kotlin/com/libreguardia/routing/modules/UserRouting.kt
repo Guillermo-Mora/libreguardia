@@ -45,6 +45,16 @@ class UserAPI {
 fun Route.userRouting(
     userService: UserService
 ) {
+    //TEMPORARY OUT HERE FOR TESTING
+    patch<UserAPI.UUID> { user ->
+        val userEdit = call.receive<UserEditDTO>()
+        userService.editUser(
+            userUuid = user.uuid,
+            userEditDTO = userEdit
+        )
+        call.respond(HttpStatusCode.OK)
+    }
+
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
             get<UserAPI> {
@@ -58,6 +68,7 @@ fun Route.userRouting(
                 )
                 call.respond(HttpStatusCode.Created)
             }
+            /*
             patch<UserAPI.UUID> { user ->
                 val userEdit = call.receive<UserEditDTO>()
                 userService.editUser(
@@ -66,6 +77,7 @@ fun Route.userRouting(
                 )
                 call.respond(HttpStatusCode.OK)
             }
+             */
             delete<UserAPI.UUID> { user ->
                 userService.deleteUser(
                     userUuid = user.uuid
