@@ -42,6 +42,7 @@ In this section, I will explain the current idea of how the application would wo
 - [ ] Implement DB indexes where needed.
 - [ ] Page to display historical statistics of absences and services by academic year, or by other filters.
 - [ ] Password recovery with automatic mail.
+- [ ] Application deployment with Docker.
 - [ ] Live notifications on your phone (Proably by email or Telegram bot messages) when having to cover a service.
 *This feature may require a lot of work, but as for now it will remain as the last thing to add*
 ## Technologies decision
