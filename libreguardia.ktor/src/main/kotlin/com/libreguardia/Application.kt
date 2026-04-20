@@ -7,6 +7,7 @@ import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.AcademicYearRepository
+import com.libreguardia.repository.ProfessionalFamilyRepository
 import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
@@ -15,6 +16,7 @@ import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
@@ -37,6 +39,7 @@ fun Application.main() {
 
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
+    val professionalFamilyRepository = ProfessionalFamilyRepository()
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
     val clock = Clock.System
@@ -61,6 +64,9 @@ fun Application.main() {
     val academicYearService = AcademicYearService(
         repository = academicYearRepository
     )
+    val professionalFamilyService = ProfessionalFamilyService(
+        repository = professionalFamilyRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -84,6 +90,7 @@ fun Application.main() {
     configureRouting(
         authService = authService,
         academicYearService = academicYearService,
+        professionalFamilyService = professionalFamilyService,
         userService = userService,
     )
 }
