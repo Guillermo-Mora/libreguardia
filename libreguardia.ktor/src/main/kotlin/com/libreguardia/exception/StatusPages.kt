@@ -70,6 +70,12 @@ fun Application.configureStatusPages() {
                 message = ErrorCode.ACADEMIC_YEAR_NOT_FOUND
             )
         }
+        exception<CourseNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.COURSE_NOT_FOUND
+            )
+        }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
             call.respond(
