@@ -21,15 +21,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Resource("/api/professional-family")
-class ProfessionalFamilyAPI
-
-@Serializable
-@Resource("/api/professional-family/{uuid}")
-class ProfessionalFamilyByUUID(
-    @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-) {
-    @Resource("toggle-enabled")
-    class ToggleEnabled(val parent: ProfessionalFamilyByUUID)
+class ProfessionalFamilyAPI {
+    @Serializable
+    @Resource("{uuid}")
+    class ByUUID(
+        val parent: ProfessionalFamilyAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    ) {
+        @Serializable
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: ByUUID)
+    }
 }
 
 fun Route.professionalFamilyRouting(service: ProfessionalFamilyService) {
@@ -43,19 +45,19 @@ fun Route.professionalFamilyRouting(service: ProfessionalFamilyService) {
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<ProfessionalFamilyByUUID> {
+            get<ProfessionalFamilyAPI.ByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<ProfessionalFamilyByUUID> {
+            patch<ProfessionalFamilyAPI.ByUUID> {
                 val dto = call.receive<ProfessionalFamilyEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<ProfessionalFamilyByUUID> {
+            delete<ProfessionalFamilyAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<ProfessionalFamilyByUUID.ToggleEnabled> {
+            patch<ProfessionalFamilyAPI.ByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)
