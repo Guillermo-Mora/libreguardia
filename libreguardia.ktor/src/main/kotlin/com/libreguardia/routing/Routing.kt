@@ -27,9 +27,7 @@ fun Application.configureRouting(
         authRouting(
             authService = authService
         )
-        userRouting(
-            userService = userService
-        )
+        userRouting(userService = userService)
         academicYearRouting(service = academicYearService)
         professionalFamilyRouting(service = professionalFamilyService)
         staticResources("/static", "static")
