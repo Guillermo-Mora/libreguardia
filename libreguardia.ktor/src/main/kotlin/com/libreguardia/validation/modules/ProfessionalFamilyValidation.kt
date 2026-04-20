@@ -9,7 +9,7 @@ import io.ktor.server.plugins.requestvalidation.*
 fun RequestValidationConfig.professionalFamilyValidation() {
     validate<ProfessionalFamilyCreateDTO> {
         val errors = mutableListOf<String>()
-        it.name.let { field -> validateString(field) }?.let { error -> errors.add(error) }
+        validateString(it.name)?.let { error -> errors.add(error) }
         return@validate validateResult(errors)
     }
     validate<ProfessionalFamilyEditDTO> {
