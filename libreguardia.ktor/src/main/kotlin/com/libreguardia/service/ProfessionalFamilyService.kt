@@ -16,20 +16,25 @@ class ProfessionalFamilyService(
     suspend fun getByUUID(uuid: UUID): ProfessionalFamilyResponseDTO =
         withTransaction { repository.getByUUID(uuid) } ?: throw ProfessionalFamilyNotFoundException()
 
-    suspend fun create(dto: ProfessionalFamilyCreateDTO) = withTransaction { repository.save(dto) }
+    suspend fun create(dto: ProfessionalFamilyCreateDTO) {
+        withTransaction { repository.save(dto) }
+    }
 
     suspend fun update(uuid: UUID, dto: ProfessionalFamilyEditDTO) {
-        if (withTransaction { repository.update(uuid, dto) }) return
-        throw ProfessionalFamilyNotFoundException()
+        withTransaction {
+            if (!repository.update(uuid, dto)) throw ProfessionalFamilyNotFoundException()
+        }
     }
 
     suspend fun delete(uuid: UUID) {
-        if (withTransaction { repository.delete(uuid) }) return
-        throw ProfessionalFamilyNotFoundException()
+        withTransaction {
+            if (!repository.delete(uuid)) throw ProfessionalFamilyNotFoundException()
+        }
     }
 
     suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        if (withTransaction { repository.toggleEnabled(uuid, enabled) }) return
-        throw ProfessionalFamilyNotFoundException()
+        withTransaction {
+            if (!repository.toggleEnabled(uuid, enabled)) throw ProfessionalFamilyNotFoundException()
+        }
     }
 }
