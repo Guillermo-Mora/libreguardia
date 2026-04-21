@@ -23,6 +23,7 @@ fun FlowContent.appHeader() {
                         target = "#main-content"
                         swap = "innerHTML"
                     }
+                    href = "/user/profile"
                     text("My profile")
                 }
             }
