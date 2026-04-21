@@ -41,7 +41,7 @@ Admins will be able to add/delete absences for all users. And will be responsibl
 
 In the application settings, there will be an option to enable/disable auto-assignment of services. If it is disabled, admins will have to manually assign the user to cover each service. While if its enabled, the app will automatically assing the user to cover the service based on a points system.
 ### The points system
-Each school course, could have one to various groups. For example, you have the 1DAM course, with the groups 1DAM-A and 1DAM-B. Every group, will have a decimal difficulty score, from 1.0 to 2.0. The idea behind this, is that administrators and teachers can talk to set the difficulty of covering services with that groups. So that teachers that cover those services, will obtain more points.
+Each school course, could have one to various groups. For example, you have the 1DAM course, with the groups 1DAM-A and 1DAM-B. Every group, will have a decimal difficulty score, from 1.0 to 2.0. The idea behind this, is that administrators and teachers can talk to set the difficulty of covering services with that groups. So that teachers who cover those services, will obtain more points.
 
 *How the points are calculated:*
 
@@ -131,7 +131,49 @@ Kotlin is a language that runs inside the JVM, and its fully interoperable with 
 Knowing this let me to some questions, as if Kotlin was actually a good option for backend development. And after some research on Google, I read in a lot of articles, forums and more that Kotlin is actually being used for a lot of backend enterpise applications. In some cases, as a result of migrating from Java. So at this point I had no excuse not to use Kotlin.
 
 Also, I want to recommend to all people that writes code in Java, to give Kotlin a try. As for me, I see no point in still using Java these days for developing new software.
+### 2. The database
+Our application needs to store a lot of data. Each user's information, all the services, absences, schedules, places, zones, etc. And some of them with clearly need of relations. So I knew we had to use a relational DB. I did a research and I decided to go with PostgreSQL, as it appears to be the standard for most applications that need a relational database.
+### 3. Ktor as the backend framework
+When we started this project, the development started using Spring Boot. However, after some weeks of developlment using Spring Boot, I realized that I was mostly writting Java code using Kotlin.
 
+This occurs because Spring Boot and all their libraries and plugins are so attached to Java, that I couldn't really use the unique Kotlin syntax and features without breaking things, meaning I had to write verbose code again to use Spring Boot.
+
+At first I simply kept going, but eventually I kept encountering more issues, not related to Kotlin, but from Spring Boot. I wanted to simply make role-based endpoints, so only users with specific roles could access them. Each user has a role in the database. When I searched for how I could implement this, I only found JPA Security. Which for me always felt like something very complex and big, while I only wanted to implement a simple feature my own way. I implemented it and then is when I thought about changing the framework, as I felt like Spring Boot was just too big and sometimes with too much magic, meaning I really didn't understand what was happening behind. So I wanted a simplier alternative, and with better Kotlin integration, so I could benefit from its syntax and features that differentiate it from Java.
+
+I Googled for Spring Boot alternatives for Kotlin and mostly only found about Ktor.
+
+Ktor is a very simple backend framework developed by JetBrains with fully Kotlin integration in mind. The idea of Ktor is that you simply start with practically a HTTP library for creating endpoints, that's Ktor without anything more. But the moment you need more features, you can easily add their own plugins, also developed and mantained for Ktor, or simply add the ones you used in your Java projects.
+
+In addition to this, Ktor has some things in advantage from Spring Boot I instantly noticed:
+- Fully Kotlin integration.
+- Asynchronous by design: While with Spring Boot I was writting blocking code, unless I wanted to deep into WebFlux, which I read about it and added too much complexity to the code. Ktor is built from the ground using Kotlin coroutines, with asynchronous programming in mind. This meant that I could write non-blocking code without adding any complexity.
+- Flexibility: In Spring Boot I had to adapt to the framework rules, but with Ktor I could do things the way I wanted without facing any issues. This meant no more need of JPA Security or magic libraries that Spring Boot force you to use. But also take in mind that this also results in more code having to be writeen from scratch by you. However, for me this hasn't been an issue, as I prefer to understand the code rather than using magic dependencies.
+- Lots of native plugins: Of course, you can use the plugins you used in your Java project, but Ktor has a lot of useful plugins ported for seamless integration with Kotlin and Ktor. And for me, they fully acomplished all my needs. I only used non Ktor plugins for things like Bcrypt, DB migration and some more I can't remember now. So the same I had with the Spring Boot project.
+- Better peformance: The fact of Ktor being a much smaller and simplier framework, and being asynchronous by design, results in a better performance and less resource ussage compared to Spring Boot. I read throught a lot of articles, and all came to the same conclusion, Ktor has performance advantage to Spring Boot.
+
+[Spring Boot vs Ktor](https://www.boundev.com/blog/kotlin-server-side-development-spring-boot-ktor)
+
+*However, the Spring Boot ecosystem is extremly big and mature, so I think it depends on your needs which framework to use. In my case I went with Ktor, as my software is very simple and I really didn't need all the complexity and features that Spring Boot adds by default. I think we should always try to take advanthe from simplier software if we can.*
+### 4. Old style frontend
+The frontend world has always seemed too overwhelming for me. There are thousands of technologies, and every day they get updated, others get outdated, and new ones appear. And if you want to create something simple for just displaying information or filling forms, you end up with lots of dependencies that you don't even need for anything. Just for them to get outdated in 2 months.
+
+Also, I really didn't have very much experience with any frontend framework. All the work I did with frontend, I simply used HTML, CSS and JS. However, using only this has a lot of limitations, and I would end up with a lot of repeated code.
+
+So I did a research and found out about HTMX. Which is a very basic JS library. The idea of HTMX is that the server returns HTML pages and fragments instead of json. In HTMX, you can make any HTML tag to do GET, POST, PUT, PATCH or DELETE operations on an action performed. For example, you could make that clicking a button would make a GET to the server to obtain an HTML fragment and replace de "main" HTML tag content from the page with the HTML fragment recieved from the server. This way you can easily create an interactive frontend, with the state being managed on the backend and without the need of refreshing the page. While this could look as something too simple, is more than enough for the needs of Libreguardia.
+
+In addition, I read some interesting articles about real life software where HTMX is used for the frontend. [A real world React -> htmx Port](https://htmx.org/essays/a-real-world-react-to-htmx-port/)
+
+As you can read in this article, the migration to HTMX resulted in:
+- Code base size reduced by 67%.
+- Reduced JS dependencies from 255 to 9.
+- Reduced web build time from 40 seconds to 5.
+- First load time-to-interactive from 2-6 seconds to 1-2 seconds.
+- Much larger data were sets possible.
+- Web application memory usage from 75MB to 45MB.
+
+*This may seem like a total win for HTMX. However I don't think this. While HTMX is a very simple and performant approach to build a frontend, it may not be enough for a frontend with very complex interactions, animations, etc. Where React could easily do that job. So as with the decision of using Ktor, I also decided to use HTMX because for the development of Libreguarida I don't need most of the complex features that React gives you, which would end up in a harder to maintain code for me. As I really don't have much experience with any frontend framework.*
+
+In Libreguardia, the frontend is diretly built in the backend and sent to the browser. And in order to recicle code and implement logic easily inside HTML pages, I used Ktor's HTML DSL, which lets me directly code HTML using Kotlin and adding logic. This ends up in a very attached frontend and backend development, which as for now is making things easy to debug, refactor and create in a fast way.
 ## Setup for coding
 ### Installation
 - IntelliJ IDEA
