@@ -8,11 +8,15 @@ import com.libreguardia.dto.UserEditProfileDTO
 import com.libreguardia.exception.IncorrectPasswordException
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.model.UserModel
+import com.libreguardia.model.UserProfileModel
+import com.libreguardia.model.WeeklySchedules
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.v1.core.Slf4jSqlDebugLogger
+import org.jetbrains.exposed.v1.core.StdOutSqlLogger
 import java.util.*
 import kotlin.time.Clock
 
@@ -37,7 +41,21 @@ class UserService (
     suspend fun getUserProfile(
         userUuid: UUID
     ) =
-        withTransaction { userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
+        withTransaction {
+            addLogger(StdOutSqlLogger)
+            val userEntity = userRepository.getEntity(uuid = userUuid) ?: throw UserNotFoundException()
+            val userWeeklySchedules = scheduleRepository.getUserWeeklySchedules(userUUID = userUuid)
+            UserProfileModel(
+                fullName = "${userEntity.name} ${userEntity.surname}",
+                email = userEntity.email,
+                phoneNumber = userEntity.phoneNumber,
+                role = userEntity.role.toString(),
+                schedules = userWeeklySchedules
+            )
+        }
+            //Eager loading entities works perfectly. References of references, of references, etc. Also work,
+            // as the log shows there's no N+1 problem, but still too much queries in my opinion :(
+            //userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
 
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
