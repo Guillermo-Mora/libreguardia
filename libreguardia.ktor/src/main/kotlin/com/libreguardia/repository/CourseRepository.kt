@@ -2,6 +2,7 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.CourseEntity
 import com.libreguardia.db.model.CourseTable
+import com.libreguardia.db.model.ProfessionalFamilyEntity
 import com.libreguardia.dto.CourseCreateDTO
 import com.libreguardia.dto.CourseEditDTO
 import com.libreguardia.dto.CourseResponseDTO
@@ -16,6 +17,9 @@ class CourseRepository {
 
     fun getByUUID(uuid: UUID): CourseResponseDTO? =
         CourseEntity.findById(uuid)?.toResponseDTO()
+
+    fun professionalFamilyExists(professionalFamilyId: UUID): Boolean =
+        ProfessionalFamilyEntity.findById(professionalFamilyId) != null
 
     fun save(dto: CourseCreateDTO) {
         CourseTable.insert {
