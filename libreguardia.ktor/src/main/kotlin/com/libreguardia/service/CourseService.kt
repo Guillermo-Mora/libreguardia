@@ -4,6 +4,7 @@ import com.libreguardia.dto.CourseCreateDTO
 import com.libreguardia.dto.CourseEditDTO
 import com.libreguardia.dto.CourseResponseDTO
 import com.libreguardia.exception.CourseNotFoundException
+import com.libreguardia.exception.ProfessionalFamilyNotFoundException
 import com.libreguardia.repository.CourseRepository
 import com.libreguardia.util.withTransaction
 import java.util.UUID
@@ -17,7 +18,12 @@ class CourseService(
         withTransaction { repository.getByUUID(uuid) } ?: throw CourseNotFoundException()
 
     suspend fun create(dto: CourseCreateDTO) {
-        withTransaction { repository.save(dto) }
+        withTransaction {
+            if (!repository.professionalFamilyExists(dto.professionalFamilyId)) {
+                throw ProfessionalFamilyNotFoundException()
+            }
+            repository.save(dto)
+        }
     }
 
     suspend fun update(uuid: UUID, dto: CourseEditDTO) {
