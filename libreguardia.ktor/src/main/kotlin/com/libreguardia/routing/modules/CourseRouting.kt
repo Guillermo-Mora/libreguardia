@@ -24,11 +24,10 @@ import kotlinx.serialization.Serializable
 class CourseAPI {
     @Serializable
     @Resource("{uuid}")
-    class UUID(val parent: CourseAPI, val uuid: UUID) {
+    class UUID(val parent: CourseAPI, @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID) {
         @Resource("toggle-enabled")
         class ToggleEnabled(val parent: UUID)
     }
-}
 }
 
 fun Route.courseRouting(service: CourseService) {

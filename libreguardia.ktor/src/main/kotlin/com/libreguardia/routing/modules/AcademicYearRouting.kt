@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 class AcademicYearAPI {
     @Serializable
     @Resource("{uuid}")
-    class UUID(val parent: AcademicYearAPI, val uuid: UUID) {
+    class UUID(val parent: AcademicYearAPI, @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID) {
         @Resource("toggle-enabled")
         class ToggleEnabled(val parent: UUID)
     }
