@@ -21,15 +21,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Resource("/api/building")
-class BuildingAPI
-
-@Serializable
-@Resource("/api/building/{uuid}")
-class BuildingByUUID(
-    @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-) {
-    @Resource("toggle-enabled")
-    class ToggleEnabled(val parent: BuildingByUUID)
+class BuildingAPI {
+    @Serializable
+    @Resource("{uuid}")
+    class ByUUID(
+        val parent: BuildingAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    ) {
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: ByUUID)
+    }
 }
 
 fun Route.buildingRouting(service: BuildingService) {
@@ -43,19 +44,19 @@ fun Route.buildingRouting(service: BuildingService) {
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<BuildingByUUID> {
+            get<BuildingAPI.ByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<BuildingByUUID> {
+            patch<BuildingAPI.ByUUID> {
                 val dto = call.receive<BuildingEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<BuildingByUUID> {
+            delete<BuildingAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<BuildingByUUID.ToggleEnabled> {
+            patch<BuildingAPI.ByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)
