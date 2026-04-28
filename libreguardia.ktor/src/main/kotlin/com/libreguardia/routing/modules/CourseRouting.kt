@@ -24,9 +24,12 @@ import kotlinx.serialization.Serializable
 class CourseAPI {
     @Serializable
     @Resource("{uuid}")
-    class UUID(val parent: CourseAPI, @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID) {
+    class ByUUID(
+        val parent: CourseAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    ) {
         @Resource("toggle-enabled")
-        class ToggleEnabled(val parent: UUID)
+        class ToggleEnabled(val parent: ByUUID)
     }
 }
 
@@ -41,19 +44,19 @@ fun Route.courseRouting(service: CourseService) {
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<CourseAPI.UUID> {
+            get<CourseAPI.ByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<CourseAPI.UUID> {
+            patch<CourseAPI.ByUUID> {
                 val dto = call.receive<CourseEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<CourseAPI.UUID> {
+            delete<CourseAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<CourseAPI.UUID.ToggleEnabled> {
+            patch<CourseAPI.ByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)
