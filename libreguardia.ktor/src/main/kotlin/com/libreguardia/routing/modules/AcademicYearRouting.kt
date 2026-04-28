@@ -1,5 +1,6 @@
 package com.libreguardia.routing.modules
 
+import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.AcademicYearCreateDTO
@@ -21,18 +22,20 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Resource("/api/academic-year")
 class AcademicYearAPI {
+    @Serializable
     @Resource("{uuid}")
     class ByUUID(
         val parent: AcademicYearAPI,
         @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
     ) {
+        @Serializable
         @Resource("toggle-enabled")
         class ToggleEnabled(val parent: ByUUID)
     }
 }
 
 fun Route.academicYearRouting(service: AcademicYearService) {
-    authenticate {
+    authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
             get<AcademicYearAPI> {
                 call.respond(service.getAll())
