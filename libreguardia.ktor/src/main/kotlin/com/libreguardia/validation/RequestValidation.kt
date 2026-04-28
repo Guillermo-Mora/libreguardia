@@ -2,6 +2,7 @@ package com.libreguardia.validation
 
 import com.libreguardia.validation.modules.academicYearValidation
 import com.libreguardia.validation.modules.authValidation
+import com.libreguardia.validation.modules.groupValidation
 import com.libreguardia.validation.modules.professionalFamilyValidation
 import com.libreguardia.validation.modules.userValidation
 import io.ktor.server.application.*
@@ -13,5 +14,6 @@ fun Application.configureRequestValidation() {
         userValidation()
         academicYearValidation()
         professionalFamilyValidation()
+        groupValidation()
     }
 }
