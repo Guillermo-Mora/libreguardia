@@ -22,15 +22,16 @@ import java.util.UUID
 
 @Serializable
 @Resource("/api/group")
-class GroupAPI
-
-@Serializable
-@Resource("/api/group/{uuid}")
-class GroupByUUID(
-    @Serializable(with = UUIDSerializer::class) val uuid: UUID
-) {
-    @Resource("toggle-enabled")
-    class ToggleEnabled(val parent: GroupByUUID)
+class GroupAPI {
+    @Serializable
+    @Resource("{uuid}")
+    class ByUUID(
+        val parent: GroupAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: UUID
+    ) {
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: ByUUID)
+    }
 }
 
 fun Route.groupRouting(service: GroupService) {
@@ -44,19 +45,19 @@ fun Route.groupRouting(service: GroupService) {
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<GroupByUUID> {
+            get<GroupAPI.ByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<GroupByUUID> {
+            patch<GroupAPI.ByUUID> {
                 val dto = call.receive<GroupEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<GroupByUUID> {
+            delete<GroupAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<GroupByUUID.ToggleEnabled> {
+            patch<GroupAPI.ByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)
