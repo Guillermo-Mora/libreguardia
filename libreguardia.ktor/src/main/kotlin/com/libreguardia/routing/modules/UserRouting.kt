@@ -2,13 +2,19 @@ package com.libreguardia.routing.modules
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
+import com.libreguardia.config.UserSession
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
+import com.libreguardia.dto.EditProfileResult
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.UserEditProfileDTO
+import com.libreguardia.dto.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
+import com.libreguardia.frontend.component.dashboard
+import com.libreguardia.frontend.component.phoneNumberAndPassword
 import com.libreguardia.frontend.component.userProfile
+import com.libreguardia.frontend.component.userProfileEdit
+import com.libreguardia.frontend.page.mainPage
 import com.libreguardia.service.UserService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.*
@@ -19,12 +25,21 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
+import io.ktor.server.sessions.get
+import io.ktor.server.sessions.sessions
+import kotlinx.html.div
+import kotlinx.html.id
 import kotlinx.serialization.Serializable
 
 @Resource("/user")
 class UserAPI {
     @Resource("profile")
-    class Profile(val parent: UserAPI = UserAPI())
+    class Profile(val parent: UserAPI = UserAPI()) {
+        @Resource("edit")
+        class Edit(val parent: Profile)
+        @Resource("phone-number")
+        class PhoneNumber(val parent: Profile)
+    }
 
     @Resource("{uuid}")
     class UUID(
@@ -102,20 +117,79 @@ fun Route.userRouting(
             }
             get<UserAPI.Profile> {
                 //Temoporary error throw. The errors to throw shouldn't be these.
-                val userUuid = call.principal<UserPrincipal>()?.userUuid ?: throw UserNotFoundException()
+                val userPrincipal = call.principal<UserPrincipal>() ?: throw UserNotFoundException()
+                val userUuid = userPrincipal.userUuid
+                val userRole = userPrincipal.userRole
                 val userProfileModel = userService.getUserProfile(userUuid = userUuid)
+                //If the request header contains that is from HTMX, we send the partial HTML
+                // but if it's a normal request to the endpoint, we have to respond with the full page
+                if (call.request.headers["HX-Request"] == "true") {
+                    call.respondHtmlFragment {
+                        userProfile(userProfileModel = userProfileModel)
+                    }
+                } else {
+                    call.respondHtml {
+                        mainPage(
+                            role = userRole,
+                            mainContent = {
+                                userProfile(
+                                    userProfileModel = userProfileModel
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+            get<UserAPI.Profile.Edit> {
+                val userUuid = call.principal<UserPrincipal>()?.userUuid ?: throw UserNotFoundException()
+                val userPhoneNumber = userService.getUserPhoneNumber(userUuid = userUuid)
                 call.respondHtmlFragment {
-                    userProfile(userProfileModel = userProfileModel)
+                    userProfileEdit(phoneNumber = userPhoneNumber)
+                }
+            }
+
+            get<UserAPI.Profile.PhoneNumber> {
+                val userUuid = call.principal<UserPrincipal>()?.userUuid ?: throw UserNotFoundException()
+                val userPhoneNumber = userService.getUserPhoneNumber(userUuid = userUuid)
+                call.respondHtmlFragment {
+                    phoneNumberAndPassword(
+                        userPhoneNumber = userPhoneNumber
+                    )
                 }
             }
             patch<UserAPI.Profile> {
-                val userEditProfile = call.receive<UserEditProfileDTO>()
-                //val userUuid = call.userUuidFromJwt()
-                //userService.editUserProfile(
-                //    userUuid = userUuid,
-                //    userEditProfileDTO = userEditProfile
-                //)
-                call.respond(HttpStatusCode.OK)
+                val userUuid = call.principal<UserPrincipal>()?.userUuid ?: throw UserNotFoundException()
+                //TEMPORARY ERROR THROWN, THIS SHOULD BE HANDLED IN A BETTER WAY
+                val sessionUuid = call.sessions.get<UserSession>()?.uuid ?: throw UserNotFoundException()
+                val userEditProfileDTO = call.receiveParameters().toUserEditProfileDTO()
+                val result = userService.editUserProfile(
+                    userUuid = userUuid,
+                    sessionUuid = sessionUuid,
+                    userEditProfileDTO = userEditProfileDTO
+                )
+                call.respondHtmlFragment {
+                    when (result) {
+                        is EditProfileResult.Success -> {
+                            div {
+                                id = "editable-fields"
+                                phoneNumberAndPassword(
+                                    userPhoneNumber = result.userPhoneNumber
+                                )
+                            }
+                        }
+
+                        is EditProfileResult.Error -> {
+                            userProfileEdit(
+                                phoneNumber = result.userEditProfileDTO.phoneNumber.toString(),
+                                currentPassword = result.userEditProfileDTO.currentPassword.toString(),
+                                newPassword = result.userEditProfileDTO.newPassword.toString(),
+                                phoneNumberError = result.phoneNumberError,
+                                currentPasswordError = result.currentPasswordError,
+                                newPasswordError = result.newPasswordError
+                            )
+                        }
+                    }
+                }
             }
         }
     }

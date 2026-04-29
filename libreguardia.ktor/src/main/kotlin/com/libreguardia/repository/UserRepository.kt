@@ -147,4 +147,14 @@ class UserRepository {
             .map { it[UserTable.id].value }
             .firstOrNull()
     }
+
+    fun getPhoneNumber(
+        userUuid: UUID
+    ): String? =
+        UserTable
+            .select(UserTable.phoneNumber)
+            .where { UserTable.id eq userUuid }
+            .limit(1)
+            .map { it[UserTable.phoneNumber] }
+            .firstOrNull()
 }

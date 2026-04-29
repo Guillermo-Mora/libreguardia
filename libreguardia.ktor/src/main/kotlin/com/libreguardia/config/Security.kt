@@ -4,12 +4,26 @@ import com.libreguardia.db.Role
 import com.libreguardia.exception.ErrorCode
 import com.libreguardia.service.AuthService
 import com.libreguardia.util.UUIDSerializer
+import io.ktor.htmx.html.hx
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.html.respondHtmlFragment
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
+import io.ktor.server.response.respondText
 import io.ktor.server.sessions.*
+import io.ktor.utils.io.ExperimentalKtorApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.html.FlowContent
+import kotlinx.html.InputType
+import kotlinx.html.div
+import kotlinx.html.id
+import kotlinx.html.input
+import kotlinx.html.label
+import kotlinx.html.p
+import kotlinx.html.span
 import kotlinx.serialization.Serializable
 import java.util.*
 
@@ -17,6 +31,7 @@ const val COOKIE_DURATION: Long = 2_592_000
 const val AUTH_FORM = "auth_form"
 const val AUTH_SESSION = "auth_session"
 const val BCRYPT_HASH_COST = 10
+
 fun Application.configureSecurity(
     authService: AuthService
 ) {
@@ -45,10 +60,31 @@ fun Application.configureSecurity(
                 else null
             }
             challenge {
-                call.respond(
-                    status = HttpStatusCode.Unauthorized,
-                    message = ErrorCode.INVALID_CREDENTIALS
-                )
+                call.respondHtmlFragment() {
+                    @OptIn(ExperimentalKtorApi::class)
+                    div("input-div input-div-error") {
+                        id = "password-div"
+                        label {
+                            htmlFor = "password"
+                            text("Password")
+                        }
+                        input {
+                            attributes.hx {
+                                validate = true
+                            }
+                            type = InputType.password
+                            name = "password"
+                            id = "password"
+                            placeholder = "Input your password"
+                            required = true
+                        }
+                        div("error-div") {
+                            span {
+                                text("Invalid credentials")
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -59,7 +95,12 @@ fun Application.configureSecurity(
                 authService.validateSession(session)
             }
             challenge {
-                call.respondRedirect("/login")
+                if (call.request.headers["HX-Request"] == "true") {
+                    call.response.headers.append("HX-Redirect", "/login")
+                    call.respond(HttpStatusCode.Unauthorized)
+                } else {
+                    call.respondRedirect("/login")
+                }
             }
         }
     }

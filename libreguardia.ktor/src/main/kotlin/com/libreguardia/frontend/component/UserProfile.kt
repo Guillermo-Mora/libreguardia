@@ -1,5 +1,6 @@
 package com.libreguardia.frontend.component
 
+import com.libreguardia.db.Role
 import com.libreguardia.model.ScheduleModel
 import com.libreguardia.model.UserProfileModel
 import io.ktor.htmx.html.hx
@@ -10,7 +11,10 @@ import kotlinx.html.br
 import kotlinx.html.button
 import kotlinx.html.caption
 import kotlinx.html.div
+import kotlinx.html.dom.document
+import kotlinx.html.id
 import kotlinx.html.p
+import kotlinx.html.script
 import kotlinx.html.small
 import kotlinx.html.table
 import kotlinx.html.td
@@ -31,10 +35,14 @@ fun FlowContent.userProfile(
         userProfileModel.schedules.sunday.size,
     )
     p { text(userProfileModel.fullName) }
-    p { text(userProfileModel.email) }
-    p { text(userProfileModel.phoneNumber) }
     p { text(userProfileModel.role) }
-    p { text("SCHEDULES VISUALIZATION AND PASSWORD AND PHONE NUMBER MODIFICATION STILL TO IMPLEMENT") }
+    p { text(userProfileModel.email) }
+    div {
+        id = "editable-fields"
+        phoneNumberAndPassword(
+            userPhoneNumber = userProfileModel.phoneNumber
+        )
+    }
     br
     if (mostSchedulesInADay > 0) {
         table("schedule-table")
@@ -100,6 +108,9 @@ fun FlowContent.userProfile(
         }
         text("Logout all devices")
     }
+    script {
+        src = ""
+    }
 }
 
 private fun TR.setTd(
@@ -130,4 +141,21 @@ private fun TR.setTd(
             }
         }
     } ?: td { }
+}
+
+@OptIn(ExperimentalKtorApi::class)
+fun FlowContent.phoneNumberAndPassword(
+    userPhoneNumber: String
+) {
+    p { text(userPhoneNumber) }
+    p { text("Password: ********") }
+    button {
+        attributes.hx {
+            trigger = "click"
+            get = "/user/profile/edit"
+            target = "#editable-fields"
+            swap = "outerHTML"
+        }
+        text("Edit profile")
+    }
 }
