@@ -18,7 +18,7 @@ fun RequestValidationConfig.userValidation() {
         validateString(it.surname)?.let { error -> errors.add(error) }
         //validatePassword(it.password)?.let { error -> errors.add(error) }
         validateEmail(it.email)?.let { error -> errors.add(error) }
-        validatePhoneNumber(it.phoneNumber)?.let { error -> errors.add(error) }
+        //validatePhoneNumber(it.phoneNumber)?.let { error -> errors.add(error) }
         validateRole(it.role)?.let { error -> errors.add(error) }
         return@validate validateResult(errors)
     }
@@ -28,13 +28,13 @@ fun RequestValidationConfig.userValidation() {
         it.surname?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
         //it.password?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
         it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
-        it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
+        //it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
         it.role?.let { field -> validateRole(field) }?.let { error -> errors.add(error) }
         return@validate validateResult(errors)
     }
     validate<UserEditProfileDTO> {
         val errors = mutableListOf<String>()
-        it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
+        //it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
         /*
         validateNewPassword(
             currentPassword = it.currentPassword,

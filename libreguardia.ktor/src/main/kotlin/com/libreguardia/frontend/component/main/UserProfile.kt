@@ -1,6 +1,5 @@
-package com.libreguardia.frontend.component
+package com.libreguardia.frontend.component.main
 
-import com.libreguardia.db.Role
 import com.libreguardia.model.ScheduleModel
 import com.libreguardia.model.UserProfileModel
 import io.ktor.htmx.html.hx
@@ -11,7 +10,6 @@ import kotlinx.html.br
 import kotlinx.html.button
 import kotlinx.html.caption
 import kotlinx.html.div
-import kotlinx.html.dom.document
 import kotlinx.html.id
 import kotlinx.html.p
 import kotlinx.html.script

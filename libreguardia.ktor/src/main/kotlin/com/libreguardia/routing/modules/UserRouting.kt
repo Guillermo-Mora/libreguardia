@@ -10,11 +10,13 @@ import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
-import com.libreguardia.frontend.component.dashboard
-import com.libreguardia.frontend.component.phoneNumberAndPassword
-import com.libreguardia.frontend.component.userProfile
+import com.libreguardia.frontend.component.main.phoneNumberAndPassword
+import com.libreguardia.frontend.component.main.userEdit
+import com.libreguardia.frontend.component.main.userProfile
+import com.libreguardia.frontend.component.main.usersList
 import com.libreguardia.frontend.component.userProfileEdit
 import com.libreguardia.frontend.page.mainPage
+import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.UserService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.*
@@ -25,8 +27,10 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.sessions.get
 import io.ktor.server.sessions.sessions
+import kotlinx.html.FlowContent
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.serialization.Serializable
@@ -37,6 +41,7 @@ class UserAPI {
     class Profile(val parent: UserAPI = UserAPI()) {
         @Resource("edit")
         class Edit(val parent: Profile)
+
         @Resource("phone-number")
         class PhoneNumber(val parent: Profile)
     }
@@ -46,9 +51,6 @@ class UserAPI {
         val parent: UserAPI = UserAPI(),
         @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
     ) {
-        @Resource("edit")
-        class Edit(val parent: UUID)
-
         @Resource("toggle-enabled")
         class ToggleEnabled(val parent: UUID)
 
@@ -72,9 +74,37 @@ fun Route.userRouting(
 
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
+            get<UserAPI.UUID> { user ->
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
+                val userUuid = user.uuid
+                val user = userService.getUser(
+                    userUuid = userUuid
+                )
+                respondHtmlPage(
+                    role = userRole,
+                    content = {
+                        userEdit(
+                            user = user
+                        )
+                    }
+                )
+            }
+
             get<UserAPI> {
+                //Temporary error throw.
+                // The errors to throw shouldn't be these.
+                // The errors to throw, could be HTML fragments that show temporary on screen,
+                // showing the error name occurred.
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
                 val users = userService.getAllUsers()
-                call.respond(users)
+                respondHtmlPage(
+                    role = userRole,
+                    content = {
+                        usersList(
+                            users = users
+                        )
+                    }
+                )
             }
             post<UserAPI> {
                 val user = call.receive<UserCreateDTO>()
@@ -111,34 +141,20 @@ fun Route.userRouting(
     }
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN, Role.USER, Role.VISUALIZER) {
-            get<UserAPI.UUID> { user ->
-                val user = userService.getUser(user.uuid)
-                call.respond(user)
-            }
             get<UserAPI.Profile> {
                 //Temoporary error throw. The errors to throw shouldn't be these.
                 val userPrincipal = call.principal<UserPrincipal>() ?: throw UserNotFoundException()
                 val userUuid = userPrincipal.userUuid
                 val userRole = userPrincipal.userRole
                 val userProfileModel = userService.getUserProfile(userUuid = userUuid)
-                //If the request header contains that is from HTMX, we send the partial HTML
-                // but if it's a normal request to the endpoint, we have to respond with the full page
-                if (call.request.headers["HX-Request"] == "true") {
-                    call.respondHtmlFragment {
-                        userProfile(userProfileModel = userProfileModel)
-                    }
-                } else {
-                    call.respondHtml {
-                        mainPage(
-                            role = userRole,
-                            mainContent = {
-                                userProfile(
-                                    userProfileModel = userProfileModel
-                                )
-                            }
+                respondHtmlPage(
+                    role = userRole,
+                    content = {
+                        userProfile(
+                            userProfileModel = userProfileModel
                         )
                     }
-                }
+                )
             }
             get<UserAPI.Profile.Edit> {
                 val userUuid = call.principal<UserPrincipal>()?.userUuid ?: throw UserNotFoundException()

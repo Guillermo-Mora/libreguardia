@@ -23,7 +23,16 @@ import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
 class UserRepository {
-    fun getAll(): List<UserModel> = UserEntity.all().map(::entityToModel)
+    fun getAll(): List<UserModel> =
+        UserEntity
+            .find { UserTable.isDeleted eq false }
+            .map(::entityToModel)
+
+    fun getAllEnabled(): List<UserModel> =
+        UserEntity
+            .find { UserTable.isEnabled eq true }
+            .map(::entityToModel)
+
     fun getByUUID(
         uuid: UUID
     ): UserModel? {

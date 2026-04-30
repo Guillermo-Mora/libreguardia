@@ -159,7 +159,7 @@ class UserService (
         sessionUuid: UUID,
         userEditProfileDTO: UserEditProfileDTO
     ): EditProfileResult {
-        val phoneNumberError = validatePhoneNumber(userEditProfileDTO.phoneNumber)
+        val phoneNumberError = validatePhoneNumber(userEditProfileDTO.phoneNumber, true)
         var currentPasswordError: String? = "Incorrect password"
         var newPasswordError = validateNewPassword(
             field = userEditProfileDTO.newPassword,

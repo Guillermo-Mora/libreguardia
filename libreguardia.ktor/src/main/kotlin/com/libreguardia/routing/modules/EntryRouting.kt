@@ -5,9 +5,10 @@ import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.exception.InsufficientPermissionsException
-import com.libreguardia.frontend.component.dashboard
+import com.libreguardia.frontend.component.main.dashboard
 import com.libreguardia.frontend.page.mainPage
 import com.libreguardia.frontend.page.loginPage
+import com.libreguardia.routing.respondHtmlPage
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.principal
 import io.ktor.server.html.respondHtml
@@ -22,26 +23,16 @@ fun Route.entryRouting() {
     authenticate(AUTH_SESSION) {
         authorized(Role.USER, Role.ADMIN, Role.VISUALIZER) {
             get("/") {
-                val role = call.principal<UserPrincipal>()
-                    ?.userRole ?: throw InsufficientPermissionsException()
-                if (call.request.headers["HX-Request"] == "true") {
-                    call.respondHtmlFragment {
+                //Temporary error thrown
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw InsufficientPermissionsException()
+                respondHtmlPage(
+                    role = role,
+                    content = {
                         dashboard(
                             role = role
                         )
                     }
-                } else {
-                    call.respondHtml {
-                        mainPage(
-                            role = role,
-                            mainContent = {
-                                dashboard(
-                                    role = role
-                                )
-                            }
-                        )
-                    }
-                }
+                )
             }
         }
     }
