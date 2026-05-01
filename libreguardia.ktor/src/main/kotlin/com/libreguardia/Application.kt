@@ -7,6 +7,7 @@ import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.AcademicYearRepository
+import com.libreguardia.repository.PlaceTypeRepository
 import com.libreguardia.repository.BuildingRepository
 import com.libreguardia.repository.GroupRepository
 import com.libreguardia.repository.ProfessionalFamilyRepository
@@ -19,6 +20,7 @@ import com.libreguardia.repository.ZoneRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.BuildingService
 import com.libreguardia.service.GroupService
 import com.libreguardia.service.ProfessionalFamilyService
@@ -42,13 +44,14 @@ fun Application.main() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
-
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
     val groupRepository = GroupRepository()
     val professionalFamilyRepository = ProfessionalFamilyRepository()
     val zoneRepository = ZoneRepository()
     val buildingRepository = BuildingRepository()
+    val placeTypeRepository = PlaceTypeRepository()
+
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
     val clock = Clock.System
@@ -75,6 +78,9 @@ fun Application.main() {
     )
     val buildingService = BuildingService(
         repository = buildingRepository
+    )
+    val placeTypeService = PlaceTypeService(
+        placeTypeRepository = placeTypeRepository
     )
     val zoneService = ZoneService(
         repository = zoneRepository
@@ -109,6 +115,7 @@ fun Application.main() {
         groupService = groupService,
         professionalFamilyService = professionalFamilyService,
         userService = userService,
-        zoneService = zoneService
+        zoneService = zoneService,
+        placeTypeService = placeTypeService
     )
 }

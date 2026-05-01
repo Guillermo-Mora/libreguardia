@@ -70,6 +70,12 @@ fun Application.configureStatusPages() {
                 message = ErrorCode.ACADEMIC_YEAR_NOT_FOUND
             )
         }
+        exception<PlaceTypeNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.PLACE_TYPE_NOT_FOUND
+            )
+        }
         exception<BuildingNotFoundException> { call, _ ->
             call.respond(
                 status = HttpStatusCode.NotFound,
