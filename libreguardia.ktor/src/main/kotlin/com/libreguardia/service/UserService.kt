@@ -2,17 +2,23 @@ package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.BCRYPT_HASH_COST
+import com.libreguardia.dto.EditUserProfileResult
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.exception.IncorrectPasswordException
+import com.libreguardia.dto.validate
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.model.UserModel
+import com.libreguardia.model.UserProfileModel
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
+import com.libreguardia.validation.OperationResult
+import com.libreguardia.validation.validateNewPassword
+import com.libreguardia.validation.validatePhoneNumber
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.exposed.v1.core.StdOutSqlLogger
 import java.util.*
 import kotlin.time.Clock
 
@@ -37,11 +43,29 @@ class UserService (
     suspend fun getUserProfile(
         userUuid: UUID
     ) =
-        withTransaction { userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
+        withTransaction {
+            //Temporary for testing
+            addLogger(StdOutSqlLogger)
+            //
+            val userEntity = userRepository.getEntity(uuid = userUuid) ?: throw UserNotFoundException()
+            val userWeeklySchedules = scheduleRepository.getUserWeeklySchedules(userUUID = userUuid)
+            UserProfileModel(
+                fullName = "${userEntity.name} ${userEntity.surname}",
+                email = userEntity.email,
+                phoneNumber = userEntity.phoneNumber,
+                role = userEntity.role.toString(),
+                schedules = userWeeklySchedules
+            )
+        }
+    //Eager loading entities works perfectly. References of references, of references, etc. Also work,
+    // as the log shows there's no N+1 problem, but still too much queries in my opinion :(
+    //userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
 
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
-    ) {
+    ): OperationResult {
+        val errors: List<String?> = userCreateDTO.validate()
+        if (errors.any { it != null }) return OperationResult.Error(errors)
         val hashedPassword = bcryptHasher.hashToString(
             BCRYPT_HASH_COST,
             userCreateDTO.password.toCharArray()
@@ -52,21 +76,28 @@ class UserService (
                 hashedPassword = hashedPassword
             )
         }
+        return OperationResult.Success()
     }
 
     suspend fun editUser(
         userUuid: UUID,
         userEditDTO: UserEditDTO
-    ) {
+    ): OperationResult {
+        val errors: List<String?> = userEditDTO.validate()
+        if (errors.any { it != null }) return OperationResult.Error(errors)
         val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val hashedPassword = userEditDTO.password?.let { newPassword ->
+        val hashedPassword = if (!userEditDTO.password.isNullOrBlank()) {
             bcryptHasher.hashToString(
                 BCRYPT_HASH_COST,
-                newPassword.toCharArray()
+                userEditDTO.password.toCharArray()
             )
-        }
-        val shouldCloseSessions = userEditDTO.isEnabled == false || userEditDTO.role != null
+        } else null
+        userEditDTO.isEnabled == false || userEditDTO.role != null
         withTransaction {
+            //It would be better to only get the role, using Exposed DSL, but for now it stays like this.
+            val user = userRepository.getEntity(uuid = userUuid)
+            val shouldCloseSessions = hashedPassword != null || userEditDTO.role != user?.role.toString()
+            //
             if (!userRepository.editByUUID(
                     userUUID = userUuid,
                     userEditDTO = userEditDTO,
@@ -81,6 +112,7 @@ class UserService (
             }
             if (shouldCloseSessions) sessionRepository.deleteSessionsFromUser(userUuid = userUuid)
         }
+        return OperationResult.Success()
     }
 
     suspend fun deleteUser(
@@ -136,23 +168,50 @@ class UserService (
 
     suspend fun editUserProfile(
         userUuid: UUID,
+        sessionUuid: UUID,
         userEditProfileDTO: UserEditProfileDTO
-    ) {
-        withTransaction {
+    ): EditUserProfileResult {
+        val phoneNumberError = validatePhoneNumber(userEditProfileDTO.phoneNumber, true)
+        var currentPasswordError: String? = "Incorrect password"
+        var newPasswordError = validateNewPassword(
+            field = userEditProfileDTO.newPassword,
+            required = false
+        )
+        return withTransaction {
+            //Temporary for testing
+            addLogger(StdOutSqlLogger)
+            //
             var hashedPassword: String? = null
-            if (userEditProfileDTO.currentPassword != null && userEditProfileDTO.newPassword != null) {
-                val hashedCurrentPassword =
-                    userRepository.getHashedPassword(userUuid) ?: throw UserNotFoundException()
-                val verificationResult = bcryptVerifyer.verify(
-                    userEditProfileDTO.currentPassword.toByteArray(),
-                    hashedCurrentPassword.toByteArray()
-                )
-                if (!verificationResult.verified) throw IncorrectPasswordException()
-                hashedPassword =
-                    bcryptHasher.hashToString(
-                        BCRYPT_HASH_COST,
-                        userEditProfileDTO.newPassword.toCharArray()
+            if (!userEditProfileDTO.currentPassword.isNullOrEmpty()) {
+                if (userEditProfileDTO.newPassword.isNullOrEmpty()) {
+                    newPasswordError = "New password is empty"
+                } else {
+                    val hashedCurrentPassword =
+                        userRepository.getHashedPassword(userUuid) ?: throw UserNotFoundException()
+                    val verificationResult = bcryptVerifyer.verify(
+                        userEditProfileDTO.currentPassword.toByteArray(),
+                        hashedCurrentPassword.toByteArray()
                     )
+                    currentPasswordError = if (!verificationResult.verified) "Incorrect password" else null
+                    hashedPassword =
+                        bcryptHasher.hashToString(
+                            BCRYPT_HASH_COST,
+                            userEditProfileDTO.newPassword.toCharArray()
+                        )
+                }
+            } else currentPasswordError = null
+            if (!userEditProfileDTO.newPassword.isNullOrEmpty() && userEditProfileDTO.currentPassword.isNullOrEmpty())
+                currentPasswordError = "Current password empty"
+            if (phoneNumberError != null ||
+                currentPasswordError != null ||
+                newPasswordError != null
+            ) {
+                return@withTransaction EditUserProfileResult.Error(
+                    userEditProfileDTO = userEditProfileDTO,
+                    phoneNumberError = phoneNumberError,
+                    currentPasswordError = currentPasswordError,
+                    newPasswordError = newPasswordError
+                )
             }
             if (!userRepository.editUserProfileByUUID(
                     userUUID = userUuid,
@@ -160,6 +219,19 @@ class UserService (
                     hashedPassword = hashedPassword
                 )
             ) throw UserNotFoundException()
+            sessionRepository.deleteOtherSessionsFromUser(
+                sessionUuid = sessionUuid,
+                userUuid = userUuid,
+            )
+            EditUserProfileResult.Success(
+                userPhoneNumber = userEditProfileDTO.phoneNumber.toString()
+            )
         }
     }
+
+    suspend fun getUserPhoneNumber(
+        userUuid: UUID
+    ) =
+        withTransaction { userRepository.getPhoneNumber(userUuid) ?: throw UserNotFoundException() }
+
 }

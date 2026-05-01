@@ -14,12 +14,14 @@ import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.repository.ZoneRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.GroupService
 import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
+import com.libreguardia.service.ZoneService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlin.time.Clock
@@ -43,6 +45,7 @@ fun Application.main() {
     val academicYearRepository = AcademicYearRepository()
     val groupRepository = GroupRepository()
     val professionalFamilyRepository = ProfessionalFamilyRepository()
+    val zoneRepository = ZoneRepository()
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
     val clock = Clock.System
@@ -67,8 +70,8 @@ fun Application.main() {
     val academicYearService = AcademicYearService(
         repository = academicYearRepository
     )
-    val professionalFamilyService = ProfessionalFamilyService(
-        repository = professionalFamilyRepository
+    val zoneService = ZoneService(
+        repository = zoneRepository
     )
     val groupService = GroupService(
         repository = groupRepository
@@ -99,5 +102,6 @@ fun Application.main() {
         groupService = groupService,
         professionalFamilyService = professionalFamilyService,
         userService = userService,
+        zoneService = zoneService
     )
 }
