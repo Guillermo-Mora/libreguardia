@@ -7,6 +7,8 @@ import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.AcademicYearRepository
+import com.libreguardia.repository.GroupRepository
+import com.libreguardia.repository.ProfessionalFamilyRepository
 import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
@@ -16,6 +18,8 @@ import com.libreguardia.repository.ZoneRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.GroupService
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import com.libreguardia.service.ZoneService
 import io.ktor.server.application.*
@@ -39,6 +43,8 @@ fun Application.main() {
 
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
+    val groupRepository = GroupRepository()
+    val professionalFamilyRepository = ProfessionalFamilyRepository()
     val zoneRepository = ZoneRepository()
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
@@ -67,6 +73,9 @@ fun Application.main() {
     val zoneService = ZoneService(
         repository = zoneRepository
     )
+    val groupService = GroupService(
+        repository = groupRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -90,6 +99,8 @@ fun Application.main() {
     configureRouting(
         authService = authService,
         academicYearService = academicYearService,
+        groupService = groupService,
+        professionalFamilyService = professionalFamilyService,
         userService = userService,
         zoneService = zoneService
     )
