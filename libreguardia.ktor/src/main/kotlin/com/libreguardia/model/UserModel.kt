@@ -4,6 +4,7 @@ import com.libreguardia.db.WeekDay
 import com.libreguardia.db.model.PlaceEntity
 import com.libreguardia.db.model.ScheduleEntity
 import com.libreguardia.db.model.UserEntity
+import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.util.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -20,6 +21,18 @@ data class UserModel(
     val isDeleted: Boolean,
     val role: String
 )
+
+fun UserModel.toUserEditDTO(): UserEditDTO =
+    UserEditDTO(
+        id = this.id,
+        name = this.name,
+        surname = this.surname,
+        email = this.email,
+        phoneNumber = this.phoneNumber,
+        password = "",
+        isEnabled = this.isEnabled,
+        role = this.role
+    )
 
 fun UserRepository.entityToModel(
     entity: UserEntity
