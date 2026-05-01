@@ -5,6 +5,7 @@ import com.libreguardia.validation.modules.authValidation
 import com.libreguardia.validation.modules.scheduleActivityValidation
 import com.libreguardia.validation.modules.placeTypeValidation
 import com.libreguardia.validation.modules.buildingValidation
+import com.libreguardia.validation.modules.courseValidation
 import com.libreguardia.validation.modules.groupValidation
 import com.libreguardia.validation.modules.userValidation
 import com.libreguardia.validation.modules.zoneValidation

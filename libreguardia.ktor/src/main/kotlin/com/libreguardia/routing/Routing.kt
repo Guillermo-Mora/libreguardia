@@ -30,13 +30,12 @@ fun Application.configureRouting(
     authService: AuthService,
     academicYearService: AcademicYearService,
     scheduleActivityService: ScheduleActivityService,
-    userService: UserService,
     placeTypeService: PlaceTypeService,
     buildingService: BuildingService,
     groupService: GroupService,
     zoneService: ZoneService,
     courseService: CourseService,
-    userService: UserService
+    userService: UserService,
 ) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     install(Resources)
