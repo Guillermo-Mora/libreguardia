@@ -3,9 +3,9 @@ package com.libreguardia.routing.modules
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.AcademicYearCreateDTO
-import com.libreguardia.dto.AcademicYearEditDTO
-import com.libreguardia.service.AcademicYearService
+import com.libreguardia.dto.ScheduleActivityCreateDTO
+import com.libreguardia.dto.ScheduleActivityEditDTO
+import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
@@ -18,46 +18,45 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.patch
 import io.ktor.server.resources.delete
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
-@Resource("/api/academic-year")
-class AcademicYearAPI {
-    @Serializable
-    @Resource("{uuid}")
-    class ByUUID(
-        val parent: AcademicYearAPI,
-        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-    ) {
-        @Serializable
-        @Resource("toggle-enabled")
-        class ToggleEnabled(val parent: ByUUID)
-    }
+@Resource("/api/schedule-activity")
+class ScheduleActivityAPI
+
+@Serializable
+@Resource("/api/schedule-activity/{uuid}")
+class ScheduleActivityByUUID(
+    @Serializable(with = UUIDSerializer::class) val uuid: UUID
+) {
+    @Resource("toggle-enabled")
+    class ToggleEnabled(val parent: ScheduleActivityByUUID)
 }
 
-fun Route.academicYearRouting(service: AcademicYearService) {
+fun Route.scheduleActivityRouting(service: ScheduleActivityService) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
-            get<AcademicYearAPI> {
+            get<ScheduleActivityAPI> {
                 call.respond(service.getAll())
             }
-            post<AcademicYearAPI> {
-                val dto = call.receive<AcademicYearCreateDTO>()
+            post<ScheduleActivityAPI> {
+                val dto = call.receive<ScheduleActivityCreateDTO>()
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<AcademicYearAPI.ByUUID> {
+            get<ScheduleActivityByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<AcademicYearAPI.ByUUID> {
-                val dto = call.receive<AcademicYearEditDTO>()
+            patch<ScheduleActivityByUUID> {
+                val dto = call.receive<ScheduleActivityEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<AcademicYearAPI.ByUUID> {
+            delete<ScheduleActivityByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<AcademicYearAPI.ByUUID.ToggleEnabled> {
+            patch<ScheduleActivityByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)
@@ -65,3 +64,4 @@ fun Route.academicYearRouting(service: AcademicYearService) {
         }
     }
 }
+

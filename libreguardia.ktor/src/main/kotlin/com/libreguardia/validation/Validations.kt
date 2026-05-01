@@ -57,7 +57,9 @@ fun validateRole(
 }
 fun validateRefreshToken(field: String) : String? =
     if (field.length != 32) "Invalid refresh token" else null
-fun validateAcademicYearDates(startDate: LocalDate, endDate: LocalDate): String? =
+fun validateDecimal(field: Double): String? =
+    if (field !in 0.0..9.9) "Invalid decimal value (must be between 0.0 and 9.9)" else null
+fun validateAcademicYearDates(startDate: kotlinx.datetime.LocalDate, endDate: kotlinx.datetime.LocalDate): String? =
     if (startDate > endDate) "Start date must be before end date" else null
 
 private fun validateRequired(

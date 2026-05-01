@@ -13,11 +13,14 @@ import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.repository.*
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.CourseService
 import com.libreguardia.service.UserService
+import com.libreguardia.service.*
+import com.libreguardia.validation.configureRequestValidation
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlin.time.Clock
@@ -36,10 +39,16 @@ fun Application.main() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
+    val scheduleActivityRepository = ScheduleActivityRepository()
 
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
     val courseRepository = CourseRepository()
+    val groupRepository = GroupRepository()
+    val zoneRepository = ZoneRepository()
+    val buildingRepository = BuildingRepository()
+    val placeTypeRepository = PlaceTypeRepository()
+
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
     val clock = Clock.System
@@ -63,6 +72,21 @@ fun Application.main() {
     )
     val academicYearService = AcademicYearService(
         repository = academicYearRepository
+    )
+    val scheduleActivityService = ScheduleActivityService(
+        repository = scheduleActivityRepository
+    )
+    val buildingService = BuildingService(
+        repository = buildingRepository
+    )
+    val placeTypeService = PlaceTypeService(
+        placeTypeRepository = placeTypeRepository
+    )
+    val zoneService = ZoneService(
+        repository = zoneRepository
+    )
+    val groupService = GroupService(
+        repository = groupRepository
     )
     val courseService = CourseService(
         repository = courseRepository
@@ -90,7 +114,12 @@ fun Application.main() {
     configureRouting(
         authService = authService,
         academicYearService = academicYearService,
+        buildingService = buildingService,
+        groupService = groupService,
+        scheduleActivityService = scheduleActivityService,
         courseService = courseService,
         userService = userService,
+        zoneService = zoneService,
+        placeTypeService = placeTypeService
     )
 }
