@@ -63,7 +63,9 @@ class UserService (
 
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
-    ) {
+    ): OperationResult {
+        val errors: List<String?> = userCreateDTO.validate()
+        if (errors.any { it != null }) return OperationResult.Error(errors)
         val hashedPassword = bcryptHasher.hashToString(
             BCRYPT_HASH_COST,
             userCreateDTO.password.toCharArray()
@@ -74,6 +76,7 @@ class UserService (
                 hashedPassword = hashedPassword
             )
         }
+        return OperationResult.Success()
     }
 
     suspend fun editUser(
