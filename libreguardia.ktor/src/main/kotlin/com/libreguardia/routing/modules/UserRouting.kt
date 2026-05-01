@@ -150,8 +150,10 @@ fun Route.userRouting(
                 userService.deleteUser(
                     userUuid = user.uuid
                 )
+                call.response.headers.append("HX-Redirect", "/user")
                 call.respond(HttpStatusCode.NoContent)
             }
+
             patch<UserAPI.UUID.ToggleEnabled> { user ->
                 val enableOrDisable = call.receive<Boolean>()
                 userService.toggleEnableUser(

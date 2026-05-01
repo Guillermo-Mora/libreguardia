@@ -7,7 +7,6 @@ import com.libreguardia.frontend.component.OperationType
 import com.libreguardia.frontend.component.SelectOption
 import com.libreguardia.frontend.component.TriggerType
 import com.libreguardia.frontend.component.customForm
-import com.libreguardia.model.UserModel
 import com.libreguardia.validation.ValidationType
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
@@ -25,7 +24,8 @@ fun FlowContent.userEdit(
         formName = "edit-user",
         previousPagePath = "/user",
         operationType = OperationType.Patch,
-        validationPath = "/user/${user.id}",
+        operationPath = "/user/${user.id}",
+        deletePath = "/user/${user.id}",
         errors = errors,
         formFieldsData = listOf(
             FormFieldData(
