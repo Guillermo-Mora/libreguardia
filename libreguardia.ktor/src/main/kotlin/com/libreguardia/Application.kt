@@ -8,6 +8,7 @@ import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.AcademicYearRepository
 import com.libreguardia.validation.configureRequestValidation
+import com.libreguardia.repository.ScheduleActivityRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
@@ -15,6 +16,7 @@ import com.libreguardia.repository.UserRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
@@ -34,6 +36,7 @@ fun Application.main() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
+    val scheduleActivityRepository = ScheduleActivityRepository()
 
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
@@ -61,6 +64,9 @@ fun Application.main() {
     val academicYearService = AcademicYearService(
         repository = academicYearRepository
     )
+    val scheduleActivityService = ScheduleActivityService(
+        repository = scheduleActivityRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -84,6 +90,7 @@ fun Application.main() {
     configureRouting(
         authService = authService,
         academicYearService = academicYearService,
+        scheduleActivityService = scheduleActivityService,
         userService = userService,
     )
 }
