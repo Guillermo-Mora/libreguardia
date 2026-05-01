@@ -42,8 +42,7 @@ class ConfigTest {
                     ServiceTable,
                     UserTable,
                     ZoneTable,
-                    AppSettingsTable,
-                    RefreshTokenTable
+                    AppSettingsTable
                 )
         }
         missingColStatements.forEach { println(it) }
