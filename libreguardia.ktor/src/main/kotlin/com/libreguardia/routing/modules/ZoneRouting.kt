@@ -21,13 +21,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Resource("/api/zone")
-class ZoneAPI
-
-@Serializable
-@Resource("/api/zone/{uuid}")
-class ZoneByUUID(
-    @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-)
+class ZoneAPI {
+    @Serializable
+    @Resource("{uuid}")
+    class ByUUID(
+        val parent: ZoneAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    )
+}
 
 fun Route.zoneRouting(service: ZoneService) {
     authenticate(AUTH_SESSION) {
@@ -40,12 +41,12 @@ fun Route.zoneRouting(service: ZoneService) {
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            patch<ZoneByUUID> {
+            patch<ZoneAPI.ByUUID> {
                 val dto = call.receive<ZoneEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<ZoneByUUID> {
+            delete<ZoneAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
