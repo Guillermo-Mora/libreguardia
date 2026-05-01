@@ -1,12 +1,12 @@
 package com.libreguardia.dto
 
-import com.libreguardia.db.model.ZoneEntity
+import com.libreguardia.db.model.PlaceTypeEntity
 import com.libreguardia.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Serializable
-data class ZoneResponseDTO(
+data class PlaceTypeResponseDTO(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val name: String,
@@ -14,16 +14,16 @@ data class ZoneResponseDTO(
 )
 
 @Serializable
-data class ZoneCreateDTO(
+data class PlaceTypeCreateDTO(
     val name: String
 )
 
 @Serializable
-data class ZoneEditDTO(
+data class PlaceTypeEditDTO(
     val name: String? = null
 )
 
-fun ZoneEntity.toResponseDTO() = ZoneResponseDTO(
+fun PlaceTypeEntity.toResponseDTO() = PlaceTypeResponseDTO(
     id = id.value,
     name = name,
     isEnabled = isEnabled

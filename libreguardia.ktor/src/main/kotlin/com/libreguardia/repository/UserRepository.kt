@@ -73,6 +73,7 @@ class UserRepository {
         userCreateDTO: UserCreateDTO,
         hashedPassword: String
     ) {
+        //I don't think this is a good way to do it. I will rework it in the future.
         UserTable.insert {
             it[name] = userCreateDTO.name
             it[surname] = userCreateDTO.surname

@@ -1,54 +1,44 @@
 package com.libreguardia.frontend.component.main
 
 import com.libreguardia.db.Role
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.frontend.component.FormFieldData
-import com.libreguardia.frontend.component.OperationType
-import com.libreguardia.frontend.component.SelectOption
-import com.libreguardia.frontend.component.TriggerType
-import com.libreguardia.frontend.component.customForm
+import com.libreguardia.dto.UserCreateDTO
+import com.libreguardia.frontend.component.*
 import com.libreguardia.validation.ValidationType
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
 
-fun FlowContent.userEdit(
-    user: UserEditDTO,
+fun FlowContent.userCreate(
+    user: UserCreateDTO = UserCreateDTO(),
     errors: List<String?>? = null
 ) {
-    //The errors list is used when the form is sent, so all has to be validated. This way, I can store errors in orders,
-    // putting String or null in each case and sending it to the customForm function. So I can track and send
-    // errors in a much more easy and straight up way.
-
-    //To add for validation of email: That the email being put is not being used by another user in the system.
     customForm(
-        formName = "edit-user",
+        formName = "create-user",
         previousPagePath = "/user",
-        operationType = OperationType.Patch,
-        operationPath = "/user/${user.id}",
-        deletePath = "/user/${user.id}",
+        operationType = OperationType.Post,
+        operationPath = "/user",
         errors = errors,
         formFieldsData = listOf(
             FormFieldData(
                 text = "name",
-                value = user.name.toString(),
+                value = user.name,
                 required = true,
                 inputType = InputType.text
             ),
             FormFieldData(
                 text = "surname",
-                value = user.surname.toString(),
+                value = user.surname,
                 required = true,
                 inputType = InputType.text
             ),
             FormFieldData(
                 text = "email",
-                value = user.email.toString(),
+                value = user.email,
                 required = true,
                 inputType = InputType.email
             ),
             FormFieldData(
                 text = "phone number",
-                value = user.phoneNumber.toString(),
+                value = user.phoneNumber,
                 required = true,
                 inputType = InputType.tel,
                 validationType = ValidationType.PhoneNumber,
@@ -56,8 +46,8 @@ fun FlowContent.userEdit(
             ),
             FormFieldData(
                 text = "new password",
-                value = user.password.toString(),
-                required = false,
+                value = user.password,
+                required = true,
                 inputType = InputType.password,
                 validationType = ValidationType.NewPassword,
                 triggerType = TriggerType.OnChange

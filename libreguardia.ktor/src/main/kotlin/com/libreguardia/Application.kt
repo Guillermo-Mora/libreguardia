@@ -7,17 +7,27 @@ import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.repository.AbsenceRepository
 import com.libreguardia.repository.AcademicYearRepository
+import com.libreguardia.repository.PlaceTypeRepository
+import com.libreguardia.repository.BuildingRepository
+import com.libreguardia.repository.GroupRepository
+import com.libreguardia.repository.ProfessionalFamilyRepository
 import com.libreguardia.validation.configureRequestValidation
 import com.libreguardia.repository.ScheduleActivityRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.repository.ZoneRepository
 import com.libreguardia.routing.configureRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.PlaceTypeService
+import com.libreguardia.service.BuildingService
+import com.libreguardia.service.GroupService
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.service.UserService
+import com.libreguardia.service.ZoneService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlin.time.Clock
@@ -40,6 +50,12 @@ fun Application.main() {
 
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
+    val groupRepository = GroupRepository()
+    val professionalFamilyRepository = ProfessionalFamilyRepository()
+    val zoneRepository = ZoneRepository()
+    val buildingRepository = BuildingRepository()
+    val placeTypeRepository = PlaceTypeRepository()
+
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
     val clock = Clock.System
@@ -67,6 +83,18 @@ fun Application.main() {
     val scheduleActivityService = ScheduleActivityService(
         repository = scheduleActivityRepository
     )
+    val buildingService = BuildingService(
+        repository = buildingRepository
+    )
+    val placeTypeService = PlaceTypeService(
+        placeTypeRepository = placeTypeRepository
+    )
+    val zoneService = ZoneService(
+        repository = zoneRepository
+    )
+    val groupService = GroupService(
+        repository = groupRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -90,7 +118,12 @@ fun Application.main() {
     configureRouting(
         authService = authService,
         academicYearService = academicYearService,
+        buildingService = buildingService,
+        groupService = groupService,
+        professionalFamilyService = professionalFamilyService,
         scheduleActivityService = scheduleActivityService,
         userService = userService,
+        zoneService = zoneService,
+        placeTypeService = placeTypeService
     )
 }

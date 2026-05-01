@@ -9,10 +9,12 @@ import com.libreguardia.dto.EditUserProfileResult
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.toModel
+import com.libreguardia.dto.toUserCreateDTO
 import com.libreguardia.dto.toUserEditDTO
 import com.libreguardia.dto.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.frontend.component.main.phoneNumberAndPassword
+import com.libreguardia.frontend.component.main.userCreate
 import com.libreguardia.frontend.component.main.userEdit
 import com.libreguardia.frontend.component.main.userProfile
 import com.libreguardia.frontend.component.main.usersList
@@ -38,6 +40,9 @@ import kotlinx.serialization.Serializable
 
 @Resource("/user")
 class UserAPI {
+    @Resource("new")
+    class New(val parent: UserAPI = UserAPI())
+
     @Resource("profile")
     class Profile(val parent: UserAPI = UserAPI()) {
         @Resource("edit")
@@ -113,12 +118,32 @@ fun Route.userRouting(
                     }
                 )
             }
-            post<UserAPI> {
-                val user = call.receive<UserCreateDTO>()
-                userService.createUser(
-                    userCreateDTO = user
+            get<UserAPI.New> {
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
+                respondHtmlPage(
+                    role = userRole,
+                    content = { userCreate() }
                 )
-                call.respond(HttpStatusCode.Created)
+            }
+            post<UserAPI> {
+                val userCreate = call.receiveParameters().toUserCreateDTO()
+                val operationResult = userService.createUser(
+                    userCreateDTO = userCreate
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        call.respondHtmlFragment {
+                            userCreate(
+                                user = userCreate,
+                                errors = operationResult.errors
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append("HX-Redirect", "/user")
+                    }
+                }
             }
 
             patch<UserAPI.UUID> { user ->
@@ -127,31 +152,34 @@ fun Route.userRouting(
                     userUuid = user.uuid,
                     userEditDTO = userEdit
                 )
-                call.respondHtmlFragment {
-                    when (operationResult) {
-                        is OperationResult.Error -> {
-                            userEdit.id = user.uuid
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        userEdit.id = user.uuid
+                        call.respondHtmlFragment {
                             userEdit(
                                 user = userEdit,
                                 errors = operationResult.errors
                             )
                         }
+                    }
 
-                        is OperationResult.Success -> {
-                            //I would prefer to only return the htmx fragment and replace it, but I don't
-                            // know if that could be convenient in this case.
-                            call.response.headers.append("HX-Redirect", "/user")
-                        }
+                    is OperationResult.Success -> {
+                        //I would prefer to only return the htmx fragment and replace it, but I don't
+                        // know if that could be convenient in this case.
+                        call.response.headers.append("HX-Redirect", "/user")
                     }
                 }
+
             }
 
             delete<UserAPI.UUID> { user ->
                 userService.deleteUser(
                     userUuid = user.uuid
                 )
+                call.response.headers.append("HX-Redirect", "/user")
                 call.respond(HttpStatusCode.NoContent)
             }
+
             patch<UserAPI.UUID.ToggleEnabled> { user ->
                 val enableOrDisable = call.receive<Boolean>()
                 userService.toggleEnableUser(

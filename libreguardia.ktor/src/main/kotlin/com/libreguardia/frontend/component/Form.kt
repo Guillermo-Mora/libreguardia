@@ -3,6 +3,7 @@ package com.libreguardia.frontend.component
 import com.libreguardia.validation.ValidationType
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
+import kotlinx.css.button
 import kotlinx.html.ButtonType
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
@@ -20,7 +21,8 @@ import kotlinx.html.span
 fun FlowContent.customForm(
     formName: String,
     previousPagePath: String,
-    validationPath: String,
+    operationPath: String,
+    deletePath: String? = null,
     operationType: OperationType,
     errors: List<String?>? = null,
     formFieldsData: List<FormFieldData>
@@ -32,11 +34,11 @@ fun FlowContent.customForm(
         form {
             attributes.hx {
                 when (operationType) {
-                    OperationType.Put -> put = validationPath
-                    OperationType.Post -> post = validationPath
-                    OperationType.Patch -> patch = validationPath
-                    OperationType.Delete -> delete = validationPath
-                    OperationType.Get -> get = validationPath
+                    OperationType.Put -> put = operationPath
+                    OperationType.Post -> post = operationPath
+                    OperationType.Patch -> patch = operationPath
+                    OperationType.Delete -> delete = operationPath
+                    OperationType.Get -> get = operationPath
                 }
                 target = formTarget
                 swap = "outerHTML"
@@ -59,6 +61,15 @@ fun FlowContent.customForm(
                     swap = "innerHTML"
                 }
                 text("Cancel")
+            }
+            deletePath?.let {
+                button {
+                    attributes.hx {
+                        trigger = "click"
+                        delete = deletePath
+                    }
+                    text("Delete")
+                }
             }
         }
     }

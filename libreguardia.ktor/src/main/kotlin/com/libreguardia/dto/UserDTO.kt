@@ -13,15 +13,14 @@ import java.util.UUID
 
 @Serializable
 data class UserCreateDTO(
-    val name: String,
-    val surname: String,
-    val email: String,
-    val phoneNumber: String,
-    val password: String,
-    val isEnabled: Boolean,
-    val role: String
+    val name: String = "",
+    val surname: String = "",
+    val email: String = "",
+    val phoneNumber: String = "",
+    val password: String = "",
+    val isEnabled: Boolean = true,
+    val role: String = ""
 )
-
 
 //I keep it as Serializable for testing purposes
 @Serializable
@@ -44,6 +43,19 @@ fun UserEditDTO.validate(): List<String?> {
     errors.add(validateEmail(this.email, true))
     errors.add(validatePhoneNumber(this.phoneNumber, true))
     errors.add(validateNewPassword(this.password, false))
+    errors.add(validateRole(this.role, true))
+    //For the enabled/disabled check box
+    errors.add(null)
+    return errors
+}
+
+fun UserCreateDTO.validate(): List<String?> {
+    val errors = mutableListOf<String?>()
+    errors.add(validateRequired(this.name))
+    errors.add(validateRequired(this.surname))
+    errors.add(validateEmail(this.email, true))
+    errors.add(validatePhoneNumber(this.phoneNumber, true))
+    errors.add(validateNewPassword(this.password, true))
     errors.add(validateRole(this.role, true))
     //For the enabled/disabled check box
     errors.add(null)
@@ -79,6 +91,17 @@ fun Parameters.toUserEditDTO() =
         password = this["newpassword"],
         isEnabled = this["enabled"].let { it == "checked" },
         role = this["role"]?.uppercase()
+    )
+
+fun Parameters.toUserCreateDTO() =
+    UserCreateDTO(
+        name = this["name"] ?: "",
+        surname = this["surname"] ?: "",
+        email = this["email"] ?: "",
+        phoneNumber = this["phonenumber"] ?: "",
+        password = this["newpassword"] ?: "",
+        isEnabled = this["enabled"].let { it == "checked" },
+        role = this["role"]?.uppercase() ?: ""
     )
 
 fun Parameters.toUserEditProfileDTO() =
