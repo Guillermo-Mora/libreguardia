@@ -8,7 +8,6 @@ import com.libreguardia.routing.modules.entryRouting
 import com.libreguardia.routing.modules.scheduleActivityRouting
 import com.libreguardia.routing.modules.placeTypeRouting
 import com.libreguardia.routing.modules.groupRouting
-import com.libreguardia.routing.modules.professionalFamilyRouting
 import com.libreguardia.routing.modules.userRouting
 import com.libreguardia.routing.modules.zoneRouting
 import com.libreguardia.routing.modules.validationRouting
@@ -18,7 +17,6 @@ import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.BuildingService
 import com.libreguardia.service.GroupService
-import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import com.libreguardia.service.ZoneService
 import io.ktor.server.application.*
@@ -34,9 +32,6 @@ fun Application.configureRouting(
     placeTypeService: PlaceTypeService,
     buildingService: BuildingService,
     groupService: GroupService,
-    professionalFamilyService: ProfessionalFamilyService,
-    userService: UserService,
-    userService: UserService,
     zoneService: ZoneService
 ) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
@@ -53,7 +48,6 @@ fun Application.configureRouting(
         academicYearRouting(service = academicYearService)
         scheduleActivityRouting(service = scheduleActivityService)
         groupRouting(service = groupService)
-        professionalFamilyRouting(service = professionalFamilyService)
         zoneRouting(service = zoneService)
         buildingRouting(service = buildingService)
         placeTypeRouting(service = placeTypeService)
