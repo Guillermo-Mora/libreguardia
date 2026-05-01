@@ -9,6 +9,7 @@ import com.libreguardia.db.Role
 import com.libreguardia.exception.InvalidCredentialsException
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.service.AuthService
+import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.receive
@@ -38,7 +39,8 @@ fun Route.authRouting(
                 call.principal<UserIdPrincipal>()?.name ?: throw InvalidCredentialsException()
             val userSession = authService.saveSession(userEmail = userEmail)
             call.sessions.set(userSession)
-            call.respondRedirect("/")
+            call.response.headers.append("HX-Redirect", "/")
+            call.respond(HttpStatusCode.OK)
         }
     }
     authenticate(AUTH_SESSION) {

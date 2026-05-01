@@ -23,7 +23,16 @@ import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
 class UserRepository {
-    fun getAll(): List<UserModel> = UserEntity.all().map(::entityToModel)
+    fun getAll(): List<UserModel> =
+        UserEntity
+            .find { UserTable.isDeleted eq false }
+            .map(::entityToModel)
+
+    fun getAllEnabled(): List<UserModel> =
+        UserEntity
+            .find { UserTable.isEnabled eq true }
+            .map(::entityToModel)
+
     fun getByUUID(
         uuid: UUID
     ): UserModel? {
@@ -64,6 +73,7 @@ class UserRepository {
         userCreateDTO: UserCreateDTO,
         hashedPassword: String
     ) {
+        //I don't think this is a good way to do it. I will rework it in the future.
         UserTable.insert {
             it[name] = userCreateDTO.name
             it[surname] = userCreateDTO.surname
@@ -147,4 +157,14 @@ class UserRepository {
             .map { it[UserTable.id].value }
             .firstOrNull()
     }
+
+    fun getPhoneNumber(
+        userUuid: UUID
+    ): String? =
+        UserTable
+            .select(UserTable.phoneNumber)
+            .where { UserTable.id eq userUuid }
+            .limit(1)
+            .map { it[UserTable.phoneNumber] }
+            .firstOrNull()
 }
