@@ -1,8 +1,13 @@
 package com.libreguardia.dto
 
 import com.libreguardia.db.model.UserEntity
+import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.repository.UserRepository
+import com.libreguardia.validation.validatePhoneNumber
+import io.ktor.http.Parameters
+import io.ktor.http.parameters
 import kotlinx.serialization.Serializable
+import java.lang.reflect.Parameter
 
 @Serializable
 data class UserCreateDTO(
@@ -26,9 +31,26 @@ data class UserEditDTO(
     val role: String? = null
 )
 
-@Serializable
 data class UserEditProfileDTO(
-    val phoneNumber: String? = null,
-    val currentPassword: String? = null,
-    val newPassword: String? = null,
+    val phoneNumber: String?,
+    val currentPassword: String?,
+    val newPassword: String?,
 )
+
+fun Parameters.toUserEditProfileDTO() =
+    UserEditProfileDTO(
+        phoneNumber = this["phoneNumber"],
+        currentPassword = this["currentPassword"],
+        newPassword = this["newPassword"]
+    )
+
+sealed class EditProfileResult {
+    data class Success(val userPhoneNumber: String) : EditProfileResult()
+
+    data class Error(
+        val userEditProfileDTO: UserEditProfileDTO,
+        val phoneNumberError: String?,
+        val currentPasswordError: String?,
+        val newPasswordError: String?
+    ) : EditProfileResult()
+}

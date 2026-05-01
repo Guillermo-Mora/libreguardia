@@ -5,6 +5,7 @@ import com.libreguardia.routing.modules.academicYearRouting
 import com.libreguardia.routing.modules.authRouting
 import com.libreguardia.routing.modules.entryRouting
 import com.libreguardia.routing.modules.userRouting
+import com.libreguardia.routing.modules.validationRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.UserService
@@ -20,6 +21,7 @@ fun Application.configureRouting(
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     install(Resources)
     routing {
+        validationRouting()
         entryRouting()
         authRouting(
             authService = authService
