@@ -2,15 +2,17 @@ package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.BCRYPT_HASH_COST
-import com.libreguardia.dto.EditProfileResult
+import com.libreguardia.dto.EditUserProfileResult
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.dto.UserEditProfileDTO
+import com.libreguardia.dto.validate
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.model.UserModel
 import com.libreguardia.model.UserProfileModel
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
+import com.libreguardia.validation.OperationResult
 import com.libreguardia.validation.validateNewPassword
 import com.libreguardia.validation.validatePhoneNumber
 import kotlinx.datetime.LocalDateTime
@@ -77,16 +79,22 @@ class UserService (
     suspend fun editUser(
         userUuid: UUID,
         userEditDTO: UserEditDTO
-    ) {
+    ): OperationResult {
+        val errors: List<String?> = userEditDTO.validate()
+        if (errors.any { it != null }) return OperationResult.Error(errors)
         val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val hashedPassword = userEditDTO.password?.let { newPassword ->
+        val hashedPassword = if (!userEditDTO.password.isNullOrBlank()) {
             bcryptHasher.hashToString(
                 BCRYPT_HASH_COST,
-                newPassword.toCharArray()
+                userEditDTO.password.toCharArray()
             )
-        }
-        val shouldCloseSessions = userEditDTO.isEnabled == false || userEditDTO.role != null
+        } else null
+        userEditDTO.isEnabled == false || userEditDTO.role != null
         withTransaction {
+            //It would be better to only get the role, using Exposed DSL, but for now it stays like this.
+            val user = userRepository.getEntity(uuid = userUuid)
+            val shouldCloseSessions = hashedPassword != null || userEditDTO.role != user?.role.toString()
+            //
             if (!userRepository.editByUUID(
                     userUUID = userUuid,
                     userEditDTO = userEditDTO,
@@ -101,6 +109,7 @@ class UserService (
             }
             if (shouldCloseSessions) sessionRepository.deleteSessionsFromUser(userUuid = userUuid)
         }
+        return OperationResult.Success()
     }
 
     suspend fun deleteUser(
@@ -158,7 +167,7 @@ class UserService (
         userUuid: UUID,
         sessionUuid: UUID,
         userEditProfileDTO: UserEditProfileDTO
-    ): EditProfileResult {
+    ): EditUserProfileResult {
         val phoneNumberError = validatePhoneNumber(userEditProfileDTO.phoneNumber, true)
         var currentPasswordError: String? = "Incorrect password"
         var newPasswordError = validateNewPassword(
@@ -194,7 +203,7 @@ class UserService (
                 currentPasswordError != null ||
                 newPasswordError != null
             ) {
-                return@withTransaction EditProfileResult.Error(
+                return@withTransaction EditUserProfileResult.Error(
                     userEditProfileDTO = userEditProfileDTO,
                     phoneNumberError = phoneNumberError,
                     currentPasswordError = currentPasswordError,
@@ -211,7 +220,7 @@ class UserService (
                 sessionUuid = sessionUuid,
                 userUuid = userUuid,
             )
-            EditProfileResult.Success(
+            EditUserProfileResult.Success(
                 userPhoneNumber = userEditProfileDTO.phoneNumber.toString()
             )
         }

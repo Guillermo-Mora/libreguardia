@@ -20,6 +20,9 @@ import kotlinx.html.span
 fun FlowContent.customForm(
     formName: String,
     previousPagePath: String,
+    validationPath: String,
+    operationType: OperationType,
+    errors: List<String?>? = null,
     formFieldsData: List<FormFieldData>
 ) {
     val formId = formName.lowercase().replace(" ", "")
@@ -28,13 +31,21 @@ fun FlowContent.customForm(
         id = formId
         form {
             attributes.hx {
+                when (operationType) {
+                    OperationType.Put -> put = validationPath
+                    OperationType.Post -> post = validationPath
+                    OperationType.Patch -> patch = validationPath
+                    OperationType.Delete -> delete = validationPath
+                    OperationType.Get -> get = validationPath
+                }
                 target = formTarget
                 swap = "outerHTML"
                 validate = true
             }
-            for (formFieldData in formFieldsData)
+            for ((i, formFieldData) in formFieldsData.withIndex())
                 customField(
-                    data = formFieldData
+                    data = formFieldData,
+                    error = errors?.get(i)
                 )
             button {
                 type = ButtonType.submit
@@ -55,7 +66,8 @@ fun FlowContent.customForm(
 
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.customField(
-    data: FormFieldData
+    data: FormFieldData,
+    error: String?
 ) {
     div {
         label {
@@ -92,6 +104,7 @@ fun FlowContent.customField(
                             // custom validations required before sending, so I can validate more fields
                             // with a relation in a single action automatically.
                             include = "#${data.inputId}"
+
                             //This works to filer the data sent, but only if the request is a POST
                             //params = data.inputId
 
@@ -119,7 +132,7 @@ fun FlowContent.customField(
             }
             span {
                 id = data.id
-                data.error?.let { text(it) }
+                error?.let { text(it) }
             }
         }
     }
@@ -128,7 +141,6 @@ data class FormFieldData(
     //First letter of the "text" should be lowercase
     val text: String,
     //
-    val error: String? = null,
     val value: String = "",
     val checkedValue: Boolean? = null,
     val required: Boolean = true,
@@ -147,6 +159,14 @@ data class FormFieldData(
 
 enum class TriggerType(val value: String) {
     OnChange("input changed delay:600ms")
+}
+
+enum class OperationType() {
+    Get,
+    Post,
+    Put,
+    Patch,
+    Delete
 }
 
 data class SelectOption(

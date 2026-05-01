@@ -5,9 +5,11 @@ import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.UserSession
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.EditProfileResult
+import com.libreguardia.dto.EditUserProfileResult
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.toModel
+import com.libreguardia.dto.toUserEditDTO
 import com.libreguardia.dto.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.frontend.component.main.phoneNumberAndPassword
@@ -15,10 +17,11 @@ import com.libreguardia.frontend.component.main.userEdit
 import com.libreguardia.frontend.component.main.userProfile
 import com.libreguardia.frontend.component.main.usersList
 import com.libreguardia.frontend.component.userProfileEdit
-import com.libreguardia.frontend.page.mainPage
+import com.libreguardia.model.toUserEditDTO
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.UserService
 import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.validation.OperationResult
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.auth.*
@@ -27,10 +30,8 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.RoutingContext
 import io.ktor.server.sessions.get
 import io.ktor.server.sessions.sessions
-import kotlinx.html.FlowContent
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.serialization.Serializable
@@ -63,6 +64,8 @@ fun Route.userRouting(
     userService: UserService
 ) {
     //TEMPORARY OUT HERE FOR TESTING
+
+    /*
     patch<UserAPI.UUID> { user ->
         val userEdit = call.receive<UserEditDTO>()
         userService.editUser(
@@ -71,6 +74,10 @@ fun Route.userRouting(
         )
         call.respond(HttpStatusCode.OK)
     }
+
+     */
+
+
 
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
@@ -84,7 +91,7 @@ fun Route.userRouting(
                     role = userRole,
                     content = {
                         userEdit(
-                            user = user
+                            user = user.toUserEditDTO()
                         )
                     }
                 )
@@ -113,16 +120,32 @@ fun Route.userRouting(
                 )
                 call.respond(HttpStatusCode.Created)
             }
-            /*
+
             patch<UserAPI.UUID> { user ->
-                val userEdit = call.receive<UserEditDTO>()
-                userService.editUser(
+                val userEdit = call.receiveParameters().toUserEditDTO()
+                val operationResult = userService.editUser(
                     userUuid = user.uuid,
                     userEditDTO = userEdit
                 )
-                call.respond(HttpStatusCode.OK)
+                call.respondHtmlFragment {
+                    when (operationResult) {
+                        is OperationResult.Error -> {
+                            userEdit.id = user.uuid
+                            userEdit(
+                                user = userEdit,
+                                errors = operationResult.errors
+                            )
+                        }
+
+                        is OperationResult.Success -> {
+                            //I would prefer to only return the htmx fragment and replace it, but I don't
+                            // know if that could be convenient in this case.
+                            call.response.headers.append("HX-Redirect", "/user")
+                        }
+                    }
+                }
             }
-             */
+
             delete<UserAPI.UUID> { user ->
                 userService.deleteUser(
                     userUuid = user.uuid
@@ -185,7 +208,7 @@ fun Route.userRouting(
                 )
                 call.respondHtmlFragment {
                     when (result) {
-                        is EditProfileResult.Success -> {
+                        is EditUserProfileResult.Success -> {
                             div {
                                 id = "editable-fields"
                                 phoneNumberAndPassword(
@@ -194,7 +217,7 @@ fun Route.userRouting(
                             }
                         }
 
-                        is EditProfileResult.Error -> {
+                        is EditUserProfileResult.Error -> {
                             userProfileEdit(
                                 phoneNumber = result.userEditProfileDTO.phoneNumber.toString(),
                                 currentPassword = result.userEditProfileDTO.currentPassword.toString(),

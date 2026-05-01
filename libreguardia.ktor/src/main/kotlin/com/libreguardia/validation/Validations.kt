@@ -13,7 +13,7 @@ fun validateNewPassword(
     field: String?,
     required: Boolean
 ): String? {
-    validateRequired(field, required).let { if (it != CONTINUE) return it }
+    validateRequired(field, required = required).let { if (it != CONTINUE) return it }
     val notNullField = field.toString()
     if (notNullField.length !in 8..50) return "Length should be between 8-50"
     return null
@@ -27,20 +27,34 @@ fun validateNewPassword(
     else validatePassword(newPassword)
 
  */
-fun validateEmail(field: String): String? =
+fun validateEmail(
+    field: String?,
+    required: Boolean
+): String? {
+    validateRequired(field, required = required).let { if (it != CONTINUE) return it }
+    val notNullField = field.toString()
     if (!Regex("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$")
-        .matches(field)) "Invalid email format" else null
+            .matches(notNullField)
+    ) return "Invalid email format"
+    return null
+}
 fun validatePhoneNumber(
     field: String?,
     required: Boolean
 ): String? {
-    validateRequired(field, required).let { if (it != CONTINUE) return it }
+    validateRequired(field, required =required).let { if (it != CONTINUE) return it }
     val notNullField = field.toString()
     if (!Regex("^[0-9]{1,20}$").matches(notNullField)) return "Invalid phone number format"
     return null
 }
-fun validateRole(field: String): String? =
-    if (Role.entries.firstOrNull { it.name == field } == null) "Invalid role" else null
+fun validateRole(
+    field: String?,
+    required: Boolean
+): String? {
+    validateRequired(field, required = required).let { if (it != CONTINUE) return it }
+    if (Role.entries.firstOrNull { it.name == field } == null) return "Invalid role"
+    return null
+}
 fun validateRefreshToken(field: String) : String? =
     if (field.length != 32) "Invalid refresh token" else null
 fun validateAcademicYearDates(startDate: LocalDate, endDate: LocalDate): String? =
@@ -48,9 +62,26 @@ fun validateAcademicYearDates(startDate: LocalDate, endDate: LocalDate): String?
 
 private fun validateRequired(
     field: String?,
-    required: Boolean
+    required: Boolean,
+    blankValidation: Boolean = true
 ): String? {
-    if (required && field.isNullOrEmpty()) return "Field required"
-    if (!required && field.isNullOrEmpty()) return null
+    if (blankValidation) {
+        if (required && field.isNullOrBlank()) return "Field required"
+        if (!required && field.isNullOrBlank()) return null
+    } else {
+        if (required && field.isNullOrEmpty()) return "Field required"
+        if (!required && field.isNullOrEmpty()) return null
+    }
     return CONTINUE
+}
+
+fun validateRequired(
+    field: String?,
+    blankValidation: Boolean = true
+): String? {
+    if (blankValidation) {
+        if (field.isNullOrBlank()) return "Field required"
+    } else
+        if (field.isNullOrEmpty()) return "Field required"
+    return null
 }
