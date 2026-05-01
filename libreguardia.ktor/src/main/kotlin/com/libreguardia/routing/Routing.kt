@@ -4,9 +4,11 @@ package com.libreguardia.routing
 import com.libreguardia.routing.modules.academicYearRouting
 import com.libreguardia.routing.modules.authRouting
 import com.libreguardia.routing.modules.entryRouting
+import com.libreguardia.routing.modules.placeTypeRouting
 import com.libreguardia.routing.modules.userRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.http.content.staticResources
@@ -15,7 +17,8 @@ import io.ktor.server.routing.*
 fun Application.configureRouting(
     authService: AuthService,
     academicYearService: AcademicYearService,
-    userService: UserService
+    userService: UserService,
+    placeTypeService: PlaceTypeService
 ) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     install(Resources)
@@ -28,6 +31,7 @@ fun Application.configureRouting(
             userService = userService
         )
         academicYearRouting(service = academicYearService)
+        placeTypeRouting(service = placeTypeService)
         staticResources("/static", "static")
     }
 }
