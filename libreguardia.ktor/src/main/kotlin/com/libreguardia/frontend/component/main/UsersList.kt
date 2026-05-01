@@ -9,6 +9,16 @@ import kotlinx.html.*
 fun FlowContent.usersList(
     users: List<UserModel>
 ) {
+    button {
+        attributes.hx {
+            get = "/user/new"
+            replaceUrl = "true"
+            pushUrl = "true"
+            target = "#main-content"
+            swap = "innerHTML"
+        }
+        text("New")
+    }
     table("schedule-table") {
         tr {
             th {
