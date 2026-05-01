@@ -70,10 +70,10 @@ fun Application.configureStatusPages() {
                 message = ErrorCode.ACADEMIC_YEAR_NOT_FOUND
             )
         }
-        exception<ProfessionalFamilyNotFoundException> { call, _ ->
+        exception<ZoneNotFoundException> { call, _ ->
             call.respond(
                 status = HttpStatusCode.NotFound,
-                message = ErrorCode.PROFESSIONAL_FAMILY_NOT_FOUND
+                message = ErrorCode.ZONE_NOT_FOUND
             )
         }
         //TEMPORARY FOR DEBUGGING

@@ -1,6 +1,10 @@
 package com.libreguardia.model
 
+import com.libreguardia.db.WeekDay
+import com.libreguardia.db.model.PlaceEntity
+import com.libreguardia.db.model.ScheduleEntity
 import com.libreguardia.db.model.UserEntity
+import com.libreguardia.dto.UserEditDTO
 import com.libreguardia.repository.UserRepository
 import com.libreguardia.util.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -18,6 +22,18 @@ data class UserModel(
     val role: String
 )
 
+fun UserModel.toUserEditDTO(): UserEditDTO =
+    UserEditDTO(
+        id = this.id,
+        name = this.name,
+        surname = this.surname,
+        email = this.email,
+        phoneNumber = this.phoneNumber,
+        password = "",
+        isEnabled = this.isEnabled,
+        role = this.role
+    )
+
 fun UserRepository.entityToModel(
     entity: UserEntity
 ) = UserModel(
@@ -32,21 +48,56 @@ fun UserRepository.entityToModel(
 )
 
 data class UserProfileModel(
-    val name: String,
-    val surname: String,
+    val fullName: String,
     val email: String,
     val phoneNumber: String,
-    val role: String
-    //SCHEDULE HERE STILL TO IMPLEMENT
+    val role: String,
+    val schedules: WeeklySchedules
 )
 
 fun UserRepository.entityToProfileModel(
     entity: UserEntity
 ) = UserProfileModel(
-    name = entity.name,
-    surname = entity.surname,
+    fullName = "${entity.name} ${entity.surname}",
     email = entity.email,
     phoneNumber = entity.phoneNumber,
-    role = entity.role.toString()
+    role = entity.role.toString(),
+    schedules = scheduleModelsToScheduleTable(entity.schedules.map { scheduleEntityToModel(it) })
 )
 
+private fun scheduleEntityToModel(
+    entity: ScheduleEntity
+) = ScheduleModel(
+    weekDay = entity.weekDay,
+    startTime = entity.startTime,
+    endTime = entity.endTime,
+    groupName = entity.group?.let { group -> "${group.course.name} ${group.code}" },
+    activity = entity.scheduleActivity.name,
+    //Have to replace this by a PlaceModel
+    place = placeEntityToModel(entity.place)
+)
+
+private fun placeEntityToModel(
+    placeEntity: PlaceEntity
+) = PlaceModel(
+    fullName = "${placeEntity.placeType.name} ${placeEntity.name}",
+    building = placeEntity.building?.name,
+    floor = placeEntity.floor
+)
+
+private fun scheduleModelsToScheduleTable(
+    scheduleModels: List<ScheduleModel>
+): WeeklySchedules {
+    val groupedSchedules = scheduleModels
+        .sortedBy { it.startTime }
+        .groupBy { it.weekDay }
+    return WeeklySchedules(
+        monday = groupedSchedules[WeekDay.MONDAY] ?: emptyList(),
+        tuesday = groupedSchedules[WeekDay.TUESDAY] ?: emptyList(),
+        wednesday = groupedSchedules[WeekDay.WEDNESDAY] ?: emptyList(),
+        thursday = groupedSchedules[WeekDay.THURSDAY] ?: emptyList(),
+        friday = groupedSchedules[WeekDay.FRIDAY] ?: emptyList(),
+        saturday = groupedSchedules[WeekDay.SATURDAY] ?: emptyList(),
+        sunday = groupedSchedules[WeekDay.SUNDAY] ?: emptyList()
+    )
+}
