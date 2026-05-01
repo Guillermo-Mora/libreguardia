@@ -50,7 +50,6 @@ fun Application.configureStatusPages() {
                     status = HttpStatusCode.Conflict,
                     message = ErrorCode.DUPLICATED_UNIQUE_FIELD
                 )
-
                 else -> call.respond(
                     //TEMPORARY FOR DEBUGGING
                     status = HttpStatusCode.InternalServerError,
@@ -60,14 +59,20 @@ fun Application.configureStatusPages() {
             }
         }
         exception<InsufficientPermissionsException> { call, _ ->
-           call.respondHtml {
-               errorPage(ErrorCode.INSUFFICIENT_PERMISSIONS)
-           }
+            call.respondHtml {
+                errorPage(ErrorCode.INSUFFICIENT_PERMISSIONS)
+            }
         }
         exception<AcademicYearNotFoundException> { call, _ ->
             call.respond(
                 status = HttpStatusCode.NotFound,
                 message = ErrorCode.ACADEMIC_YEAR_NOT_FOUND
+            )
+        }
+        exception<PlaceTypeNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.PLACE_TYPE_NOT_FOUND
             )
         }
         //TEMPORARY FOR DEBUGGING
