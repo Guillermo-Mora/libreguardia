@@ -3,9 +3,9 @@ package com.libreguardia.routing.modules
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.AcademicYearCreateDTO
-import com.libreguardia.dto.AcademicYearEditDTO
-import com.libreguardia.service.AcademicYearService
+import com.libreguardia.dto.GroupCreateDTO
+import com.libreguardia.dto.GroupEditDTO
+import com.libreguardia.service.GroupService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
@@ -18,46 +18,46 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.patch
 import io.ktor.server.resources.delete
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
-@Resource("/api/academic-year")
-class AcademicYearAPI {
+@Resource("/api/group")
+class GroupAPI {
     @Serializable
     @Resource("{uuid}")
     class ByUUID(
-        val parent: AcademicYearAPI,
-        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+        val parent: GroupAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: UUID
     ) {
-        @Serializable
         @Resource("toggle-enabled")
         class ToggleEnabled(val parent: ByUUID)
     }
 }
 
-fun Route.academicYearRouting(service: AcademicYearService) {
+fun Route.groupRouting(service: GroupService) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
-            get<AcademicYearAPI> {
+            get<GroupAPI> {
                 call.respond(service.getAll())
             }
-            post<AcademicYearAPI> {
-                val dto = call.receive<AcademicYearCreateDTO>()
+            post<GroupAPI> {
+                val dto = call.receive<GroupCreateDTO>()
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<AcademicYearAPI.ByUUID> {
+            get<GroupAPI.ByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<AcademicYearAPI.ByUUID> {
-                val dto = call.receive<AcademicYearEditDTO>()
+            patch<GroupAPI.ByUUID> {
+                val dto = call.receive<GroupEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<AcademicYearAPI.ByUUID> {
+            delete<GroupAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<AcademicYearAPI.ByUUID.ToggleEnabled> {
+            patch<GroupAPI.ByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)

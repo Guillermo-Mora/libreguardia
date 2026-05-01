@@ -76,6 +76,12 @@ fun Application.configureStatusPages() {
                 message = ErrorCode.BUILDING_NOT_FOUND
             )
         }
+        exception<ZoneNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.ZONE_NOT_FOUND
+            )
+        }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
             call.respond(

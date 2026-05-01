@@ -1,16 +1,15 @@
 package com.libreguardia.repository
 
-import com.libreguardia.db.model.GroupTable
-import com.libreguardia.db.model.ScheduleTable
 import com.libreguardia.db.model.SessionEntity
 import com.libreguardia.db.model.SessionTable
-import com.libreguardia.db.model.UserEntity
 import com.libreguardia.db.model.UserTable
 import com.libreguardia.model.SessionModel
-import com.libreguardia.model.dataToModel
 import org.jetbrains.exposed.v1.core.JoinType
+import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.dao.load
+import org.jetbrains.exposed.v1.jdbc.delete
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.select
@@ -80,5 +79,22 @@ class SessionRepository {
         uuid: UUID
     ) {
         SessionTable.deleteWhere { SessionTable.id eq uuid }
+    }
+
+    fun deleteOtherSessionsFromUser(sessionUuid: UUID, userUuid: UUID) {
+        SessionTable.deleteWhere { SessionTable.user eq userUuid and (SessionTable.id neq sessionUuid) }
+
+        /*
+        SessionTable
+            .join(
+                otherTable = UserTable,
+                joinType = JoinType.LEFT,
+                onColumn = SessionTable.user,
+                otherColumn = UserTable.id
+            ).delete(SessionTable) {
+                SessionTable.user eq userUuid and (SessionTable.id neq sessionUuid)
+            }
+
+         */
     }
 }
