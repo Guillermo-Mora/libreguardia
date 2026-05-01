@@ -1,6 +1,33 @@
 body {
     margin: 0;
 }
+.login-main {
+    display: flex;
+    justify-content: center;
+}
+.login-form {
+    max-width: 300px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 15px;
+}
+.input-div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.error-div {
+    color: #CC0000;
+    min-height: 25px;
+}
+.input-div-error {
+    input {
+        box-shadow: 0 0 3px #CC0000;
+    }
+}
+
+
 
 .app-header {
     padding: 20px;

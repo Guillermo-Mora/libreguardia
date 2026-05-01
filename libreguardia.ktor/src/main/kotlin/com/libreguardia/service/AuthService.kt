@@ -25,12 +25,17 @@ class AuthService(
     suspend fun validateLogin(
         credentials: UserPasswordCredential
     ): Boolean {
+        //
+        println(credentials)
+        //
         val fakeHashedPassword = $$"$2a$10$ppBBdNODqqvrTLd4wVAQ0OJ7i0hsmuJYcy69g/pPlfzmBD/pEPTMK"
         val userEntity = withTransaction { userRepository.getEntity(credentials.name) }
+        println(userEntity?.password)
         val verificationResult = bcryptVerifyer.verify(
             credentials.password.toByteArray(),
             (userEntity?.password ?: fakeHashedPassword).toByteArray()
         )
+        println(verificationResult.verified)
         return !(!verificationResult.verified || userEntity?.isEnabled != true || userEntity.isDeleted)
     }
 
