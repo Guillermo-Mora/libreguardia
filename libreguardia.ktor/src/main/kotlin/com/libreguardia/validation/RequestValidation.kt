@@ -21,5 +21,6 @@ fun Application.configureRequestValidation() {
         buildingValidation()
         groupValidation()
         zoneValidation()
+        courseValidation()
     }
 }

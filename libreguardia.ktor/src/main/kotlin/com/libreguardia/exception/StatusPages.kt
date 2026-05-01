@@ -88,6 +88,18 @@ fun Application.configureStatusPages() {
                 message = ErrorCode.ZONE_NOT_FOUND
             )
         }
+        exception<CourseNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.COURSE_NOT_FOUND
+            )
+        }
+        exception<ProfessionalFamilyNotFoundException> { call, _ ->
+            call.respond(
+                status = HttpStatusCode.NotFound,
+                message = ErrorCode.PROFESSIONAL_FAMILY_NOT_FOUND
+            )
+        }
         //TEMPORARY FOR DEBUGGING
         exception<BadRequestException> { call, cause ->
             call.respond(
