@@ -21,15 +21,17 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Resource("/api/academic-year")
-class AcademicYearAPI
-
-@Serializable
-@Resource("/api/academic-year/{uuid}")
-class AcademicYearByUUID(
-    @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-) {
-    @Resource("toggle-enabled")
-    class ToggleEnabled(val parent: AcademicYearByUUID)
+class AcademicYearAPI {
+    @Serializable
+    @Resource("{uuid}")
+    class ByUUID(
+        val parent: AcademicYearAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    ) {
+        @Serializable
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: ByUUID)
+    }
 }
 
 fun Route.academicYearRouting(service: AcademicYearService) {
@@ -43,19 +45,19 @@ fun Route.academicYearRouting(service: AcademicYearService) {
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<AcademicYearByUUID> {
+            get<AcademicYearAPI.ByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<AcademicYearByUUID> {
+            patch<AcademicYearAPI.ByUUID> {
                 val dto = call.receive<AcademicYearEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<AcademicYearByUUID> {
+            delete<AcademicYearAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<AcademicYearByUUID.ToggleEnabled> {
+            patch<AcademicYearAPI.ByUUID.ToggleEnabled> {
                 val enableOrDisable = call.receive<Boolean>()
                 service.toggleEnabled(it.parent.uuid, enableOrDisable)
                 call.respond(HttpStatusCode.OK)
