@@ -2,6 +2,7 @@ package com.libreguardia.validation
 
 import com.libreguardia.validation.modules.academicYearValidation
 import com.libreguardia.validation.modules.authValidation
+import com.libreguardia.validation.modules.scheduleActivityValidation
 import com.libreguardia.validation.modules.placeTypeValidation
 import com.libreguardia.validation.modules.buildingValidation
 import com.libreguardia.validation.modules.groupValidation
@@ -16,6 +17,7 @@ fun Application.configureRequestValidation() {
         authValidation()
         userValidation()
         academicYearValidation()
+        scheduleActivityValidation()
         placeTypeValidation()
         buildingValidation()
         professionalFamilyValidation()

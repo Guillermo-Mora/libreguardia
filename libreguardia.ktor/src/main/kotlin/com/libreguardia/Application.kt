@@ -12,6 +12,7 @@ import com.libreguardia.repository.BuildingRepository
 import com.libreguardia.repository.GroupRepository
 import com.libreguardia.repository.ProfessionalFamilyRepository
 import com.libreguardia.validation.configureRequestValidation
+import com.libreguardia.repository.ScheduleActivityRepository
 import com.libreguardia.repository.ScheduleRepository
 import com.libreguardia.repository.ServiceRepository
 import com.libreguardia.repository.SessionRepository
@@ -24,6 +25,7 @@ import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.BuildingService
 import com.libreguardia.service.GroupService
 import com.libreguardia.service.ProfessionalFamilyService
+import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.service.UserService
 import com.libreguardia.service.ZoneService
 import io.ktor.server.application.*
@@ -44,6 +46,8 @@ fun Application.main() {
     val absenceRepository = AbsenceRepository()
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
+    val scheduleActivityRepository = ScheduleActivityRepository()
+
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
     val groupRepository = GroupRepository()
@@ -75,6 +79,9 @@ fun Application.main() {
     )
     val academicYearService = AcademicYearService(
         repository = academicYearRepository
+    )
+    val scheduleActivityService = ScheduleActivityService(
+        repository = scheduleActivityRepository
     )
     val buildingService = BuildingService(
         repository = buildingRepository
@@ -114,6 +121,7 @@ fun Application.main() {
         buildingService = buildingService,
         groupService = groupService,
         professionalFamilyService = professionalFamilyService,
+        scheduleActivityService = scheduleActivityService,
         userService = userService,
         zoneService = zoneService,
         placeTypeService = placeTypeService

@@ -5,6 +5,7 @@ import com.libreguardia.routing.modules.academicYearRouting
 import com.libreguardia.routing.modules.authRouting
 import com.libreguardia.routing.modules.buildingRouting
 import com.libreguardia.routing.modules.entryRouting
+import com.libreguardia.routing.modules.scheduleActivityRouting
 import com.libreguardia.routing.modules.placeTypeRouting
 import com.libreguardia.routing.modules.groupRouting
 import com.libreguardia.routing.modules.professionalFamilyRouting
@@ -13,6 +14,7 @@ import com.libreguardia.routing.modules.zoneRouting
 import com.libreguardia.routing.modules.validationRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
+import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.BuildingService
 import com.libreguardia.service.GroupService
@@ -27,12 +29,13 @@ import io.ktor.server.routing.*
 fun Application.configureRouting(
     authService: AuthService,
     academicYearService: AcademicYearService,
+    scheduleActivityService: ScheduleActivityService,
     userService: UserService,
-    placeTypeService: PlaceTypeService
+    placeTypeService: PlaceTypeService,
     buildingService: BuildingService,
     groupService: GroupService,
     professionalFamilyService: ProfessionalFamilyService,
-    userService: UserService
+    userService: UserService,
     userService: UserService,
     zoneService: ZoneService
 ) {
@@ -48,6 +51,7 @@ fun Application.configureRouting(
             userService = userService
         )
         academicYearRouting(service = academicYearService)
+        scheduleActivityRouting(service = scheduleActivityService)
         groupRouting(service = groupService)
         professionalFamilyRouting(service = professionalFamilyService)
         zoneRouting(service = zoneService)

@@ -6,6 +6,8 @@ class IncorrectPasswordException : RuntimeException()
 class InvalidCredentialsException : RuntimeException()
 class InsufficientPermissionsException : RuntimeException()
 class AcademicYearNotFoundException : RuntimeException()
+class ScheduleActivityNotFoundException : RuntimeException()
+
 class PlaceTypeNotFoundException : RuntimeException()
 class BuildingNotFoundException : RuntimeException()
 class GroupNotFoundException : RuntimeException()
