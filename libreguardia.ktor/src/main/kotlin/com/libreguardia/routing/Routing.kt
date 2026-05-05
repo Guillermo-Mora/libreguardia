@@ -1,18 +1,18 @@
 package com.libreguardia.routing
 
 
-import com.libreguardia.routing.modules.academicYearRouting
-import com.libreguardia.routing.modules.authRouting
-import com.libreguardia.routing.modules.buildingRouting
-import com.libreguardia.routing.modules.courseRouting
-import com.libreguardia.routing.modules.entryRouting
-import com.libreguardia.routing.modules.scheduleActivityRouting
-import com.libreguardia.routing.modules.placeTypeRouting
-import com.libreguardia.routing.modules.groupRouting
-import com.libreguardia.routing.modules.professionalFamilyRouting
-import com.libreguardia.routing.modules.userRouting
-import com.libreguardia.routing.modules.zoneRouting
-import com.libreguardia.routing.modules.validationRouting
+import com.libreguardia.routing.module.academicYearRouting
+import com.libreguardia.routing.module.authRouting
+import com.libreguardia.routing.module.buildingRouting
+import com.libreguardia.routing.module.courseRouting
+import com.libreguardia.routing.module.entryRouting
+import com.libreguardia.routing.module.scheduleActivityRouting
+import com.libreguardia.routing.module.placeTypeRouting
+import com.libreguardia.routing.module.groupRouting
+import com.libreguardia.routing.module.professionalFamilyRouting
+import com.libreguardia.routing.module.userRouting
+import com.libreguardia.routing.module.zoneRouting
+import com.libreguardia.routing.module.validationRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.ScheduleActivityService

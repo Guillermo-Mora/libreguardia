@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.ScheduleActivityCreateDTO
-import com.libreguardia.dto.ScheduleActivityEditDTO
-import com.libreguardia.dto.ScheduleActivityResponseDTO
+import com.libreguardia.dto.module.ScheduleActivityCreateDTO
+import com.libreguardia.dto.module.ScheduleActivityEditDTO
+import com.libreguardia.dto.module.ScheduleActivityResponseDTO
 import com.libreguardia.exception.ScheduleActivityNotFoundException
 import com.libreguardia.repository.ScheduleActivityRepository
 import com.libreguardia.util.withTransaction
@@ -31,12 +31,6 @@ class ScheduleActivityService(
     suspend fun delete(uuid: UUID) {
         withTransaction {
             if (!repository.delete(uuid)) throw ScheduleActivityNotFoundException()
-        }
-    }
-
-    suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw ScheduleActivityNotFoundException()
         }
     }
 }

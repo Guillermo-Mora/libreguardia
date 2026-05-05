@@ -20,9 +20,6 @@ object AcademicYearTable: UUIDTable(
     val endDate = date(
         name = "end_date"
     )
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
 }
 
 class AcademicYearEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -31,5 +28,4 @@ class AcademicYearEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var name by AcademicYearTable.name
     var startDate by AcademicYearTable.startDate
     var endDate by AcademicYearTable.endDate
-    var isEnabled by AcademicYearTable.isEnabled
 }

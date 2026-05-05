@@ -20,9 +20,6 @@ object GroupTable: UUIDTable(
         precision = 2,
         scale = 1
     ).default(BigDecimal.ONE)
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
     val course = reference(
         name = "course_id",
         foreign = CourseTable,
@@ -36,6 +33,5 @@ class GroupEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var code by GroupTable.code
     var pointsMultiplier by GroupTable.pointsMultiplier
-    var isEnabled by GroupTable.isEnabled
     var course by CourseEntity referencedOn GroupTable.course
 }

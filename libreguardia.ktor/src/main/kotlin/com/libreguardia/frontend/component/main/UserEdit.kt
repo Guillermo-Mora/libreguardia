@@ -1,18 +1,15 @@
 package com.libreguardia.frontend.component.main
 
 import com.libreguardia.db.Role
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.FormFieldData
-import com.libreguardia.frontend.component.OperationType
-import com.libreguardia.frontend.component.SelectOption
-import com.libreguardia.frontend.component.TriggerType
-import com.libreguardia.frontend.component.customForm
-import com.libreguardia.validation.ValidationType
+import com.libreguardia.dto.module.UserEditDTO
+import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
-import java.util.UUID
+import java.util.*
 
+
+// I think it would be better to use the actual UserEditDTO for doing this, instead of having
+// to manually define the fields. But for now, this does the work.
 enum class UserEditField(override val key: String) : FormField {
     NAME("name"),
     SURNAME("surname"),

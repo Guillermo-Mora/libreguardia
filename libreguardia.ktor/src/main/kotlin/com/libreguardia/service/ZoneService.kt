@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.ZoneCreateDTO
-import com.libreguardia.dto.ZoneEditDTO
-import com.libreguardia.dto.ZoneResponseDTO
+import com.libreguardia.dto.module.ZoneCreateDTO
+import com.libreguardia.dto.module.ZoneEditDTO
+import com.libreguardia.dto.module.ZoneResponseDTO
 import com.libreguardia.exception.ZoneNotFoundException
 import com.libreguardia.repository.ZoneRepository
 import com.libreguardia.util.withTransaction

@@ -2,11 +2,12 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.GroupEntity
 import com.libreguardia.db.model.GroupTable
-import com.libreguardia.dto.GroupCreateDTO
-import com.libreguardia.dto.GroupEditDTO
-import com.libreguardia.dto.GroupResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.GroupCreateDTO
+import com.libreguardia.dto.module.GroupEditDTO
+import com.libreguardia.dto.module.GroupResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
@@ -34,14 +35,6 @@ class GroupRepository {
     }
 
     fun delete(uuid: UUID): Boolean {
-        return GroupTable.update({ GroupTable.id eq uuid }) {
-            it[isEnabled] = false
-        } == 1
-    }
-
-    fun toggleEnabled(uuid: UUID, enabled: Boolean): Boolean {
-        return GroupTable.update({ GroupTable.id eq uuid }) {
-            it[isEnabled] = enabled
-        } == 1
+        return GroupTable.deleteWhere{ GroupTable.id eq uuid } == 1
     }
 }

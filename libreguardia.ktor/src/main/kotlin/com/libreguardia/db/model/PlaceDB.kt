@@ -18,9 +18,6 @@ object PlaceTable: UUIDTable(
         name = "floor",
         length = 50
     ).nullable().default(null)
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
     val building = optReference(
         name = "building_id",
         foreign = BuildingTable,
@@ -46,7 +43,6 @@ class PlaceEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var name by PlaceTable.name
     var floor by PlaceTable.floor
-    var isEnabled by PlaceTable.isEnabled
     var building by BuildingEntity optionalReferencedOn PlaceTable.building
     var zone by ZoneEntity referencedOn PlaceTable.zone
     var placeType by PlaceTypeEntity referencedOn PlaceTable.placeType

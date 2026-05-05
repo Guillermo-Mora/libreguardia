@@ -19,14 +19,12 @@ CREATE TABLE schedule_template (
 
 CREATE TABLE place_type (
                             id UUID PRIMARY KEY,
-                            name VARCHAR(50) NOT NULL UNIQUE,
-                            is_enabled BOOLEAN NOT NULL DEFAULT TRUE
+                            name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE zone (
                       id UUID PRIMARY KEY,
-                      name VARCHAR(50) NOT NULL UNIQUE,
-                      is_enabled BOOLEAN NOT NULL DEFAULT TRUE
+                      name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE academic_year (
@@ -38,21 +36,18 @@ CREATE TABLE academic_year (
 
 CREATE TABLE professional_family (
                                      id UUID PRIMARY KEY,
-                                     name VARCHAR(50) NOT NULL UNIQUE,
-                                     is_enabled BOOLEAN NOT NULL DEFAULT TRUE
+                                     name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE building (
                           id UUID PRIMARY KEY,
-                          name VARCHAR(50) NOT NULL UNIQUE,
-                          is_enabled BOOLEAN NOT NULL DEFAULT TRUE
+                          name VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE schedule_activity (
                                    id UUID PRIMARY KEY,
                                    name VARCHAR(50) NOT NULL UNIQUE,
-                                   generates_service BOOLEAN NOT NULL,
-                                   is_enabled BOOLEAN NOT NULL DEFAULT TRUE
+                                   generates_service BOOLEAN NOT NULL
 );
 
 -- ========================
@@ -63,7 +58,6 @@ CREATE TABLE place (
                        id UUID PRIMARY KEY,
                        name VARCHAR(50) NOT NULL UNIQUE,
                        floor VARCHAR(50) DEFAULT NULL,
-                       is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
                        building_id UUID DEFAULT NULL REFERENCES building(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                        zone_id UUID NOT NULL REFERENCES zone(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                        place_type_id UUID NOT NULL REFERENCES place_type(id) ON DELETE RESTRICT ON UPDATE RESTRICT
@@ -84,7 +78,6 @@ CREATE TABLE user_tbl (
 CREATE TABLE course (
                         id UUID PRIMARY KEY,
                         name VARCHAR(50) NOT NULL UNIQUE,
-                        is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
                         professional_family_id UUID NOT NULL REFERENCES professional_family(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
@@ -92,7 +85,6 @@ CREATE TABLE group_tbl (
                            id UUID PRIMARY KEY,
                            code VARCHAR(50) NOT NULL UNIQUE,
                            points_multiplier DECIMAL(2,1) NOT NULL DEFAULT 1,
-                           is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
                            course_id UUID NOT NULL REFERENCES course(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 

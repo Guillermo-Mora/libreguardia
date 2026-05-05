@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.BuildingCreateDTO
-import com.libreguardia.dto.BuildingEditDTO
-import com.libreguardia.dto.BuildingResponseDTO
+import com.libreguardia.dto.module.BuildingCreateDTO
+import com.libreguardia.dto.module.BuildingEditDTO
+import com.libreguardia.dto.module.BuildingResponseDTO
 import com.libreguardia.exception.BuildingNotFoundException
 import com.libreguardia.repository.BuildingRepository
 import com.libreguardia.util.withTransaction
@@ -28,12 +28,6 @@ class BuildingService(
     suspend fun delete(uuid: java.util.UUID) {
         withTransaction {
             if (!repository.delete(uuid)) throw BuildingNotFoundException()
-        }
-    }
-
-    suspend fun toggleEnabled(uuid: java.util.UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw BuildingNotFoundException()
         }
     }
 }

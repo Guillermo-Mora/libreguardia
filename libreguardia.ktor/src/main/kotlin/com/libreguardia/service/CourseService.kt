@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.CourseCreateDTO
-import com.libreguardia.dto.CourseEditDTO
-import com.libreguardia.dto.CourseResponseDTO
+import com.libreguardia.dto.module.CourseCreateDTO
+import com.libreguardia.dto.module.CourseEditDTO
+import com.libreguardia.dto.module.CourseResponseDTO
 import com.libreguardia.exception.CourseNotFoundException
 import com.libreguardia.exception.ProfessionalFamilyNotFoundException
 import com.libreguardia.repository.CourseRepository
@@ -35,12 +35,6 @@ class CourseService(
     suspend fun delete(uuid: UUID) {
         withTransaction {
             if (!repository.delete(uuid)) throw CourseNotFoundException()
-        }
-    }
-
-    suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw CourseNotFoundException()
         }
     }
 }

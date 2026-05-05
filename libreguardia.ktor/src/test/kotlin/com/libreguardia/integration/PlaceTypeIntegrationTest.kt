@@ -14,7 +14,7 @@ class PlaceTypeIntegrationTest {
             install(io.ktor.server.plugins.contentnegotiation.ContentNegotiation) { json() }
             install(io.ktor.server.resources.Resources)
             routing {
-                com.libreguardia.routing.modules.placeTypeRouting(
+                com.libreguardia.routing.module.placeTypeRouting(
                     com.libreguardia.service.PlaceTypeService(com.libreguardia.repository.PlaceTypeRepository())
                 )
             }

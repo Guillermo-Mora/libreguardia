@@ -2,10 +2,10 @@ package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.BCRYPT_HASH_COST
-import com.libreguardia.dto.EditUserProfileResult
-import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.UserEditProfileDTO
+import com.libreguardia.dto.module.EditUserProfileResult
+import com.libreguardia.dto.module.UserCreateDTO
+import com.libreguardia.dto.module.UserEditDTO
+import com.libreguardia.dto.module.UserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.UserCreateField
@@ -15,7 +15,7 @@ import com.libreguardia.model.UserProfileModel
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
 import com.libreguardia.validation.OperationResult
-import com.libreguardia.validation.modules.validate
+import com.libreguardia.validation.module.validate
 import com.libreguardia.validation.validateNewPassword
 import com.libreguardia.validation.validatePhoneNumber
 import kotlinx.datetime.LocalDateTime
