@@ -1,7 +1,7 @@
-package com.libreguardia.validation.modules
+package com.libreguardia.validation.module
 
-import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.module.UserCreateDTO
+import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.UserCreateField
 import com.libreguardia.frontend.component.main.UserEditField

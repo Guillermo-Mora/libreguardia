@@ -1,11 +1,11 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.PlaceTypeCreateDTO
-import com.libreguardia.dto.PlaceTypeEditDTO
-import com.libreguardia.service.PlaceTypeService
+import com.libreguardia.dto.module.ZoneCreateDTO
+import com.libreguardia.dto.module.ZoneEditDTO
+import com.libreguardia.service.ZoneService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
@@ -20,36 +20,33 @@ import io.ktor.server.resources.delete
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Resource("/api/place-type")
-class PlaceTypeAPI
+@Resource("/api/zone")
+class ZoneAPI {
+    @Serializable
+    @Resource("{uuid}")
+    class ByUUID(
+        val parent: ZoneAPI,
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    )
+}
 
-@Serializable
-@Resource("{uuid}")
-class PlaceTypeByUUID(
-    val parent: PlaceTypeAPI = PlaceTypeAPI(),
-    @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-)
-
-fun Route.placeTypeRouting(service: PlaceTypeService) {
+fun Route.zoneRouting(service: ZoneService) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
-            get<PlaceTypeAPI> {
+            get<ZoneAPI> {
                 call.respond(service.getAll())
             }
-            post<PlaceTypeAPI> {
-                val dto = call.receive<PlaceTypeCreateDTO>()
+            post<ZoneAPI> {
+                val dto = call.receive<ZoneCreateDTO>()
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<PlaceTypeByUUID> {
-                call.respond(service.getByUUID(it.uuid))
-            }
-            patch<PlaceTypeByUUID> {
-                val dto = call.receive<PlaceTypeEditDTO>()
+            patch<ZoneAPI.ByUUID> {
+                val dto = call.receive<ZoneEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<PlaceTypeByUUID> {
+            delete<ZoneAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }

@@ -1,4 +1,4 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.AcademicYearEntity
 import com.libreguardia.util.UUIDSerializer
@@ -13,7 +13,6 @@ data class AcademicYearResponseDTO(
     val name: String,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    val isEnabled: Boolean = true
 )
 
 @Serializable
@@ -34,6 +33,5 @@ fun AcademicYearEntity.toResponseDTO() = AcademicYearResponseDTO(
     id = id.value,
     name = name,
     startDate = startDate,
-    endDate = endDate,
-    isEnabled = isEnabled
+    endDate = endDate
 )

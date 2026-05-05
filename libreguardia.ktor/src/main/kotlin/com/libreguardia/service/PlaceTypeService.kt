@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.PlaceTypeCreateDTO
-import com.libreguardia.dto.PlaceTypeEditDTO
-import com.libreguardia.dto.PlaceTypeResponseDTO
+import com.libreguardia.dto.module.PlaceTypeCreateDTO
+import com.libreguardia.dto.module.PlaceTypeEditDTO
+import com.libreguardia.dto.module.PlaceTypeResponseDTO
 import com.libreguardia.exception.PlaceTypeNotFoundException
 import com.libreguardia.repository.PlaceTypeRepository
 import com.libreguardia.util.withTransaction

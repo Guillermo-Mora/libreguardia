@@ -4,10 +4,8 @@ import com.libreguardia.db.WeekDay
 import com.libreguardia.db.model.PlaceEntity
 import com.libreguardia.db.model.ScheduleEntity
 import com.libreguardia.db.model.UserEntity
-import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.repository.UserRepository
-import com.libreguardia.util.UUIDSerializer
-import kotlinx.serialization.Serializable
 import java.util.UUID
 
 data class UserModel(

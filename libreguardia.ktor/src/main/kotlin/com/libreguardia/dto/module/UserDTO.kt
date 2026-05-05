@@ -1,6 +1,8 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
-import com.libreguardia.frontend.component.FormField
+import com.libreguardia.dto.boolean
+import com.libreguardia.dto.enum
+import com.libreguardia.dto.string
 import com.libreguardia.frontend.component.main.UserCreateField
 import com.libreguardia.frontend.component.main.UserEditField
 import io.ktor.http.*
@@ -24,11 +26,6 @@ data class UserEditDTO(
     val isEnabled: Boolean,
     val role: String
 )
-
-//Helpers for receiving parameters
-fun Parameters.string(field: FormField) = this[field.id] ?: ""
-fun Parameters.boolean(field: FormField) = this[field.id].let { it == "checked" }
-fun Parameters.enum(field: FormField) = this[field.id]?.uppercase() ?: ""
 
 fun Parameters.toUserEditDTO() =
     UserEditDTO(

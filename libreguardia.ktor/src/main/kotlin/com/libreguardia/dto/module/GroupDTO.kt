@@ -1,4 +1,4 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.GroupEntity
 import com.libreguardia.util.UUIDSerializer
@@ -11,7 +11,6 @@ data class GroupResponseDTO(
     val id: UUID,
     val code: String,
     val pointsMultiplier: Double,
-    val isEnabled: Boolean = true,
     @Serializable(with = UUIDSerializer::class)
     val courseId: UUID
 )
@@ -36,6 +35,5 @@ fun GroupEntity.toResponseDTO() = GroupResponseDTO(
     id = id.value,
     code = code,
     pointsMultiplier = pointsMultiplier.toDouble(),
-    isEnabled = isEnabled,
     courseId = course.id.value
 )

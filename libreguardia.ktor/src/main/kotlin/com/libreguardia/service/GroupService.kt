@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.GroupCreateDTO
-import com.libreguardia.dto.GroupEditDTO
-import com.libreguardia.dto.GroupResponseDTO
+import com.libreguardia.dto.module.GroupCreateDTO
+import com.libreguardia.dto.module.GroupEditDTO
+import com.libreguardia.dto.module.GroupResponseDTO
 import com.libreguardia.exception.GroupNotFoundException
 import com.libreguardia.repository.GroupRepository
 import com.libreguardia.util.withTransaction

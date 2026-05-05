@@ -2,10 +2,10 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.PlaceTypeEntity
 import com.libreguardia.db.model.PlaceTypeTable
-import com.libreguardia.dto.PlaceTypeCreateDTO
-import com.libreguardia.dto.PlaceTypeEditDTO
-import com.libreguardia.dto.PlaceTypeResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.PlaceTypeCreateDTO
+import com.libreguardia.dto.module.PlaceTypeEditDTO
+import com.libreguardia.dto.module.PlaceTypeResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update

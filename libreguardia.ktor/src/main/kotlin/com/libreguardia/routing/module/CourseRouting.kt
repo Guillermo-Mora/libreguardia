@@ -1,10 +1,10 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.CourseCreateDTO
-import com.libreguardia.dto.CourseEditDTO
+import com.libreguardia.dto.module.CourseCreateDTO
+import com.libreguardia.dto.module.CourseEditDTO
 import com.libreguardia.service.CourseService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode

@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.AcademicYearCreateDTO
-import com.libreguardia.dto.AcademicYearEditDTO
-import com.libreguardia.dto.AcademicYearResponseDTO
+import com.libreguardia.dto.module.AcademicYearCreateDTO
+import com.libreguardia.dto.module.AcademicYearEditDTO
+import com.libreguardia.dto.module.AcademicYearResponseDTO
 import com.libreguardia.exception.AcademicYearNotFoundException
 import com.libreguardia.repository.AcademicYearRepository
 import com.libreguardia.util.withTransaction

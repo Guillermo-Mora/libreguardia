@@ -3,10 +3,10 @@ package com.libreguardia.repository
 import com.libreguardia.db.model.CourseEntity
 import com.libreguardia.db.model.CourseTable
 import com.libreguardia.db.model.ProfessionalFamilyEntity
-import com.libreguardia.dto.CourseCreateDTO
-import com.libreguardia.dto.CourseEditDTO
-import com.libreguardia.dto.CourseResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.CourseCreateDTO
+import com.libreguardia.dto.module.CourseEditDTO
+import com.libreguardia.dto.module.CourseResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update

@@ -1,11 +1,11 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.ZoneCreateDTO
-import com.libreguardia.dto.ZoneEditDTO
-import com.libreguardia.service.ZoneService
+import com.libreguardia.dto.module.BuildingCreateDTO
+import com.libreguardia.dto.module.BuildingEditDTO
+import com.libreguardia.service.BuildingService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
@@ -20,35 +20,46 @@ import io.ktor.server.resources.delete
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Resource("/api/zone")
-class ZoneAPI {
+@Resource("/api/building")
+class BuildingAPI {
     @Serializable
     @Resource("{uuid}")
     class ByUUID(
-        val parent: ZoneAPI,
+        val parent: BuildingAPI,
         @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-    )
+    ) {
+        @Resource("toggle-enabled")
+        class ToggleEnabled(val parent: ByUUID)
+    }
 }
 
-fun Route.zoneRouting(service: ZoneService) {
+fun Route.buildingRouting(service: BuildingService) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
-            get<ZoneAPI> {
+            get<BuildingAPI> {
                 call.respond(service.getAll())
             }
-            post<ZoneAPI> {
-                val dto = call.receive<ZoneCreateDTO>()
+            post<BuildingAPI> {
+                val dto = call.receive<BuildingCreateDTO>()
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            patch<ZoneAPI.ByUUID> {
-                val dto = call.receive<ZoneEditDTO>()
+            get<BuildingAPI.ByUUID> {
+                call.respond(service.getByUUID(it.uuid))
+            }
+            patch<BuildingAPI.ByUUID> {
+                val dto = call.receive<BuildingEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<ZoneAPI.ByUUID> {
+            delete<BuildingAPI.ByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
+            }
+            patch<BuildingAPI.ByUUID.ToggleEnabled> {
+                val enableOrDisable = call.receive<Boolean>()
+                service.toggleEnabled(it.parent.uuid, enableOrDisable)
+                call.respond(HttpStatusCode.OK)
             }
         }
     }

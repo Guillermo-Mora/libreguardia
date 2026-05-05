@@ -1,10 +1,10 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.AcademicYearCreateDTO
-import com.libreguardia.dto.AcademicYearEditDTO
+import com.libreguardia.dto.module.AcademicYearCreateDTO
+import com.libreguardia.dto.module.AcademicYearEditDTO
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode

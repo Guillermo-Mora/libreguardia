@@ -1,7 +1,7 @@
 package com.libreguardia.frontend.component.main
 
 import com.libreguardia.db.Role
-import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType

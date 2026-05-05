@@ -2,10 +2,10 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.ScheduleActivityEntity
 import com.libreguardia.db.model.ScheduleActivityTable
-import com.libreguardia.dto.ScheduleActivityCreateDTO
-import com.libreguardia.dto.ScheduleActivityEditDTO
-import com.libreguardia.dto.ScheduleActivityResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.ScheduleActivityCreateDTO
+import com.libreguardia.dto.module.ScheduleActivityEditDTO
+import com.libreguardia.dto.module.ScheduleActivityResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update

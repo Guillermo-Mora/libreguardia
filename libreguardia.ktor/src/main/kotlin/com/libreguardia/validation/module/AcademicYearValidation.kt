@@ -1,7 +1,7 @@
-package com.libreguardia.validation.modules
+package com.libreguardia.validation.module
 
-import com.libreguardia.dto.AcademicYearCreateDTO
-import com.libreguardia.dto.AcademicYearEditDTO
+import com.libreguardia.dto.module.AcademicYearCreateDTO
+import com.libreguardia.dto.module.AcademicYearEditDTO
 import com.libreguardia.validation.validateAcademicYearDates
 import com.libreguardia.validation.validateResult
 import com.libreguardia.validation.validateString

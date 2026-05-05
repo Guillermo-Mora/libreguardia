@@ -1,4 +1,4 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized

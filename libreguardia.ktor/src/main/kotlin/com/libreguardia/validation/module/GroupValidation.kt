@@ -1,7 +1,7 @@
-package com.libreguardia.validation.modules
+package com.libreguardia.validation.module
 
-import com.libreguardia.dto.GroupCreateDTO
-import com.libreguardia.dto.GroupEditDTO
+import com.libreguardia.dto.module.GroupCreateDTO
+import com.libreguardia.dto.module.GroupEditDTO
 import com.libreguardia.validation.validateDecimal
 import com.libreguardia.validation.validateString
 import com.libreguardia.validation.validateResult

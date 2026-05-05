@@ -1,4 +1,4 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.ZoneEntity
 import com.libreguardia.util.UUIDSerializer
@@ -10,7 +10,6 @@ data class ZoneResponseDTO(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val name: String,
-    val isEnabled: Boolean
 )
 
 @Serializable
@@ -25,6 +24,5 @@ data class ZoneEditDTO(
 
 fun ZoneEntity.toResponseDTO() = ZoneResponseDTO(
     id = id.value,
-    name = name,
-    isEnabled = isEnabled
+    name = name
 )

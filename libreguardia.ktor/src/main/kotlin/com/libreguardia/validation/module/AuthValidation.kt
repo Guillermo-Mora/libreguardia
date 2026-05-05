@@ -1,7 +1,7 @@
-package com.libreguardia.validation.modules
+package com.libreguardia.validation.module
 
-import com.libreguardia.dto.LoginDTO
-import com.libreguardia.dto.RefreshTokenDTO
+import com.libreguardia.dto.module.LoginDTO
+import com.libreguardia.dto.module.RefreshTokenDTO
 import com.libreguardia.validation.validateRefreshToken
 import com.libreguardia.validation.validateResult
 import com.libreguardia.validation.validateString

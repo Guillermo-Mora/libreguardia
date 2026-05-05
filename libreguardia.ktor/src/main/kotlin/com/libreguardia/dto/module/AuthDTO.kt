@@ -1,4 +1,4 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
 import kotlinx.serialization.Serializable
 

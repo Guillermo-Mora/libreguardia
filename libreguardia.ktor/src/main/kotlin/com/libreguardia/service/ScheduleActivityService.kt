@@ -1,8 +1,8 @@
 package com.libreguardia.service
 
-import com.libreguardia.dto.ScheduleActivityCreateDTO
-import com.libreguardia.dto.ScheduleActivityEditDTO
-import com.libreguardia.dto.ScheduleActivityResponseDTO
+import com.libreguardia.dto.module.ScheduleActivityCreateDTO
+import com.libreguardia.dto.module.ScheduleActivityEditDTO
+import com.libreguardia.dto.module.ScheduleActivityResponseDTO
 import com.libreguardia.exception.ScheduleActivityNotFoundException
 import com.libreguardia.repository.ScheduleActivityRepository
 import com.libreguardia.util.withTransaction

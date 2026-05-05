@@ -1,9 +1,8 @@
 package com.libreguardia.frontend.component.main
 
 import com.libreguardia.db.Role
-import com.libreguardia.dto.UserCreateDTO
+import com.libreguardia.dto.module.UserCreateDTO
 import com.libreguardia.frontend.component.*
-import com.libreguardia.validation.ValidationType
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
 

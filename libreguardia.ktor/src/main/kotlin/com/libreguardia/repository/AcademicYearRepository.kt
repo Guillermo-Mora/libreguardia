@@ -2,10 +2,10 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.AcademicYearEntity
 import com.libreguardia.db.model.AcademicYearTable
-import com.libreguardia.dto.AcademicYearCreateDTO
-import com.libreguardia.dto.AcademicYearEditDTO
-import com.libreguardia.dto.AcademicYearResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.AcademicYearCreateDTO
+import com.libreguardia.dto.module.AcademicYearEditDTO
+import com.libreguardia.dto.module.AcademicYearResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update

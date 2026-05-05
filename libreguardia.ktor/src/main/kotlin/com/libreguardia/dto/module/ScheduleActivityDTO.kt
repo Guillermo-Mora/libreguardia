@@ -1,4 +1,4 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.ScheduleActivityEntity
 import com.libreguardia.util.UUIDSerializer
@@ -11,7 +11,6 @@ data class ScheduleActivityResponseDTO(
     val id: UUID,
     val name: String,
     val generatesService: Boolean,
-    val isEnabled: Boolean = true
 )
 
 @Serializable
@@ -29,7 +28,6 @@ data class ScheduleActivityEditDTO(
 fun ScheduleActivityEntity.toResponseDTO() = ScheduleActivityResponseDTO(
     id = id.value,
     name = name,
-    generatesService = generatesService,
-    isEnabled = isEnabled
+    generatesService = generatesService
 )
 

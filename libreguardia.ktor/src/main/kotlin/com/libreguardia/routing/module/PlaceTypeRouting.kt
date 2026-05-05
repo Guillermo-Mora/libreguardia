@@ -1,11 +1,11 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.BuildingCreateDTO
-import com.libreguardia.dto.BuildingEditDTO
-import com.libreguardia.service.BuildingService
+import com.libreguardia.dto.module.PlaceTypeCreateDTO
+import com.libreguardia.dto.module.PlaceTypeEditDTO
+import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
@@ -20,46 +20,38 @@ import io.ktor.server.resources.delete
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Resource("/api/building")
-class BuildingAPI {
-    @Serializable
-    @Resource("{uuid}")
-    class ByUUID(
-        val parent: BuildingAPI,
-        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-    ) {
-        @Resource("toggle-enabled")
-        class ToggleEnabled(val parent: ByUUID)
-    }
-}
+@Resource("/api/place-type")
+class PlaceTypeAPI
 
-fun Route.buildingRouting(service: BuildingService) {
+@Serializable
+@Resource("{uuid}")
+class PlaceTypeByUUID(
+    val parent: PlaceTypeAPI = PlaceTypeAPI(),
+    @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+)
+
+fun Route.placeTypeRouting(service: PlaceTypeService) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
-            get<BuildingAPI> {
+            get<PlaceTypeAPI> {
                 call.respond(service.getAll())
             }
-            post<BuildingAPI> {
-                val dto = call.receive<BuildingCreateDTO>()
+            post<PlaceTypeAPI> {
+                val dto = call.receive<PlaceTypeCreateDTO>()
                 service.create(dto)
                 call.respond(HttpStatusCode.Created)
             }
-            get<BuildingAPI.ByUUID> {
+            get<PlaceTypeByUUID> {
                 call.respond(service.getByUUID(it.uuid))
             }
-            patch<BuildingAPI.ByUUID> {
-                val dto = call.receive<BuildingEditDTO>()
+            patch<PlaceTypeByUUID> {
+                val dto = call.receive<PlaceTypeEditDTO>()
                 service.update(it.uuid, dto)
                 call.respond(HttpStatusCode.OK)
             }
-            delete<BuildingAPI.ByUUID> {
+            delete<PlaceTypeByUUID> {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
-            }
-            patch<BuildingAPI.ByUUID.ToggleEnabled> {
-                val enableOrDisable = call.receive<Boolean>()
-                service.toggleEnabled(it.parent.uuid, enableOrDisable)
-                call.respond(HttpStatusCode.OK)
             }
         }
     }

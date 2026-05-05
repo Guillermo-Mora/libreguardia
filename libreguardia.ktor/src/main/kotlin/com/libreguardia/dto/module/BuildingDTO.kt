@@ -1,30 +1,28 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
-import com.libreguardia.db.model.PlaceTypeEntity
+import com.libreguardia.db.model.BuildingEntity
 import com.libreguardia.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Serializable
-data class PlaceTypeResponseDTO(
+data class BuildingResponseDTO(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val name: String,
-    val isEnabled: Boolean
 )
 
 @Serializable
-data class PlaceTypeCreateDTO(
+data class BuildingCreateDTO(
     val name: String
 )
 
 @Serializable
-data class PlaceTypeEditDTO(
+data class BuildingEditDTO(
     val name: String? = null
 )
 
-fun PlaceTypeEntity.toResponseDTO() = PlaceTypeResponseDTO(
+fun BuildingEntity.toResponseDTO() = BuildingResponseDTO(
     id = id.value,
     name = name,
-    isEnabled = isEnabled
 )

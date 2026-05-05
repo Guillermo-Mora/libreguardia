@@ -2,10 +2,10 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.GroupEntity
 import com.libreguardia.db.model.GroupTable
-import com.libreguardia.dto.GroupCreateDTO
-import com.libreguardia.dto.GroupEditDTO
-import com.libreguardia.dto.GroupResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.GroupCreateDTO
+import com.libreguardia.dto.module.GroupEditDTO
+import com.libreguardia.dto.module.GroupResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update

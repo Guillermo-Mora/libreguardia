@@ -10,8 +10,8 @@ import com.libreguardia.dto.ZoneEditDTO
 import com.libreguardia.dto.ZoneResponseDTO
 import com.libreguardia.exception.configureStatusPages
 import com.libreguardia.repository.ZoneRepository
-import com.libreguardia.routing.modules.ZoneAPI
-import com.libreguardia.routing.modules.ZoneByUUID
+import com.libreguardia.routing.module.ZoneAPI
+import com.libreguardia.routing.module.ZoneByUUID
 import com.libreguardia.service.ZoneService
 import com.libreguardia.util.withTransaction
 import io.ktor.client.call.*

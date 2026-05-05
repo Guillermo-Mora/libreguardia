@@ -1,4 +1,4 @@
-package com.libreguardia.dto
+package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.CourseEntity
 import com.libreguardia.util.UUIDSerializer
@@ -12,7 +12,6 @@ data class CourseResponseDTO(
     val name: String,
     @Serializable(with = UUIDSerializer::class)
     val professionalFamilyId: UUID,
-    val isEnabled: Boolean = true
 )
 
 @Serializable
@@ -31,5 +30,4 @@ fun CourseEntity.toResponseDTO() = CourseResponseDTO(
     id = id.value,
     name = name,
     professionalFamilyId = professionalFamily.id.value,
-    isEnabled = isEnabled
 )

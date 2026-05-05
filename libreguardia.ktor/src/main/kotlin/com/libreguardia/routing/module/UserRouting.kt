@@ -1,14 +1,14 @@
-package com.libreguardia.routing.modules
+package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.UserSession
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.EditUserProfileResult
-import com.libreguardia.dto.toUserCreateDTO
-import com.libreguardia.dto.toUserEditDTO
-import com.libreguardia.dto.toUserEditProfileDTO
+import com.libreguardia.dto.module.EditUserProfileResult
+import com.libreguardia.dto.module.toUserCreateDTO
+import com.libreguardia.dto.module.toUserEditDTO
+import com.libreguardia.dto.module.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.frontend.component.main.*
 import com.libreguardia.frontend.component.userProfileEdit
