@@ -13,15 +13,11 @@ object PlaceTypeTable: UUIDTable(
         name = "name",
         length = 50
     ).uniqueIndex()
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
 }
 
 class PlaceTypeEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<PlaceTypeEntity>(PlaceTypeTable)
 
     var name by PlaceTypeTable.name
-    var isEnabled by PlaceTypeTable.isEnabled
     val places by PlaceEntity referrersOn PlaceTable.placeType
 }
