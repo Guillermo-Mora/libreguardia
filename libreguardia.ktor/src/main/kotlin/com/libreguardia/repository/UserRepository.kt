@@ -11,8 +11,8 @@ import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.dto.module.UserEditProfileDTO
 import com.libreguardia.model.UserModel
 import com.libreguardia.model.UserProfileModel
-import com.libreguardia.model.entityToModel
 import com.libreguardia.model.entityToProfileModel
+import com.libreguardia.model.toModel
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.neq
@@ -27,17 +27,19 @@ class UserRepository {
     fun getAll(): List<UserModel> =
         UserEntity
             .find { UserTable.isDeleted eq false }
-            .map(::entityToModel)
+            .map(UserEntity::toModel)
 
     fun getAllEnabled(): List<UserModel> =
         UserEntity
             .find { UserTable.isEnabled eq true }
-            .map(::entityToModel)
+            .map(UserEntity::toModel)
 
     fun getByUUID(
         uuid: UUID
     ): UserModel? {
-        return UserEntity.findById(uuid)?.let { entityToModel(it) }
+        return UserEntity
+            .findById(uuid)
+            ?.toModel()
     }
 
     fun getProfileByUUID(

@@ -57,7 +57,7 @@ CREATE TABLE schedule_activity (
 CREATE TABLE place (
                        id UUID PRIMARY KEY,
                        name VARCHAR(50) NOT NULL UNIQUE,
-                       floor VARCHAR(50) DEFAULT NULL
+                       floor VARCHAR(50) DEFAULT NULL,
                        building_id UUID DEFAULT NULL REFERENCES building(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                        zone_id UUID NOT NULL REFERENCES zone(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
                        place_type_id UUID NOT NULL REFERENCES place_type(id) ON DELETE RESTRICT ON UPDATE RESTRICT

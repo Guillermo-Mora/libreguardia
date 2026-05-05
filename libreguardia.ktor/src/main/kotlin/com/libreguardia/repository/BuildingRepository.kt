@@ -7,6 +7,7 @@ import com.libreguardia.dto.module.BuildingEditDTO
 import com.libreguardia.dto.module.BuildingResponseDTO
 import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 
@@ -26,19 +27,10 @@ class BuildingRepository {
     fun update(uuid: java.util.UUID, dto: BuildingEditDTO): Boolean {
         return BuildingTable.update({ BuildingTable.id eq uuid }) { updated ->
             dto.name?.let { updated[name] = it }
-            dto.isEnabled?.let { updated[isEnabled] = it }
         } == 1
     }
 
     fun delete(uuid: java.util.UUID): Boolean {
-        return BuildingTable.update({ BuildingTable.id eq uuid }) {
-            it[isEnabled] = false
-        } == 1
-    }
-
-    fun toggleEnabled(uuid: java.util.UUID, enabled: Boolean): Boolean {
-        return BuildingTable.update({ BuildingTable.id eq uuid }) {
-            it[isEnabled] = enabled
-        } == 1
+        return BuildingTable.deleteWhere{ BuildingTable.id eq uuid } == 1
     }
 }

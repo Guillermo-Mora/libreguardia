@@ -30,17 +30,16 @@ fun UserModel.toUserEditDTO(): UserEditDTO =
         role = this.role
     )
 
-fun UserRepository.entityToModel(
-    entity: UserEntity
-) = UserModel(
-    id = entity.id.value,
-    name = entity.name,
-    surname = entity.surname,
-    email = entity.email,
-    phoneNumber = entity.phoneNumber,
-    isEnabled = entity.isEnabled,
-    isDeleted = entity.isDeleted,
-    role = entity.role.toString()
+fun UserEntity.toModel()
+= UserModel(
+    id = this.id.value,
+    name = this.name,
+    surname = this.surname,
+    email = this.email,
+    phoneNumber = this.phoneNumber,
+    isEnabled = this.isEnabled,
+    isDeleted = this.isDeleted,
+    role = this.role.toString()
 )
 
 data class UserProfileModel(

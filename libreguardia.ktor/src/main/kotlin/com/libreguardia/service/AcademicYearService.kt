@@ -31,10 +31,4 @@ class AcademicYearService(
             if (!repository.delete(uuid)) throw AcademicYearNotFoundException()
         }
     }
-
-    suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw AcademicYearNotFoundException()
-        }
-    }
 }

@@ -56,11 +56,6 @@ fun Route.courseRouting(service: CourseService) {
                 service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
-            patch<CourseAPI.ByUUID.ToggleEnabled> {
-                val enableOrDisable = call.receive<Boolean>()
-                service.toggleEnabled(it.parent.uuid, enableOrDisable)
-                call.respond(HttpStatusCode.OK)
-            }
         }
     }
 }

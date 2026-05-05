@@ -31,10 +31,4 @@ class GroupService(
             if (!repository.delete(uuid)) throw GroupNotFoundException()
         }
     }
-
-    suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw GroupNotFoundException()
-        }
-    }
 }

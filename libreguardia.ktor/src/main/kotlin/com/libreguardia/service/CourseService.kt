@@ -37,10 +37,4 @@ class CourseService(
             if (!repository.delete(uuid)) throw CourseNotFoundException()
         }
     }
-
-    suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw CourseNotFoundException()
-        }
-    }
 }

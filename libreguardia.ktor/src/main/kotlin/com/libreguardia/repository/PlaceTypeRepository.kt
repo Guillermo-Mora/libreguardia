@@ -7,6 +7,7 @@ import com.libreguardia.dto.module.PlaceTypeEditDTO
 import com.libreguardia.dto.module.PlaceTypeResponseDTO
 import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
@@ -30,8 +31,6 @@ class PlaceTypeRepository {
     }
 
     fun delete(uuid: UUID): Boolean {
-        return PlaceTypeTable.update({ PlaceTypeTable.id eq uuid }) {
-            it[isEnabled] = false
-        } == 1
+        return PlaceTypeTable.deleteWhere { PlaceTypeTable.id eq uuid } == 1
     }
 }

@@ -8,6 +8,7 @@ import com.libreguardia.dto.module.CourseEditDTO
 import com.libreguardia.dto.module.CourseResponseDTO
 import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
@@ -35,14 +36,6 @@ class CourseRepository {
     }
 
     fun delete(uuid: UUID): Boolean {
-        return CourseTable.update({ CourseTable.id eq uuid }) {
-            it[isEnabled] = false
-        } == 1
-    }
-
-    fun toggleEnabled(uuid: UUID, enabled: Boolean): Boolean {
-        return CourseTable.update({ CourseTable.id eq uuid }) {
-            it[isEnabled] = enabled
-        } == 1
+        return CourseTable.deleteWhere { CourseTable.id eq uuid } == 1
     }
 }

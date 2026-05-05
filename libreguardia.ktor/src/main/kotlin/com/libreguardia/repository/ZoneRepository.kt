@@ -7,6 +7,7 @@ import com.libreguardia.dto.module.ZoneEditDTO
 import com.libreguardia.dto.module.ZoneResponseDTO
 import com.libreguardia.dto.module.toResponseDTO
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
@@ -27,8 +28,6 @@ class ZoneRepository {
     }
 
     fun delete(uuid: UUID): Boolean {
-        return ZoneTable.update({ ZoneTable.id eq uuid }) {
-            it[isEnabled] = false
-        } == 1
+        return ZoneTable.deleteWhere { ZoneTable.id eq uuid } == 1
     }
 }

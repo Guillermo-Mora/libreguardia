@@ -33,11 +33,5 @@ class ScheduleActivityService(
             if (!repository.delete(uuid)) throw ScheduleActivityNotFoundException()
         }
     }
-
-    suspend fun toggleEnabled(uuid: UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw ScheduleActivityNotFoundException()
-        }
-    }
 }
 

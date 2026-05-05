@@ -30,10 +30,4 @@ class BuildingService(
             if (!repository.delete(uuid)) throw BuildingNotFoundException()
         }
     }
-
-    suspend fun toggleEnabled(uuid: java.util.UUID, enabled: Boolean) {
-        withTransaction {
-            if (!repository.toggleEnabled(uuid, enabled)) throw BuildingNotFoundException()
-        }
-    }
 }
