@@ -40,7 +40,6 @@ fun Application.main() {
     val serviceRepository = ServiceRepository()
     val scheduleRepository = ScheduleRepository()
     val scheduleActivityRepository = ScheduleActivityRepository()
-
     val sessionRepository = SessionRepository()
     val academicYearRepository = AcademicYearRepository()
     val courseRepository = CourseRepository()
@@ -48,6 +47,7 @@ fun Application.main() {
     val zoneRepository = ZoneRepository()
     val buildingRepository = BuildingRepository()
     val placeTypeRepository = PlaceTypeRepository()
+    val professionalFamilyRepository = ProfessionalFamilyRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
@@ -91,6 +91,9 @@ fun Application.main() {
     val courseService = CourseService(
         repository = courseRepository
     )
+    val professionalFamilyService = ProfessionalFamilyService(
+        professionalFamilyRepository = professionalFamilyRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -120,6 +123,7 @@ fun Application.main() {
         courseService = courseService,
         userService = userService,
         zoneService = zoneService,
-        placeTypeService = placeTypeService
+        placeTypeService = placeTypeService,
+        professionalFamilyService = professionalFamilyService
     )
 }
