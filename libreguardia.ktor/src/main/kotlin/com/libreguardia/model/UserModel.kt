@@ -11,7 +11,6 @@ import kotlinx.serialization.Serializable
 import java.util.UUID
 
 data class UserModel(
-    @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val name: String,
     val surname: String,
@@ -24,7 +23,6 @@ data class UserModel(
 
 fun UserModel.toUserEditDTO(): UserEditDTO =
     UserEditDTO(
-        id = this.id,
         name = this.name,
         surname = this.surname,
         email = this.email,

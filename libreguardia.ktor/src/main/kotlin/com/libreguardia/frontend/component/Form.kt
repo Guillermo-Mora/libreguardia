@@ -3,7 +3,6 @@ package com.libreguardia.frontend.component
 import com.libreguardia.validation.ValidationType
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
-import kotlinx.css.button
 import kotlinx.html.ButtonType
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
@@ -13,6 +12,8 @@ import kotlinx.html.form
 import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.label
+import kotlinx.html.onInput
+import kotlinx.html.onKeyUp
 import kotlinx.html.option
 import kotlinx.html.select
 import kotlinx.html.span
@@ -24,9 +25,9 @@ fun FlowContent.customForm(
     operationPath: String,
     deletePath: String? = null,
     operationType: OperationType,
-    errors: List<String?>? = null,
-    formFieldsData: List<FormFieldData>
-) {
+    errors: Map<FormField, String?>? = null,
+    formFields: Map<FormField, FormFieldData>,
+    ) {
     val formId = formName.lowercase().replace(" ", "")
     val formTarget = "#$formId"
     div {
@@ -44,11 +45,19 @@ fun FlowContent.customForm(
                 swap = "outerHTML"
                 validate = true
             }
-            for ((i, formFieldData) in formFieldsData.withIndex())
+            for ((field, data) in formFields) {
+                val id = field.id
+                val errorId = "$id-error"
+                val errorTarget = "#$errorId"
                 customField(
-                    data = formFieldData,
-                    error = errors?.get(i)
+                    data = data,
+                    id = id,
+                    formTarget = formTarget,
+                    errorId = errorId,
+                    errorTarget = errorTarget,
+                    error = errors?.get(field)
                 )
+            }
             button {
                 type = ButtonType.submit
                 text("Save")
@@ -78,17 +87,21 @@ fun FlowContent.customForm(
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.customField(
     data: FormFieldData,
-    error: String?
+    error: String?,
+    id: String,
+    formTarget: String,
+    errorId: String,
+    errorTarget: String
 ) {
     div {
         label {
-            htmlFor = data.inputId
+            htmlFor = id
             text(data.labelText)
         }
         div {
             if (data.selectOptions != null) {
                 select {
-                    name = data.inputId
+                    name = id
                     required = data.required
                     for (selectOption in data.selectOptions)
                         option {
@@ -99,6 +112,11 @@ fun FlowContent.customField(
                 }
             } else {
                 input {
+                    //I implemented this for doing live server-side validations on each field. Just to avoid
+                    // writing JS. However, I don't think it's a good practice to use this for simple data format
+                    // validations. So I'm switching to HTML5 Validation API. I will let it here in case I
+                    // need it in the future.
+                    //
                     if (
                         data.validationType != null &&
                         data.triggerType != null
@@ -106,15 +124,15 @@ fun FlowContent.customField(
                         attributes.hx {
                             //Replaced to get as it's not really a post, and this way we only send
                             // the necessary data.
-                            get = "/validation/${data.id}/${data.inputId}/${data.required}/${data.validationType}"
+                            get = "/validation/${errorId}/${id}/${data.required}/${data.validationType}"
                             trigger = data.triggerType.value
-                            target = data.target
+                            this.target = errorTarget
 
                             //To only send for validation this input value.
                             // Maybe I should consider doing this more permissive for easier
                             // custom validations required before sending, so I can validate more fields
                             // with a relation in a single action automatically.
-                            include = "#${data.inputId}"
+                            include = "#${id}"
 
                             //This works to filer the data sent, but only if the request is a POST
                             //params = data.inputId
@@ -124,6 +142,31 @@ fun FlowContent.customField(
 
                         }
                     }
+                    //
+
+                    //Validations using the HTML5 Validation API
+                    //Still to be implemented live validations with HTML5 + JS. To prevent the previous
+                    // implementation that constantly threw requests to the server.
+                    //onKeyUp = "this.setCustomValidity('')"
+
+                    //Could be used for regex validations with specific patterns
+                    //pattern = "foo"
+                    //Still to implement
+                    /*
+                    onInput = """
+                        const error = document.getElementById('${errorId}')
+                        
+                        if (this.value !== 'foo') {
+                        error.textContent = 'Please enter the value foo'
+                        } else {
+                        error.textContent = ''
+                        }
+                    """.trimIndent()
+                    attributes.hx {
+                        validate = true
+                    }
+                     */
+
                     if (
                         data.inputType == InputType.checkBox &&
                         data.checkedValue != null
@@ -136,13 +179,13 @@ fun FlowContent.customField(
                         required = data.required
                     }
                     type = data.inputType
-                    name = data.inputId
-                    id = data.inputId
+                    name = id
+                    this.id = id
                     placeholder = data.placeHolder
                 }
             }
             span {
-                id = data.id
+                this.id = errorId
                 error?.let { text(it) }
             }
         }
@@ -162,17 +205,14 @@ data class FormFieldData(
     val triggerType: TriggerType? = null,
 ) {
     val labelText: String = text.replaceFirstChar { it.uppercase() }
-    val id: String = text.lowercase().replace(" ", "-")
-    val inputId: String = text.replace(" ", "")
     val placeHolder: String = "Input $text"
-    val target: String = "#$id"
 }
 
 enum class TriggerType(val value: String) {
     OnChange("input changed delay:600ms")
 }
 
-enum class OperationType() {
+enum class OperationType {
     Get,
     Post,
     Put,
@@ -185,4 +225,9 @@ data class SelectOption(
     val selected: Boolean = false
 ) {
     val value: String = text.lowercase().replace(" ", "")
+}
+
+interface FormField {
+    val key: String
+    val id get() = "$key-id"
 }

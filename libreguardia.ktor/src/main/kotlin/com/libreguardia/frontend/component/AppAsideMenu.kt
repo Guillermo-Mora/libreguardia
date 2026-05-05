@@ -67,7 +67,7 @@ private val asideMenuOptions = listOf(
     //
     MenuOption(
         name = "Professional families",
-        path = "/todo",
+        path = "/professional-family",
         roles = setOf(Role.ADMIN)
     ),
     MenuOption(

@@ -2,45 +2,29 @@ package com.libreguardia.validation.modules
 
 import com.libreguardia.dto.UserCreateDTO
 import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.validation.validateEmail
+import com.libreguardia.frontend.component.FormField
+import com.libreguardia.frontend.component.main.UserCreateField
+import com.libreguardia.frontend.component.main.UserEditField
+import com.libreguardia.validation.*
 
-import com.libreguardia.validation.validatePhoneNumber
-import com.libreguardia.validation.validateResult
-import com.libreguardia.validation.validateRole
-import com.libreguardia.validation.validateString
-import io.ktor.server.plugins.requestvalidation.*
+fun UserEditDTO.validate(): MutableMap<FormField, String?> {
+    val errors = mutableMapOf<FormField, String?>()
+    errors[UserEditField.NAME] = validateRequired(this.name)
+    errors[UserEditField.SURNAME] = validateRequired(this.surname)
+    errors[UserEditField.EMAIL] = validateEmail(this.email, true)
+    errors[UserEditField.PHONE_NUMBER] = validatePhoneNumber(this.phoneNumber, true)
+    errors[UserEditField.NEW_PASSWORD] = validateNewPassword(this.password, false)
+    errors[UserEditField.ROLE] = validateRole(this.role, true)
+    return errors
+}
 
-fun RequestValidationConfig.userValidation() {
-    validate<UserCreateDTO> {
-        val errors = mutableListOf<String>()
-        validateString(it.name)?.let { error -> errors.add(error) }
-        validateString(it.surname)?.let { error -> errors.add(error) }
-        //validatePassword(it.password)?.let { error -> errors.add(error) }
-        //validateEmail(it.email)?.let { error -> errors.add(error) }
-        //validatePhoneNumber(it.phoneNumber)?.let { error -> errors.add(error) }
-        //validateRole(it.role)?.let { error -> errors.add(error) }
-        return@validate validateResult(errors)
-    }
-    validate<UserEditDTO> {
-        val errors = mutableListOf<String>()
-        it.name?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
-        it.surname?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
-        //it.password?.let { field -> validatePassword(field) }?.let { error -> errors.add(error) }
-        //it.email?.let { field -> validateEmail(field) }?.let { error -> errors.add(error) }
-        //it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
-        //it.role?.let { field -> validateRole(field) }?.let { error -> errors.add(error) }
-        return@validate validateResult(errors)
-    }
-    validate<UserEditProfileDTO> {
-        val errors = mutableListOf<String>()
-        //it.phoneNumber?.let { field -> validatePhoneNumber(field) }?.let { error -> errors.add(error) }
-        /*
-        validateNewPassword(
-            currentPassword = it.currentPassword,
-            newPassword = it.newPassword
-        )?.let { error -> errors.add(error) }
-         */
-        return@validate validateResult(errors)
-    }
+fun UserCreateDTO.validate(): MutableMap<FormField, String?> {
+    val errors = mutableMapOf<FormField, String?>()
+    errors[UserCreateField.NAME] = validateRequired(this.name)
+    errors[UserCreateField.SURNAME] = validateRequired(this.surname)
+    errors[UserCreateField.EMAIL] = validateEmail(this.email, true)
+    errors[UserCreateField.PHONE_NUMBER] = validatePhoneNumber(this.phoneNumber, true)
+    errors[UserCreateField.NEW_PASSWORD] = validateNewPassword(this.password, false)
+    errors[UserCreateField.ROLE] = validateRole(this.role, true)
+    return errors
 }

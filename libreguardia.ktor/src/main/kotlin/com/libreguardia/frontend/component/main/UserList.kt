@@ -6,7 +6,7 @@ import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
 
 @OptIn(ExperimentalKtorApi::class)
-fun FlowContent.usersList(
+fun FlowContent.userList(
     users: List<UserModel>
 ) {
     button {

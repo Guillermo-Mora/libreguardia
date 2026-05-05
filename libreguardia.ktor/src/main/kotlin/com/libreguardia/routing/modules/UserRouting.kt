@@ -6,18 +6,11 @@ import com.libreguardia.config.UserSession
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.EditUserProfileResult
-import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.toModel
 import com.libreguardia.dto.toUserCreateDTO
 import com.libreguardia.dto.toUserEditDTO
 import com.libreguardia.dto.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
-import com.libreguardia.frontend.component.main.phoneNumberAndPassword
-import com.libreguardia.frontend.component.main.userCreate
-import com.libreguardia.frontend.component.main.userEdit
-import com.libreguardia.frontend.component.main.userProfile
-import com.libreguardia.frontend.component.main.usersList
+import com.libreguardia.frontend.component.main.*
 import com.libreguardia.frontend.component.userProfileEdit
 import com.libreguardia.model.toUserEditDTO
 import com.libreguardia.routing.respondHtmlPage
@@ -32,8 +25,7 @@ import io.ktor.server.request.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.Route
-import io.ktor.server.sessions.get
-import io.ktor.server.sessions.sessions
+import io.ktor.server.sessions.*
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.serialization.Serializable
@@ -82,21 +74,20 @@ fun Route.userRouting(
 
      */
 
-
-
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
             get<UserAPI.UUID> { user ->
                 val userRole = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
                 val userUuid = user.uuid
-                val user = userService.getUser(
+                val userEdit = userService.getUser(
                     userUuid = userUuid
-                )
+                ).toUserEditDTO()
                 respondHtmlPage(
                     role = userRole,
                     content = {
                         userEdit(
-                            user = user.toUserEditDTO()
+                            user = userEdit,
+                            userUuid = userUuid,
                         )
                     }
                 )
@@ -112,7 +103,7 @@ fun Route.userRouting(
                 respondHtmlPage(
                     role = userRole,
                     content = {
-                        usersList(
+                        userList(
                             users = users
                         )
                     }
@@ -125,6 +116,7 @@ fun Route.userRouting(
                     content = { userCreate() }
                 )
             }
+
             post<UserAPI> {
                 val userCreate = call.receiveParameters().toUserCreateDTO()
                 val operationResult = userService.createUser(
@@ -154,11 +146,11 @@ fun Route.userRouting(
                 )
                 when (operationResult) {
                     is OperationResult.Error -> {
-                        userEdit.id = user.uuid
                         call.respondHtmlFragment {
                             userEdit(
                                 user = userEdit,
-                                errors = operationResult.errors
+                                errors = operationResult.errors,
+                                userUuid = user.uuid
                             )
                         }
                     }
@@ -169,7 +161,6 @@ fun Route.userRouting(
                         call.response.headers.append("HX-Redirect", "/user")
                     }
                 }
-
             }
 
             delete<UserAPI.UUID> { user ->

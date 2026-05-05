@@ -2,6 +2,7 @@ package com.libreguardia.frontend.component.main
 
 import com.libreguardia.db.Role
 import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.FormFieldData
 import com.libreguardia.frontend.component.OperationType
 import com.libreguardia.frontend.component.SelectOption
@@ -10,59 +11,70 @@ import com.libreguardia.frontend.component.customForm
 import com.libreguardia.validation.ValidationType
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
+import java.util.UUID
+
+enum class UserEditField(override val key: String) : FormField {
+    NAME("name"),
+    SURNAME("surname"),
+    EMAIL("email"),
+    PHONE_NUMBER("phone-number"),
+    NEW_PASSWORD("new-password"),
+    ROLE("role"),
+    ENABLED("enabled");
+}
 
 fun FlowContent.userEdit(
     user: UserEditDTO,
-    errors: List<String?>? = null
+    errors: Map<FormField, String?>? = null,
+    userUuid: UUID
 ) {
-    //The errors list is used when the form is sent, so all has to be validated. This way, I can store errors in orders,
-    // putting String or null in each case and sending it to the customForm function. So I can track and send
-    // errors in a much more easy and straight up way.
-
-    //To add for validation of email: That the email being put is not being used by another user in the system.
     customForm(
         formName = "edit-user",
         previousPagePath = "/user",
         operationType = OperationType.Patch,
-        operationPath = "/user/${user.id}",
-        deletePath = "/user/${user.id}",
+        operationPath = "/user/${userUuid}",
+        deletePath = "/user/${userUuid}",
         errors = errors,
-        formFieldsData = listOf(
-            FormFieldData(
+        //All of this is implemented in order to also make easier to implement different languages in the future.
+        // So the enum key and the text from the formFieldData have to be separated.
+        formFields = mapOf(
+            UserEditField.NAME to FormFieldData(
                 text = "name",
-                value = user.name.toString(),
+                value = user.name,
                 required = true,
                 inputType = InputType.text
             ),
-            FormFieldData(
+            UserEditField.SURNAME to FormFieldData(
                 text = "surname",
-                value = user.surname.toString(),
+                value = user.surname,
                 required = true,
                 inputType = InputType.text
             ),
-            FormFieldData(
+            UserEditField.EMAIL to FormFieldData(
                 text = "email",
-                value = user.email.toString(),
+                value = user.email,
                 required = true,
-                inputType = InputType.email
+                inputType = InputType.email,
+                //validationType = ValidationType.Email,
+                //triggerType = TriggerType.OnChange
             ),
-            FormFieldData(
+            UserEditField.PHONE_NUMBER to FormFieldData(
                 text = "phone number",
-                value = user.phoneNumber.toString(),
+                value = user.phoneNumber,
                 required = true,
                 inputType = InputType.tel,
-                validationType = ValidationType.PhoneNumber,
-                triggerType = TriggerType.OnChange
+                //validationType = ValidationType.PhoneNumber,
+                //triggerType = TriggerType.OnChange
             ),
-            FormFieldData(
+            UserEditField.NEW_PASSWORD to FormFieldData(
                 text = "new password",
-                value = user.password.toString(),
+                value = user.password,
                 required = false,
                 inputType = InputType.password,
-                validationType = ValidationType.NewPassword,
-                triggerType = TriggerType.OnChange
+                //validationType = ValidationType.NewPassword,
+                //triggerType = TriggerType.OnChange
             ),
-            FormFieldData(
+            UserEditField.ROLE to FormFieldData(
                 text = "role",
                 required = true,
                 selectOptions =
@@ -73,12 +85,12 @@ fun FlowContent.userEdit(
                         )
                     }
             ),
-            FormFieldData(
+            UserEditField.ENABLED to FormFieldData(
                 text = "enabled",
                 inputType = InputType.checkBox,
                 checkedValue = user.isEnabled,
                 required = true
             )
-        )
+        ),
     )
 }

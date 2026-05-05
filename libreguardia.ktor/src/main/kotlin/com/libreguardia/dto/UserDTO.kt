@@ -1,17 +1,10 @@
 package com.libreguardia.dto
 
-import com.libreguardia.model.UserModel
-import com.libreguardia.util.UUIDSerializer
-import com.libreguardia.validation.validateEmail
-import com.libreguardia.validation.validateNewPassword
-import com.libreguardia.validation.validatePhoneNumber
-import com.libreguardia.validation.validateRequired
-import com.libreguardia.validation.validateRole
-import io.ktor.http.Parameters
-import kotlinx.serialization.Serializable
-import java.util.UUID
+import com.libreguardia.frontend.component.FormField
+import com.libreguardia.frontend.component.main.UserCreateField
+import com.libreguardia.frontend.component.main.UserEditField
+import io.ktor.http.*
 
-@Serializable
 data class UserCreateDTO(
     val name: String = "",
     val surname: String = "",
@@ -22,87 +15,56 @@ data class UserCreateDTO(
     val role: String = ""
 )
 
-//I keep it as Serializable for testing purposes
-@Serializable
 data class UserEditDTO(
-    @Serializable(with = UUIDSerializer::class)
-    var id: UUID? = null,
-    val name: String? = null,
-    val surname: String? = null,
-    val email: String? = null,
-    val phoneNumber: String? = null,
-    val password: String? = null,
-    val isEnabled: Boolean? = null,
-    val role: String? = null
+    val name: String,
+    val surname: String,
+    val email: String,
+    val phoneNumber: String,
+    val password: String,
+    val isEnabled: Boolean,
+    val role: String
 )
 
-fun UserEditDTO.validate(): List<String?> {
-    val errors = mutableListOf<String?>()
-    errors.add(validateRequired(this.name))
-    errors.add(validateRequired(this.surname))
-    errors.add(validateEmail(this.email, true))
-    errors.add(validatePhoneNumber(this.phoneNumber, true))
-    errors.add(validateNewPassword(this.password, false))
-    errors.add(validateRole(this.role, true))
-    //For the enabled/disabled check box
-    errors.add(null)
-    return errors
-}
+//Helpers for receiving parameters
+fun Parameters.string(field: FormField) = this[field.id] ?: ""
+fun Parameters.boolean(field: FormField) = this[field.id].let { it == "checked" }
+fun Parameters.enum(field: FormField) = this[field.id]?.uppercase() ?: ""
 
-fun UserCreateDTO.validate(): List<String?> {
-    val errors = mutableListOf<String?>()
-    errors.add(validateRequired(this.name))
-    errors.add(validateRequired(this.surname))
-    errors.add(validateEmail(this.email, true))
-    errors.add(validatePhoneNumber(this.phoneNumber, true))
-    errors.add(validateNewPassword(this.password, true))
-    errors.add(validateRole(this.role, true))
-    //For the enabled/disabled check box
-    errors.add(null)
-    return errors
-}
-
-fun UserEditDTO.toModel(
-    userUuid: UUID
-): UserModel =
-    UserModel(
-        id = userUuid,
-        name = this.name.toString(),
-        surname = this.surname.toString(),
-        email = this.email.toString(),
-        phoneNumber = this.phoneNumber.toString(),
-        isEnabled = this.isEnabled == true,
-        isDeleted = false,
-        role = this.role.toString()
+fun Parameters.toUserEditDTO() =
+    UserEditDTO(
+        name = string(UserEditField.NAME),
+        surname = string(UserEditField.SURNAME),
+        email = string(UserEditField.EMAIL),
+        phoneNumber = string(UserEditField.PHONE_NUMBER),
+        password = string(UserEditField.NEW_PASSWORD),
+        isEnabled = boolean(UserEditField.ENABLED),
+        role = enum(UserEditField.ROLE)
     )
 
+fun Parameters.toUserCreateDTO() =
+    UserCreateDTO(
+        name = string(UserCreateField.NAME),
+        surname = string(UserCreateField.SURNAME),
+        email = string(UserCreateField.EMAIL),
+        phoneNumber = string(UserCreateField.PHONE_NUMBER),
+        password = string(UserCreateField.NEW_PASSWORD),
+        isEnabled = boolean(UserCreateField.ENABLED),
+        role = enum(UserCreateField.ROLE)
+    )
+
+
+
+
+
+
+
+//This has to be reworked to use the new way of doing it instead of this
+//
 data class UserEditProfileDTO(
     val phoneNumber: String?,
     val currentPassword: String?,
     val newPassword: String?,
 )
-
-fun Parameters.toUserEditDTO() =
-    UserEditDTO(
-        name = this["name"],
-        surname = this["surname"],
-        email = this["email"],
-        phoneNumber = this["phonenumber"],
-        password = this["newpassword"],
-        isEnabled = this["enabled"].let { it == "checked" },
-        role = this["role"]?.uppercase()
-    )
-
-fun Parameters.toUserCreateDTO() =
-    UserCreateDTO(
-        name = this["name"] ?: "",
-        surname = this["surname"] ?: "",
-        email = this["email"] ?: "",
-        phoneNumber = this["phonenumber"] ?: "",
-        password = this["newpassword"] ?: "",
-        isEnabled = this["enabled"].let { it == "checked" },
-        role = this["role"]?.uppercase() ?: ""
-    )
 
 fun Parameters.toUserEditProfileDTO() =
     UserEditProfileDTO(
@@ -121,3 +83,5 @@ sealed class EditUserProfileResult {
         val newPasswordError: String?
     ) : EditUserProfileResult()
 }
+//
+//
