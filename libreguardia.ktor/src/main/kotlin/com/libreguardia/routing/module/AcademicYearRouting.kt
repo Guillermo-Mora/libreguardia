@@ -28,26 +28,15 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Resource("/academic-year")
-class AcademicYearPagesAPI {
-    @Serializable
-    @Resource("new")
-    class New(val parent: AcademicYearPagesAPI = AcademicYearPagesAPI())
-
-    @Serializable
-    @Resource("{uuid}")
-    class ByUUID(
-        val parent: AcademicYearPagesAPI = AcademicYearPagesAPI(),
-        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-    )
-}
-
-@Serializable
-@Resource("/api/academic-year")
 class AcademicYearAPI {
     @Serializable
+    @Resource("new")
+    class New(val parent: AcademicYearAPI = AcademicYearAPI())
+
+    @Serializable
     @Resource("{uuid}")
     class ByUUID(
-        val parent: AcademicYearAPI,
+        val parent: AcademicYearAPI = AcademicYearAPI(),
         @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
     ) {
         @Serializable
@@ -60,8 +49,8 @@ fun Route.academicYearRouting(service: AcademicYearService) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
             // HTML Pages
-            get<AcademicYearPagesAPI> {
-                val userRole = call.principal<com.libreguardia.config.UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
+            get<AcademicYearAPI> {
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
                 val academicYears = service.getAll()
                 respondHtmlPage(
                     role = userRole,
@@ -73,16 +62,16 @@ fun Route.academicYearRouting(service: AcademicYearService) {
                 )
             }
 
-            get<AcademicYearPagesAPI.New> {
-                val userRole = call.principal<com.libreguardia.config.UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
+            get<AcademicYearAPI.New> {
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
                 respondHtmlPage(
                     role = userRole,
                     content = { academicYearCreate() }
                 )
             }
 
-            get<AcademicYearPagesAPI.ByUUID> { academicYear ->
-                val userRole = call.principal<com.libreguardia.config.UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
+            get<AcademicYearAPI.ByUUID> { academicYear ->
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
                 val academicYearDto = service.getByUUID(academicYear.uuid)
                 respondHtmlPage(
                     role = userRole,
@@ -95,7 +84,7 @@ fun Route.academicYearRouting(service: AcademicYearService) {
                 )
             }
 
-            post<AcademicYearPagesAPI> {
+            post<AcademicYearAPI> {
                 val academicYearCreate = call.receiveParameters().toAcademicYearCreateDTO()
                 val operationResult = service.create(academicYearCreate)
                 when (operationResult) {
@@ -113,7 +102,7 @@ fun Route.academicYearRouting(service: AcademicYearService) {
                 }
             }
 
-            patch<AcademicYearPagesAPI.ByUUID> { academicYear ->
+            patch<AcademicYearAPI.ByUUID> { academicYear ->
                 val academicYearEdit = call.receiveParameters().toAcademicYearEditDTO()
                 val operationResult = service.update(academicYear.uuid, academicYearEdit)
                 when (operationResult) {
@@ -132,31 +121,9 @@ fun Route.academicYearRouting(service: AcademicYearService) {
                 }
             }
 
-            delete<AcademicYearPagesAPI.ByUUID> { academicYear ->
+            delete<AcademicYearAPI.ByUUID> { academicYear ->
                 service.delete(academicYear.uuid)
                 call.response.headers.append("HX-Redirect", "/academic-year")
-                call.respond(HttpStatusCode.NoContent)
-            }
-
-            // API Routes
-            get<AcademicYearAPI> {
-                call.respond(service.getAll())
-            }
-            post<AcademicYearAPI> {
-                val dto = call.receive<AcademicYearCreateDTO>()
-                service.create(dto)
-                call.respond(HttpStatusCode.Created)
-            }
-            get<AcademicYearAPI.ByUUID> {
-                call.respond(service.getByUUID(it.uuid))
-            }
-            patch<AcademicYearAPI.ByUUID> {
-                val dto = call.receive<AcademicYearEditDTO>()
-                service.update(it.uuid, dto)
-                call.respond(HttpStatusCode.OK)
-            }
-            delete<AcademicYearAPI.ByUUID> {
-                service.delete(it.uuid)
                 call.respond(HttpStatusCode.NoContent)
             }
         }
