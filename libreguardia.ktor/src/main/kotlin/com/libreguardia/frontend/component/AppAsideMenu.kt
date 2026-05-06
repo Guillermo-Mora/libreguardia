@@ -44,7 +44,7 @@ private val asideMenuOptions = listOf(
     //
     MenuOption(
         name = "Academic Years",
-        path = "/todo",
+        path = "/academic-year",
         roles = setOf(Role.ADMIN)
     ),
     //
