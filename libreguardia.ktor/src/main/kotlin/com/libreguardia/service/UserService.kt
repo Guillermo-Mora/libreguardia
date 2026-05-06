@@ -91,12 +91,6 @@ class UserService (
         }
     }
 
-    //This helper should be in another place for general use inside services. For now in testing, it stays here.
-    fun containsErrors(
-        errors: MutableMap<FormField, String?>
-    ) = errors.any { it.value != null }
-
-
     //This is a partially clean example of how I should manage the validations in the service functions
     suspend fun editUser(
         userUuid: UUID,
