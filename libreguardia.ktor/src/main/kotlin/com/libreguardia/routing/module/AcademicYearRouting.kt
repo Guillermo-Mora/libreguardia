@@ -1,6 +1,7 @@
 package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
+import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.module.AcademicYearCreateDTO
@@ -14,7 +15,7 @@ import com.libreguardia.util.UUIDSerializer
 import com.libreguardia.validation.OperationResult
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
-import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.*
 import io.ktor.server.html.respondHtmlFragment
 import io.ktor.server.request.*
 import io.ktor.server.response.*

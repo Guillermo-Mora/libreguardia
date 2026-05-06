@@ -3,6 +3,7 @@ package com.libreguardia.dto.module
 import com.libreguardia.db.model.AcademicYearEntity
 import com.libreguardia.dto.string
 import com.libreguardia.frontend.component.main.AcademicYearCreateField
+import com.libreguardia.frontend.component.main.AcademicYearEditField
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.Parameters
 import kotlinx.datetime.LocalDate
@@ -48,7 +49,7 @@ fun Parameters.toAcademicYearCreateDTO() =
 
 fun Parameters.toAcademicYearEditDTO() =
     AcademicYearEditDTO(
-        name = string(AcademicYearCreateField.NAME).takeIf { it.isNotBlank() },
-        startDate = string(AcademicYearCreateField.START_DATE).takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) },
-        endDate = string(AcademicYearCreateField.END_DATE).takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+        name = string(AcademicYearEditField.NAME).takeIf { it.isNotBlank() },
+        startDate = string(AcademicYearEditField.START_DATE).takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) },
+        endDate = string(AcademicYearEditField.END_DATE).takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
     )
