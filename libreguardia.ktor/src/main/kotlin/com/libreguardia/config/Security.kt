@@ -1,28 +1,22 @@
 package com.libreguardia.config
 
 import com.libreguardia.db.Role
-import com.libreguardia.exception.ErrorCode
 import com.libreguardia.service.AuthService
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.htmx.html.hx
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.html.respondHtmlFragment
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
-import io.ktor.server.response.respondText
 import io.ktor.server.sessions.*
 import io.ktor.utils.io.ExperimentalKtorApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.html.FlowContent
 import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.label
-import kotlinx.html.p
 import kotlinx.html.span
 import kotlinx.serialization.Serializable
 import java.util.*
@@ -63,7 +57,7 @@ fun Application.configureSecurity(
                 call.respondHtmlFragment() {
                     @OptIn(ExperimentalKtorApi::class)
                     div("input-div input-div-error") {
-                        id = "password-div"
+                        this.id = "password-div"
                         label {
                             htmlFor = "password"
                             text("Password")
@@ -74,7 +68,7 @@ fun Application.configureSecurity(
                             }
                             type = InputType.password
                             name = "password"
-                            id = "password"
+                            this.id = "password"
                             placeholder = "Input your password"
                             required = true
                         }

@@ -28,7 +28,7 @@ class ProfessionalFamilyRepository {
     fun getAll(): List<ProfessionalFamilyModel> =
         ProfessionalFamilyEntity
             .all()
-            .map(ProfessionalFamilyEntity::toModel)
+            .map { it.toModel() }
 
     fun getThis(
         uuid: UUID
@@ -78,4 +78,13 @@ class ProfessionalFamilyRepository {
             it[ProfessionalFamilyTable.name] = professionalFamilyCreateDTO.name
         }
     }
+
+    fun exists(
+        uuid: UUID
+    ): Boolean =
+        ProfessionalFamilyTable
+            .select(ProfessionalFamilyTable.id)
+            .where { ProfessionalFamilyTable.id eq uuid }
+            .limit(1)
+            .count().toInt() >= 1
 }

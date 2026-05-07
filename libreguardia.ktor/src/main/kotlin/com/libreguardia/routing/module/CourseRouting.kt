@@ -1,59 +1,159 @@
 package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
+import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.CourseCreateDTO
-import com.libreguardia.dto.module.CourseEditDTO
+import com.libreguardia.dto.module.toCourseCreateDTO
+import com.libreguardia.dto.module.toCourseEditDTO
+import com.libreguardia.dto.module.toProfessionalFamilyCreateDTO
+import com.libreguardia.dto.module.toProfessionalFamilyEditDTO
+import com.libreguardia.frontend.component.main.*
+import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.CourseService
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.validation.OperationResult
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
-import io.ktor.server.auth.authenticate
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.resources.get
-import io.ktor.server.resources.post
-import io.ktor.server.resources.patch
-import io.ktor.server.resources.delete
+import io.ktor.server.auth.*
+import io.ktor.server.html.respondHtmlFragment
+import io.ktor.server.plugins.NotFoundException
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.resources.*
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable
 
-@Serializable
-@Resource("/api/course")
+@Resource("/course")
 class CourseAPI {
-    @Serializable
+    @Resource("new")
+    class New(val parent: CourseAPI = CourseAPI())
+
     @Resource("{uuid}")
-    class ByUUID(
-        val parent: CourseAPI,
+    class UUID(
+        val parent: CourseAPI = CourseAPI(),
         @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
-    ) {
-        @Resource("toggle-enabled")
-        class ToggleEnabled(val parent: ByUUID)
-    }
+    )
 }
 
-fun Route.courseRouting(service: CourseService) {
+fun Route.courseRouting(
+    courseService: CourseService,
+    professionalFamilyService: ProfessionalFamilyService
+) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
+
+            get<CourseAPI.UUID> { course ->
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val uuid = course.uuid
+                val courseEdit = courseService.getThis(
+                    uuid = uuid
+                ).toCourseEditDTO()
+                val professionalFamilies = professionalFamilyService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        courseEdit(
+                            dto = courseEdit,
+                            uuid = uuid,
+                            professionalFamilies = professionalFamilies,
+                        )
+                    }
+                )
+            }
+
             get<CourseAPI> {
-                call.respond(service.getAll())
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val courses = courseService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        courseList(
+                            courses = courses
+                        )
+                    }
+                )
             }
+
+            get<CourseAPI.New> {
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val professionalFamilies = professionalFamilyService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        courseCreate(
+                            professionalFamilies = professionalFamilies,
+                        )
+                    }
+                )
+            }
+
             post<CourseAPI> {
-                val dto = call.receive<CourseCreateDTO>()
-                service.create(dto)
-                call.respond(HttpStatusCode.Created)
+                val courseCreate = call.receiveParameters().toCourseCreateDTO()
+                val operationResult = courseService.create(
+                    courseCreateDTO = courseCreate
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        val professionalFamilies = professionalFamilyService.getAll()
+                        call.respondHtmlFragment {
+                            courseCreate(
+                                dto = courseCreate,
+                                errors = operationResult.errors,
+                                professionalFamilies = professionalFamilies
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/course","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
             }
-            get<CourseAPI.ByUUID> {
-                call.respond(service.getByUUID(it.uuid))
+
+
+            patch<CourseAPI.UUID> { course ->
+                val courseEdit = call.receiveParameters().toCourseEditDTO()
+                val operationResult = courseService.editThis(
+                    uuid = course.uuid,
+                    courseEditDTO = courseEdit
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        val professionalFamilies = professionalFamilyService.getAll()
+                        call.respondHtmlFragment {
+                            courseEdit(
+                                dto = courseEdit,
+                                errors = operationResult.errors,
+                                professionalFamilies = professionalFamilies,
+                                uuid = course.uuid
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/course","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
             }
-            patch<CourseAPI.ByUUID> {
-                val dto = call.receive<CourseEditDTO>()
-                service.update(it.uuid, dto)
-                call.respond(HttpStatusCode.OK)
-            }
-            delete<CourseAPI.ByUUID> {
-                service.delete(it.uuid)
+
+            delete<CourseAPI.UUID> { professionalFamily ->
+                courseService.deleteThis(
+                    uuid = professionalFamily.uuid
+                )
+                call.response.headers.append(
+                    "HX-Location",
+                    """{"path":"/course","target":"#main-content"}"""
+                )
                 call.respond(HttpStatusCode.NoContent)
             }
         }

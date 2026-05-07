@@ -72,7 +72,7 @@ private val asideMenuOptions = listOf(
     ),
     MenuOption(
         name = "Courses",
-        path = "/todo",
+        path = "/course",
         roles = setOf(Role.ADMIN)
     ),
     MenuOption(

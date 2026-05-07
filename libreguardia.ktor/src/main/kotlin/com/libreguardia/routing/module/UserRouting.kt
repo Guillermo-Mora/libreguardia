@@ -229,7 +229,7 @@ fun Route.userRouting(
                     when (result) {
                         is EditUserProfileResult.Success -> {
                             div {
-                                id = "editable-fields"
+                                this.id = "editable-fields"
                                 phoneNumberAndPassword(
                                     userPhoneNumber = result.userPhoneNumber
                                 )

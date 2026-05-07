@@ -54,7 +54,10 @@ fun Application.configureRouting(
         zoneRouting(service = zoneService)
         buildingRouting(service = buildingService)
         placeTypeRouting(service = placeTypeService)
-        courseRouting(service = courseService)
+        courseRouting(
+            courseService = courseService,
+            professionalFamilyService = professionalFamilyService
+        )
         staticResources("/static", "static")
     }
 }

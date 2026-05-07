@@ -5,20 +5,8 @@ import com.libreguardia.config.*
 import com.libreguardia.db.configureDatabase
 import com.libreguardia.db.configureFlyway
 import com.libreguardia.exception.configureStatusPages
-import com.libreguardia.repository.AbsenceRepository
-import com.libreguardia.repository.AcademicYearRepository
-import com.libreguardia.repository.CourseRepository
-import com.libreguardia.validation.configureRequestValidation
-import com.libreguardia.repository.ScheduleRepository
-import com.libreguardia.repository.ServiceRepository
-import com.libreguardia.repository.SessionRepository
-import com.libreguardia.repository.UserRepository
 import com.libreguardia.repository.*
 import com.libreguardia.routing.configureRouting
-import com.libreguardia.service.AcademicYearService
-import com.libreguardia.service.AuthService
-import com.libreguardia.service.CourseService
-import com.libreguardia.service.UserService
 import com.libreguardia.service.*
 import com.libreguardia.validation.configureRequestValidation
 import io.ktor.server.application.*
@@ -89,7 +77,8 @@ fun Application.main() {
         repository = groupRepository
     )
     val courseService = CourseService(
-        repository = courseRepository
+        courseRepository = courseRepository,
+        professionalFamilyRepository = professionalFamilyRepository
     )
     val professionalFamilyService = ProfessionalFamilyService(
         professionalFamilyRepository = professionalFamilyRepository

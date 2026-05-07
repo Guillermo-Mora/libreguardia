@@ -95,6 +95,10 @@ fun Route.professionalFamilyRouting(
                     }
 
                     is OperationResult.Success -> {
+                        //This works, however the redirection page should be decided by the page, not by this endpoint.
+                        // The best solution would be to add a String field in the Success class, to represent the
+                        // path to go if the operation is successfully completed, that can be nullable, In case it
+                        // has to stay in the same path.
                         call.response.headers.append(
                             "HX-Location",
                             """{"path":"/professional-family","target":"#main-content"}"""

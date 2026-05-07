@@ -12,11 +12,10 @@ import kotlinx.html.form
 import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.label
-import kotlinx.html.onInput
-import kotlinx.html.onKeyUp
 import kotlinx.html.option
 import kotlinx.html.select
 import kotlinx.html.span
+import java.util.UUID
 
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.customForm(
@@ -31,7 +30,7 @@ fun FlowContent.customForm(
     val formId = formName.lowercase().replace(" ", "")
     val formTarget = "#$formId"
     div {
-        id = formId
+        this.id = formId
         form {
             attributes.hx {
                 when (operationType) {
@@ -106,7 +105,7 @@ fun FlowContent.customField(
                     for (selectOption in data.selectOptions)
                         option {
                             selected = selectOption.selected
-                            value = selectOption.value
+                            value = selectOption.id?.toString() ?: selectOption.value
                             text(selectOption.text)
                         }
                 }
@@ -222,7 +221,8 @@ enum class OperationType {
 
 data class SelectOption(
     val text: String,
-    val selected: Boolean = false
+    val selected: Boolean = false,
+    val id: UUID? = null
 ) {
     val value: String = text.lowercase().replace(" ", "")
 }

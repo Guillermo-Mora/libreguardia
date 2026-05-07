@@ -1,33 +1,37 @@
 package com.libreguardia.dto.module
 
-import com.libreguardia.db.model.CourseEntity
-import com.libreguardia.util.UUIDSerializer
-import kotlinx.serialization.Serializable
+import com.libreguardia.dto.string
+import com.libreguardia.dto.uuid
+import com.libreguardia.frontend.component.main.CourseCreateField
+import com.libreguardia.frontend.component.main.CourseEditField
+import com.libreguardia.model.CourseModel
+import io.ktor.http.*
 import java.util.UUID
 
-@Serializable
-data class CourseResponseDTO(
-    @Serializable(with = UUIDSerializer::class)
-    val id: UUID,
+data class CourseEditDTO(
     val name: String,
-    @Serializable(with = UUIDSerializer::class)
-    val professionalFamilyId: UUID,
-)
-
-@Serializable
-data class CourseCreateDTO(
-    val name: String,
-    @Serializable(with = UUIDSerializer::class)
     val professionalFamilyId: UUID
 )
 
-@Serializable
-data class CourseEditDTO(
-    val name: String? = null
+data class CourseCreateDTO(
+    val name: String = "",
+    val professionalFamilyId: UUID = UUID.randomUUID()
 )
 
-fun CourseEntity.toResponseDTO() = CourseResponseDTO(
-    id = id.value,
-    name = name,
-    professionalFamilyId = professionalFamily.id.value,
-)
+fun CourseModel.toCourseEditDTO() =
+    CourseEditDTO(
+        name = this.name,
+        professionalFamilyId = this.professionalFamilyId
+    )
+
+fun Parameters.toCourseEditDTO() =
+    CourseEditDTO(
+        name = string(CourseEditField.NAME),
+        professionalFamilyId = uuid(CourseEditField.PROFESSIONAL_FAMILY)
+    )
+
+fun Parameters.toCourseCreateDTO() =
+    CourseCreateDTO(
+        name = string(CourseCreateField.NAME),
+        professionalFamilyId = uuid(CourseCreateField.PROFESSIONAL_FAMILY)
+    )

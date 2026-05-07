@@ -5,7 +5,6 @@ import com.libreguardia.validation.module.authValidation
 import com.libreguardia.validation.module.scheduleActivityValidation
 import com.libreguardia.validation.module.placeTypeValidation
 import com.libreguardia.validation.module.buildingValidation
-import com.libreguardia.validation.module.courseValidation
 import com.libreguardia.validation.module.groupValidation
 import com.libreguardia.validation.module.zoneValidation
 import io.ktor.server.application.*
@@ -20,6 +19,5 @@ fun Application.configureRequestValidation() {
         buildingValidation()
         groupValidation()
         zoneValidation()
-        courseValidation()
     }
 }
