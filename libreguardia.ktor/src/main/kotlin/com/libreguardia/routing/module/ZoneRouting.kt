@@ -8,6 +8,7 @@ import com.libreguardia.dto.module.ZoneCreateDTO
 import com.libreguardia.dto.module.ZoneEditDTO
 import com.libreguardia.dto.module.toZoneCreateDTO
 import com.libreguardia.dto.module.toZoneEditDTO
+import com.libreguardia.exception.ZoneNotFoundException
 import com.libreguardia.frontend.component.main.*
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.ZoneService
@@ -46,7 +47,7 @@ fun Route.zoneRouting(service: ZoneService) {
         authorized(Role.ADMIN) {
             // HTML Pages
             get<ZoneAPI> {
-                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw ZoneNotFoundException()
                 val zones = service.getAll()
                 respondHtmlPage(
                     role = userRole,
@@ -59,7 +60,7 @@ fun Route.zoneRouting(service: ZoneService) {
             }
 
             get<ZoneAPI.New> {
-                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw ZoneNotFoundException()
                 respondHtmlPage(
                     role = userRole,
                     content = { zoneCreate() }
@@ -67,7 +68,7 @@ fun Route.zoneRouting(service: ZoneService) {
             }
 
             get<ZoneAPI.ByUUID> { zone ->
-                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw IllegalArgumentException()
+                val userRole = call.principal<UserPrincipal>()?.userRole ?: throw ZoneNotFoundException()
                 val zoneDto = service.getByUUID(zone.uuid)
                 respondHtmlPage(
                     role = userRole,
