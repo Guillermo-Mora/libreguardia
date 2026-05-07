@@ -1,12 +1,16 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.edit
 
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.UserCreateDTO
+import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
+import java.util.*
 
-enum class UserCreateField(override val key: String) : FormField {
+
+// I think it would be better to use the actual UserEditDTO for doing this, instead of having
+// to manually define the fields. But for now, this does the work.
+enum class UserEditField(override val key: String) : FormField {
     NAME("name"),
     SURNAME("surname"),
     EMAIL("email"),
@@ -16,31 +20,34 @@ enum class UserCreateField(override val key: String) : FormField {
     ENABLED("enabled");
 }
 
-
-fun FlowContent.userCreate(
-    user: UserCreateDTO = UserCreateDTO(),
+fun FlowContent.userEdit(
+    user: UserEditDTO,
     errors: Map<FormField, String?>? = null,
+    userUuid: UUID
 ) {
     customForm(
-        formName = "create-user",
+        formName = "edit-user",
         previousPagePath = "/user",
-        operationPath = "/user",
-        operationType = OperationType.Post,
+        operationType = OperationType.Patch,
+        operationPath = "/user/${userUuid}",
+        deletePath = "/user/${userUuid}",
         errors = errors,
+        //All of this is implemented in order to also make easier to implement different languages in the future.
+        // So the enum key and the text from the formFieldData have to be separated.
         formFields = mapOf(
-            UserCreateField.NAME to FormFieldData(
+            UserEditField.NAME to FormFieldData(
                 text = "name",
                 value = user.name,
                 required = true,
                 inputType = InputType.text
             ),
-            UserCreateField.SURNAME to FormFieldData(
+            UserEditField.SURNAME to FormFieldData(
                 text = "surname",
                 value = user.surname,
                 required = true,
                 inputType = InputType.text
             ),
-            UserCreateField.EMAIL to FormFieldData(
+            UserEditField.EMAIL to FormFieldData(
                 text = "email",
                 value = user.email,
                 required = true,
@@ -48,7 +55,7 @@ fun FlowContent.userCreate(
                 //validationType = ValidationType.Email,
                 //triggerType = TriggerType.OnChange
             ),
-            UserCreateField.PHONE_NUMBER to FormFieldData(
+            UserEditField.PHONE_NUMBER to FormFieldData(
                 text = "phone number",
                 value = user.phoneNumber,
                 required = true,
@@ -56,15 +63,15 @@ fun FlowContent.userCreate(
                 //validationType = ValidationType.PhoneNumber,
                 //triggerType = TriggerType.OnChange
             ),
-            UserCreateField.NEW_PASSWORD to FormFieldData(
+            UserEditField.NEW_PASSWORD to FormFieldData(
                 text = "new password",
                 value = user.password,
-                required = true,
+                required = false,
                 inputType = InputType.password,
                 //validationType = ValidationType.NewPassword,
                 //triggerType = TriggerType.OnChange
             ),
-            UserCreateField.ROLE to FormFieldData(
+            UserEditField.ROLE to FormFieldData(
                 text = "role",
                 required = true,
                 selectOptions =
@@ -75,7 +82,7 @@ fun FlowContent.userCreate(
                         )
                     }
             ),
-            UserCreateField.ENABLED to FormFieldData(
+            UserEditField.ENABLED to FormFieldData(
                 text = "enabled",
                 inputType = InputType.checkBox,
                 checkedValue = user.isEnabled,

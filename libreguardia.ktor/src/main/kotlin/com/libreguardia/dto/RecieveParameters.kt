@@ -2,6 +2,7 @@ package com.libreguardia.dto
 
 import com.libreguardia.frontend.component.FormField
 import io.ktor.http.Parameters
+import java.math.BigDecimal
 import java.util.UUID
 import kotlin.text.uppercase
 

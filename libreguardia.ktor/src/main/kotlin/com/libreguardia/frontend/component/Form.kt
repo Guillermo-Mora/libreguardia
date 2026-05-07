@@ -166,6 +166,13 @@ fun FlowContent.customField(
                     }
                      */
 
+                    if (data.inputType == InputType.range &&
+                        data.rangeConfig != null) {
+                        min = data.rangeConfig.min.toString()
+                        max = data.rangeConfig.max.toString()
+                        step = data.rangeConfig.step.toString()
+                    }
+
                     if (
                         data.inputType == InputType.checkBox &&
                         data.checkedValue != null
@@ -199,6 +206,7 @@ data class FormFieldData(
     val required: Boolean = true,
     val inputType: InputType = InputType.text,
     val selectOptions: List<SelectOption>? = null,
+    val rangeConfig: RangeConfig? = null,
     //
     val validationType: ValidationType? = null,
     val triggerType: TriggerType? = null,
@@ -226,6 +234,12 @@ data class SelectOption(
 ) {
     val value: String = text.lowercase().replace(" ", "")
 }
+
+data class RangeConfig(
+    val min: Float,
+    val max: Float,
+    val step: Float
+)
 
 interface FormField {
     val key: String

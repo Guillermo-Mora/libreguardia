@@ -2,8 +2,8 @@ package com.libreguardia.dto.module
 
 import com.libreguardia.dto.string
 import com.libreguardia.dto.uuid
-import com.libreguardia.frontend.component.main.CourseCreateField
-import com.libreguardia.frontend.component.main.CourseEditField
+import com.libreguardia.frontend.component.main.create.CourseCreateField
+import com.libreguardia.frontend.component.main.edit.CourseEditField
 import com.libreguardia.model.CourseModel
 import io.ktor.http.*
 import java.util.UUID

@@ -1,39 +1,42 @@
 package com.libreguardia.dto.module
 
-import com.libreguardia.db.model.GroupEntity
-import com.libreguardia.util.UUIDSerializer
-import kotlinx.serialization.Serializable
-import java.util.UUID
+import com.libreguardia.dto.string
+import com.libreguardia.dto.uuid
+import com.libreguardia.frontend.component.main.create.GroupCreateField
+import com.libreguardia.frontend.component.main.edit.GroupEditField
+import com.libreguardia.model.GroupModel
+import io.ktor.http.*
+import java.util.*
 
-@Serializable
-data class GroupResponseDTO(
-    @Serializable(with = UUIDSerializer::class)
-    val id: UUID,
-    val code: String,
-    val pointsMultiplier: Double,
-    @Serializable(with = UUIDSerializer::class)
-    val courseId: UUID
-)
-
-@Serializable
-data class GroupCreateDTO(
-    val code: String,
-    val pointsMultiplier: Double? = null,
-    @Serializable(with = UUIDSerializer::class)
-    val courseId: UUID
-)
-
-@Serializable
 data class GroupEditDTO(
-    val code: String? = null,
-    val pointsMultiplier: Double? = null,
-    @Serializable(with = UUIDSerializer::class)
-    val courseId: UUID? = null
+    val code: String,
+    val pointsMultiplier: String,
+    val courseId: UUID
 )
 
-fun GroupEntity.toResponseDTO() = GroupResponseDTO(
-    id = id.value,
-    code = code,
-    pointsMultiplier = pointsMultiplier.toDouble(),
-    courseId = course.id.value
+data class GroupCreateDTO(
+    val code: String = "",
+    val pointsMultiplier: String = "0",
+    val courseId: UUID = UUID.randomUUID()
 )
+
+fun GroupModel.toGroupEditDTO() =
+    GroupEditDTO(
+        code = this.code,
+        pointsMultiplier = this.pointsMultiplier,
+        courseId = this.courseId
+    )
+
+fun Parameters.toGroupEditDTO() =
+    GroupEditDTO(
+        code = string(GroupEditField.CODE),
+        pointsMultiplier = string(GroupEditField.POINTS_MULTIPLIER),
+        courseId = uuid(GroupEditField.COURSE)
+    )
+
+fun Parameters.toGroupCreateDTO() =
+    GroupCreateDTO(
+        code = string(GroupCreateField.CODE),
+        pointsMultiplier = string(GroupCreateField.POINTS_MULTIPLIER),
+        courseId = uuid(GroupCreateField.COURSE)
+    )

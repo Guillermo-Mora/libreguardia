@@ -45,19 +45,41 @@ fun Application.configureRouting(
     routing {
         validationRouting()
         entryRouting()
-        authRouting(authService = authService)
-        userRouting(userService = userService)
-        professionalFamilyRouting(professionalFamilyService = professionalFamilyService)
-        academicYearRouting(service = academicYearService)
-        scheduleActivityRouting(service = scheduleActivityService)
-        groupRouting(service = groupService)
-        zoneRouting(service = zoneService)
-        buildingRouting(service = buildingService)
-        placeTypeRouting(service = placeTypeService)
+        authRouting(
+            authService = authService
+        )
+        userRouting(
+            userService = userService
+        )
+        professionalFamilyRouting(
+            professionalFamilyService = professionalFamilyService
+        )
+        academicYearRouting(
+            service = academicYearService
+        )
+        scheduleActivityRouting(
+            service = scheduleActivityService
+        )
+        groupRouting(
+            groupService = groupService,
+            courseService = courseService
+        )
+        zoneRouting(
+            service = zoneService
+        )
+        buildingRouting(
+            service = buildingService
+        )
+        placeTypeRouting(
+            service = placeTypeService
+        )
         courseRouting(
             courseService = courseService,
             professionalFamilyService = professionalFamilyService
         )
-        staticResources("/static", "static")
+        staticResources(
+            remotePath = "/static",
+            basePackage = "static"
+        )
     }
 }

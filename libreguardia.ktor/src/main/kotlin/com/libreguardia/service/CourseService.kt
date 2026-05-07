@@ -2,8 +2,8 @@ package com.libreguardia.service
 
 import com.libreguardia.dto.module.CourseCreateDTO
 import com.libreguardia.dto.module.CourseEditDTO
-import com.libreguardia.frontend.component.main.CourseCreateField
-import com.libreguardia.frontend.component.main.CourseEditField
+import com.libreguardia.frontend.component.main.create.CourseCreateField
+import com.libreguardia.frontend.component.main.edit.CourseEditField
 import com.libreguardia.model.CourseModel
 import com.libreguardia.repository.CourseRepository
 import com.libreguardia.repository.ProfessionalFamilyRepository
@@ -31,8 +31,14 @@ class CourseService(
         val errors = courseCreateDTO.validate()
         if (containsErrors(errors)) return OperationResult.Error(errors)
         return withTransaction {
-            if (!professionalFamilyRepository.exists(courseCreateDTO.professionalFamilyId))
-                errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
+            if (courseRepository.isNameTaken(
+                    name = courseCreateDTO.name
+                )
+            ) errors[CourseCreateField.NAME] = "Name already taken"
+            if (!professionalFamilyRepository.exists(
+                    uuid = courseCreateDTO.professionalFamilyId
+                )
+            ) errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
             if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
             courseRepository.save(
                 courseCreateDTO = courseCreateDTO
@@ -52,9 +58,9 @@ class CourseService(
                     uuid = uuid,
                     name = courseEditDTO.name
                 )
-            ) {
-                errors[CourseEditField.NAME] = "Name already taken"
-            }
+            ) errors[CourseEditField.NAME] = "Name already taken"
+            if (!professionalFamilyRepository.exists(courseEditDTO.professionalFamilyId))
+                errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
             if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
 
             if (!courseRepository.editThis(

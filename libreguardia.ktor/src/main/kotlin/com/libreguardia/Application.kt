@@ -53,7 +53,6 @@ fun Application.main() {
     )
     val authService = AuthService(
         bcryptVerifyer = bcryptVerifyer,
-        bcryptHasher = bcryptHasher,
         clock = clock,
         userRepository = userRepository,
         sessionRepository = sessionRepository,
@@ -74,7 +73,8 @@ fun Application.main() {
         repository = zoneRepository
     )
     val groupService = GroupService(
-        repository = groupRepository
+        groupRepository = groupRepository,
+        courseRepository = courseRepository
     )
     val courseService = CourseService(
         courseRepository = courseRepository,

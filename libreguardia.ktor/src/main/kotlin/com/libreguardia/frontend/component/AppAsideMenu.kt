@@ -77,7 +77,7 @@ private val asideMenuOptions = listOf(
     ),
     MenuOption(
         name = "Groups",
-        path = "/todo",
+        path = "/group",
         roles = setOf(Role.ADMIN)
     ),
     //

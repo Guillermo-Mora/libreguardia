@@ -2,6 +2,7 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.CourseEntity
 import com.libreguardia.db.model.CourseTable
+import com.libreguardia.db.model.ProfessionalFamilyTable
 import com.libreguardia.dto.module.CourseCreateDTO
 import com.libreguardia.dto.module.CourseEditDTO
 import com.libreguardia.model.CourseModel
@@ -65,6 +66,15 @@ class CourseRepository {
         CourseTable
             .select(CourseTable.name)
             .where { CourseTable.name eq name }
+            .limit(1)
+            .count().toInt() >= 1
+
+    fun exists(
+        uuid: UUID
+    ): Boolean =
+        CourseTable
+            .select(CourseTable.id)
+            .where { CourseTable.id eq uuid }
             .limit(1)
             .count().toInt() >= 1
 }

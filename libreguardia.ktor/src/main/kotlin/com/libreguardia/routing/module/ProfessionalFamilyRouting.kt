@@ -6,8 +6,9 @@ import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.module.toProfessionalFamilyCreateDTO
 import com.libreguardia.dto.module.toProfessionalFamilyEditDTO
-import com.libreguardia.exception.UserNotFoundException
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.professionalFamilyCreate
+import com.libreguardia.frontend.component.main.edit.professionalFamilyEdit
+import com.libreguardia.frontend.component.main.list.professionalFamilyList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.util.UUIDSerializer

@@ -6,9 +6,9 @@ import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.module.toCourseCreateDTO
 import com.libreguardia.dto.module.toCourseEditDTO
-import com.libreguardia.dto.module.toProfessionalFamilyCreateDTO
-import com.libreguardia.dto.module.toProfessionalFamilyEditDTO
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.courseCreate
+import com.libreguardia.frontend.component.main.edit.courseEdit
+import com.libreguardia.frontend.component.main.list.courseList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.CourseService
 import com.libreguardia.service.ProfessionalFamilyService

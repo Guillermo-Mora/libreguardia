@@ -1,6 +1,6 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.model.ProfessionalFamilyModel
+import com.libreguardia.model.CourseModel
 import io.ktor.htmx.html.*
 import io.ktor.utils.io.*
 import kotlinx.html.FlowContent
@@ -11,13 +11,13 @@ import kotlinx.html.th
 import kotlinx.html.tr
 
 @OptIn(ExperimentalKtorApi::class)
-fun FlowContent.professionalFamilyList(
-    professionalFamilies: List<ProfessionalFamilyModel>
+fun FlowContent.courseList(
+    courses: List<CourseModel>
 ) {
 
     button {
         attributes.hx {
-            get = "/professional-family/new"
+            get = "/course/new"
             replaceUrl = "true"
             pushUrl = "true"
             target = "#main-content"
@@ -30,14 +30,18 @@ fun FlowContent.professionalFamilyList(
             th {
                 text("Name")
             }
+            th {
+                text("Professional Family")
+            }
         }
-        for (professionalFamily in professionalFamilies)
+        for (course in courses)
             tr {
-                td("td-filled") { text(professionalFamily.name) }
+                td("td-filled") { text(course.name) }
+                td("td-filled") { text(course.professionalFamilyName) }
                 td {
                     button {
                         attributes.hx {
-                            get = "/professional-family/${professionalFamily.id}"
+                            get = "/course/${course.id}"
                             replaceUrl = "true"
                             pushUrl = "true"
                             target = "#main-content"

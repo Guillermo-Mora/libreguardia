@@ -7,9 +7,8 @@ import com.libreguardia.dto.module.UserCreateDTO
 import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.dto.module.UserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
-import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.main.UserCreateField
-import com.libreguardia.frontend.component.main.UserEditField
+import com.libreguardia.frontend.component.main.create.UserCreateField
+import com.libreguardia.frontend.component.main.edit.UserEditField
 import com.libreguardia.model.UserModel
 import com.libreguardia.model.UserProfileModel
 import com.libreguardia.repository.*
