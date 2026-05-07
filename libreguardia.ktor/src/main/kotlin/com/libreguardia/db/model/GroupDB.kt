@@ -1,5 +1,9 @@
 package com.libreguardia.db.model
 
+import com.libreguardia.db.model.ScheduleTable.endTime
+import com.libreguardia.db.model.ScheduleTable.startTime
+import com.libreguardia.db.model.ScheduleTable.user
+import com.libreguardia.db.model.ScheduleTable.weekDay
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
@@ -14,7 +18,7 @@ object GroupTable: UUIDTable(
     val code = varchar(
         name = "code",
         length = 50
-    ).uniqueIndex()
+    )
     val pointsMultiplier = decimal(
         name = "points_multiplier",
         precision = 2,
@@ -26,6 +30,13 @@ object GroupTable: UUIDTable(
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
+
+    init {
+        uniqueIndex(
+            customIndexName = "uq_group",
+            code, course
+        )
+    }
 }
 
 class GroupEntity(id: EntityID<UUID>) : UUIDEntity(id) {
