@@ -74,7 +74,7 @@ private fun scheduleEntityToModel(
 
 private fun placeEntityToModel(
     placeEntity: PlaceEntity
-) = PlaceModel(
+) = PlaceScheduleModel(
     fullName = "${placeEntity.placeType.name} ${placeEntity.name}",
     building = placeEntity.building?.name,
     floor = placeEntity.floor

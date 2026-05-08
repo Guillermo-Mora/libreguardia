@@ -7,7 +7,7 @@ import com.libreguardia.db.model.PlaceTable
 import com.libreguardia.db.model.PlaceTypeTable
 import com.libreguardia.db.model.ScheduleActivityTable
 import com.libreguardia.db.model.ScheduleTable
-import com.libreguardia.model.PlaceModel
+import com.libreguardia.model.PlaceScheduleModel
 import com.libreguardia.model.ScheduleModel
 import com.libreguardia.model.WeeklySchedules
 import com.libreguardia.model.scheduleModelsToScheduleTable
@@ -18,7 +18,7 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.select
 import java.util.*
 
-class ScheduleRepository {
+class ScheduleRepository : BaseRepository<ScheduleTable>(ScheduleTable) {
     fun deleteSchedulesByUserUUID(
         userUUID: UUID
     ) {
@@ -89,7 +89,7 @@ class ScheduleRepository {
                     endTime = it[ScheduleTable.endTime],
                     groupName = it[groupNameCon],
                     activity = it[ScheduleActivityTable.name],
-                    place = PlaceModel(
+                    place = PlaceScheduleModel(
                         fullName = it[placeNameCon],
                         building = it[BuildingTable.name],
                         floor = it[PlaceTable.floor]

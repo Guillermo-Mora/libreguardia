@@ -10,7 +10,7 @@ data class ScheduleModel(
     val endTime: LocalTime,
     val groupName: String?,
     val activity: String,
-    val place: PlaceModel
+    val place: PlaceScheduleModel
 )
 
 data class WeeklySchedules(
@@ -40,7 +40,7 @@ fun ScheduleRepository.dataToModel(
         endTime = endTime,
         groupName = groupName,
         activity = activity,
-        place = PlaceModel(
+        place = PlaceScheduleModel(
             fullName = placeName,
             building = building,
             floor = floor

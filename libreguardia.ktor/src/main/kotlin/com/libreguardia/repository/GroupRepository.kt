@@ -15,7 +15,7 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 
-class GroupRepository {
+class GroupRepository : BaseRepository<GroupTable>(GroupTable) {
     fun getAll(): List<GroupModel> = GroupEntity.all().map { it.toModel() }
 
     fun getThis(
@@ -29,7 +29,7 @@ class GroupRepository {
         GroupTable.insert {
             it[code] = dto.code
             it[pointsMultiplier] = dto.pointsMultiplier.toBigDecimal()
-            it[course] = dto.courseId
+            it[course] = UUID.fromString(dto.courseId)
         }
     }
 
@@ -40,15 +40,11 @@ class GroupRepository {
         return GroupTable.update({ GroupTable.id eq uuid }) {
             it[code] = groupEditDTO.code
             it[pointsMultiplier] = groupEditDTO.pointsMultiplier.toBigDecimal()
-            it[course] = groupEditDTO.courseId
+            it[course] = UUID.fromString(groupEditDTO.courseId)
         } == 1
     }
 
-    fun delete(uuid: UUID): Boolean {
-        return GroupTable.deleteWhere { GroupTable.id eq uuid } == 1
-    }
-
-    fun alreadyExists(
+    fun exists(
         uuid: UUID,
         code: String,
         courseId: UUID
@@ -63,7 +59,7 @@ class GroupRepository {
             .limit(1)
             .count().toInt() >= 1
 
-    fun alreadyExists(
+    fun exists(
         code: String,
         courseId: UUID
     ): Boolean =
@@ -74,5 +70,5 @@ class GroupRepository {
                         (GroupTable.course eq courseId)
             }
             .limit(1)
-            .count().toInt() >= 1
+            .count() >= 1
 }

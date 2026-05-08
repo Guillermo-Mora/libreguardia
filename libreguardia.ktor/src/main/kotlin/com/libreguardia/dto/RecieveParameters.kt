@@ -8,6 +8,5 @@ import kotlin.text.uppercase
 
 //Helpers for receiving HTML forms parameters
 fun Parameters.string(field: FormField) = this[field.id] ?: ""
-fun Parameters.uuid(field: FormField): UUID = UUID.fromString(this[field.id]) ?: UUID.randomUUID()
 fun Parameters.boolean(field: FormField) = this[field.id].let { it == "checked" }
 fun Parameters.enum(field: FormField) = this[field.id]?.uppercase() ?: ""

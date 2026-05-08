@@ -1,7 +1,6 @@
 package com.libreguardia.dto.module
 
 import com.libreguardia.dto.string
-import com.libreguardia.dto.uuid
 import com.libreguardia.frontend.component.main.create.GroupCreateField
 import com.libreguardia.frontend.component.main.edit.GroupEditField
 import com.libreguardia.model.GroupModel
@@ -11,13 +10,13 @@ import java.util.*
 data class GroupEditDTO(
     val code: String,
     val pointsMultiplier: String,
-    val courseId: UUID
+    val courseId: String
 )
 
 data class GroupCreateDTO(
     val code: String = "",
     val pointsMultiplier: String = "0",
-    val courseId: UUID = UUID.randomUUID()
+    val courseId: String = ""
 )
 
 fun GroupModel.toGroupEditDTO() =
@@ -31,12 +30,12 @@ fun Parameters.toGroupEditDTO() =
     GroupEditDTO(
         code = string(GroupEditField.CODE),
         pointsMultiplier = string(GroupEditField.POINTS_MULTIPLIER),
-        courseId = uuid(GroupEditField.COURSE)
+        courseId = string(GroupEditField.COURSE)
     )
 
 fun Parameters.toGroupCreateDTO() =
     GroupCreateDTO(
         code = string(GroupCreateField.CODE),
         pointsMultiplier = string(GroupCreateField.POINTS_MULTIPLIER),
-        courseId = uuid(GroupCreateField.COURSE)
+        courseId = string(GroupCreateField.COURSE)
     )

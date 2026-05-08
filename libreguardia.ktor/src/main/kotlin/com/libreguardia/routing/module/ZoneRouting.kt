@@ -4,8 +4,6 @@ import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.ZoneCreateDTO
-import com.libreguardia.dto.module.ZoneEditDTO
 import com.libreguardia.dto.module.toZoneCreateDTO
 import com.libreguardia.dto.module.toZoneEditDTO
 import com.libreguardia.exception.ZoneNotFoundException

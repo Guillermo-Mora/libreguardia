@@ -7,7 +7,7 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import java.util.*
 
-class AbsenceRepository {
+class AbsenceRepository : BaseRepository<AbsenceTable>(AbsenceTable) {
     fun existsAbsenceByUserUUIDPreviousToNow(
         userUUID: UUID,
         dateTimeNow: LocalDateTime
