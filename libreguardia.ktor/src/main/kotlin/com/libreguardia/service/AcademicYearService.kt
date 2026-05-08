@@ -5,8 +5,6 @@ import com.libreguardia.dto.module.AcademicYearEditDTO
 import com.libreguardia.dto.module.AcademicYearResponseDTO
 import com.libreguardia.exception.AcademicYearNotFoundException
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.main.AcademicYearCreateField
-import com.libreguardia.frontend.component.main.AcademicYearEditField
 import com.libreguardia.repository.AcademicYearRepository
 import com.libreguardia.util.withTransaction
 import com.libreguardia.validation.OperationResult
@@ -41,7 +39,7 @@ class AcademicYearService(
 
     suspend fun delete(uuid: UUID) {
         withTransaction {
-            if (!repository.delete(uuid)) throw AcademicYearNotFoundException()
+            if (!repository.deleteThis(uuid)) throw AcademicYearNotFoundException()
         }
     }
 

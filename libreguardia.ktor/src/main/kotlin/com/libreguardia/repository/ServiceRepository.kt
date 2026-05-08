@@ -8,7 +8,7 @@ import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
-class ServiceRepository {
+class ServiceRepository : BaseRepository<ServiceTable>(ServiceTable) {
     fun existsServiceAssignedOrCoveredByUserUUIDPreviousToNow(
         userUUID: UUID,
         dateTimeNow: LocalDateTime

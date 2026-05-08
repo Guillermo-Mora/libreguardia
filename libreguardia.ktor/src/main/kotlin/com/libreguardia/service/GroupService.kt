@@ -24,19 +24,23 @@ class GroupService(
     ): GroupModel =
         withTransaction { groupRepository.getThis(uuid) } ?: throw GroupNotFoundException()
 
+    //I shouldn't be converting Strings from the DTO to the desired type inside the Service
+    // or the Repository. Instead, I should map the DTO to a model with the correct data types,
+    // after the initial format validation has been performed. However, this will require more time
+    // to implement. So for now I will do it this, way, and change it in the future.
     suspend fun create(
         groupCreateDTO: GroupCreateDTO
     ): OperationResult {
         val errors = groupCreateDTO.validate()
         if (containsErrors(errors)) return OperationResult.Error(errors)
         return withTransaction {
-            if (groupRepository.alreadyExists(
+            if (groupRepository.exists(
                     code = groupCreateDTO.code,
-                    courseId = groupCreateDTO.courseId
+                    courseId = UUID.fromString(groupCreateDTO.courseId)
                 )
             ) errors[GroupCreateField.CODE] = "This group already exists"
             if (!courseRepository.exists(
-                    uuid = groupCreateDTO.courseId
+                    uuid = UUID.fromString(groupCreateDTO.courseId)
                 )
             ) errors[GroupCreateField.COURSE] = "This course doesn't exists"
             if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
@@ -54,14 +58,14 @@ class GroupService(
         val errors = groupEditDTO.validate()
         if (containsErrors(errors)) return OperationResult.Error(errors)
         return withTransaction {
-            if (groupRepository.alreadyExists(
+            if (groupRepository.exists(
                     uuid = uuid,
                     code = groupEditDTO.code,
-                    courseId = groupEditDTO.courseId
+                    courseId = UUID.fromString(groupEditDTO.courseId)
                 )
             ) errors[GroupEditField.CODE] = "This group already exists"
             if (!courseRepository.exists(
-                    uuid = groupEditDTO.courseId
+                    uuid = UUID.fromString(groupEditDTO.courseId)
                 )
             ) errors[GroupEditField.COURSE] = "This course doesn't exists"
             if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
@@ -78,7 +82,7 @@ class GroupService(
         uuid: UUID
     ) {
         withTransaction {
-            if (!groupRepository.delete(uuid)) throw GroupNotFoundException()
+            if (!groupRepository.deleteThis(uuid)) throw GroupNotFoundException()
         }
     }
 }

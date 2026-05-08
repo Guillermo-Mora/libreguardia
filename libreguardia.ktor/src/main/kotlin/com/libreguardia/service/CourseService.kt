@@ -36,7 +36,7 @@ class CourseService(
                 )
             ) errors[CourseCreateField.NAME] = "Name already taken"
             if (!professionalFamilyRepository.exists(
-                    uuid = courseCreateDTO.professionalFamilyId
+                    uuid = UUID.fromString(courseCreateDTO.professionalFamilyId)
                 )
             ) errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
             if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
@@ -59,7 +59,7 @@ class CourseService(
                     name = courseEditDTO.name
                 )
             ) errors[CourseEditField.NAME] = "Name already taken"
-            if (!professionalFamilyRepository.exists(courseEditDTO.professionalFamilyId))
+            if (!professionalFamilyRepository.exists(UUID.fromString(courseEditDTO.professionalFamilyId)))
                 errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
             if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
 

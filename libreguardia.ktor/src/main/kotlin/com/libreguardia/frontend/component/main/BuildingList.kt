@@ -1,13 +1,14 @@
 package com.libreguardia.frontend.component.main
 
 import com.libreguardia.dto.module.BuildingResponseDTO
+import com.libreguardia.model.BuildingModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
 
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.buildingList(
-    buildings: List<BuildingResponseDTO>
+    buildings: List<BuildingModel>
 ) {
     button {
         attributes.hx {

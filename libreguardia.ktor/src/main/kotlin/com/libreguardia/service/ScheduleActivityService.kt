@@ -30,7 +30,7 @@ class ScheduleActivityService(
 
     suspend fun delete(uuid: UUID) {
         withTransaction {
-            if (!repository.delete(uuid)) throw ScheduleActivityNotFoundException()
+            if (!repository.deleteThis(uuid)) throw ScheduleActivityNotFoundException()
         }
     }
 }

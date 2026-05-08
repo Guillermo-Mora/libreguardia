@@ -23,7 +23,7 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
-class UserRepository {
+class UserRepository : BaseRepository<UserTable>(UserTable) {
     fun getAll(): List<UserModel> =
         UserEntity
             .find { UserTable.isDeleted eq false }

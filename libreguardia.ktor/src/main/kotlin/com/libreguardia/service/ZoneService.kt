@@ -5,6 +5,7 @@ import com.libreguardia.dto.module.ZoneEditDTO
 import com.libreguardia.dto.module.ZoneResponseDTO
 import com.libreguardia.exception.ZoneNotFoundException
 import com.libreguardia.frontend.component.FormField
+import com.libreguardia.model.ZoneModel
 import com.libreguardia.repository.ZoneRepository
 import com.libreguardia.util.withTransaction
 import com.libreguardia.validation.OperationResult
@@ -14,7 +15,7 @@ import java.util.UUID
 class ZoneService(
     private val repository: ZoneRepository
 ) {
-    suspend fun getAll(): List<ZoneResponseDTO> = withTransaction { repository.getAll() }
+    suspend fun getAll(): List<ZoneModel> = withTransaction { repository.getAll() }
 
     suspend fun getByUUID(uuid: UUID): ZoneResponseDTO =
         withTransaction { repository.getByUUID(uuid) } ?: throw ZoneNotFoundException()
@@ -39,7 +40,7 @@ class ZoneService(
 
     suspend fun delete(uuid: UUID) {
         withTransaction {
-            if (!repository.delete(uuid)) throw ZoneNotFoundException()
+            if (!repository.deleteThis(uuid)) throw ZoneNotFoundException()
         }
     }
 

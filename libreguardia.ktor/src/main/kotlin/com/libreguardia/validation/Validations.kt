@@ -3,6 +3,7 @@ package com.libreguardia.validation
 import com.libreguardia.db.Role
 import io.ktor.server.plugins.requestvalidation.*
 import java.math.BigDecimal
+import java.util.UUID
 import kotlin.text.toBigDecimal
 
 private const val CONTINUE: String = "__continue__"
@@ -70,6 +71,18 @@ fun validateDifficulty(
     if (bigDecimal.scale() > 1) return "Maximum 1 decimal allowed"
     return null
 }
+
+fun validateUuid(
+    field: String?,
+    required: Boolean
+): String? {
+    validateRequired(field, required = required).let { if (it != CONTINUE) return it }
+    val notNullField = field.toString()
+    runCatching { UUID.fromString(notNullField) }
+        .getOrElse { return "Invalid selection" }
+    return null
+}
+
 fun validateAcademicYearDates(startDate: kotlinx.datetime.LocalDate, endDate: kotlinx.datetime.LocalDate): String? =
     if (startDate > endDate) "Start date must be before end date" else null
 
