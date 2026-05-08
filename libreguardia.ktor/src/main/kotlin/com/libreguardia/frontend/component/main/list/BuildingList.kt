@@ -1,6 +1,5 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.dto.module.BuildingResponseDTO
 import com.libreguardia.model.BuildingModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi

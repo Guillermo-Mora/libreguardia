@@ -1,4 +1,4 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.create
 
 import com.libreguardia.dto.module.BuildingCreateDTO
 import com.libreguardia.frontend.component.*

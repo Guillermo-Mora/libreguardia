@@ -4,12 +4,12 @@ import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.ScheduleActivityCreateDTO
-import com.libreguardia.dto.module.ScheduleActivityEditDTO
 import com.libreguardia.dto.module.toScheduleActivityCreateDTO
 import com.libreguardia.dto.module.toScheduleActivityEditDTO
 import com.libreguardia.exception.ScheduleActivityNotFoundException
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.scheduleActivityCreate
+import com.libreguardia.frontend.component.main.edit.scheduleActivityEdit
+import com.libreguardia.frontend.component.main.list.scheduleActivityList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.ScheduleActivityService
 import com.libreguardia.util.UUIDSerializer

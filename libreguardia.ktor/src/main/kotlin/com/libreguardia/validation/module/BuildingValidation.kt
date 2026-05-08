@@ -3,8 +3,8 @@ package com.libreguardia.validation.module
 import com.libreguardia.dto.module.BuildingCreateDTO
 import com.libreguardia.dto.module.BuildingEditDTO
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.main.BuildingCreateField
-import com.libreguardia.frontend.component.main.BuildingEditField
+import com.libreguardia.frontend.component.main.create.BuildingCreateField
+import com.libreguardia.frontend.component.main.edit.BuildingEditField
 import com.libreguardia.validation.*
 import io.ktor.server.plugins.requestvalidation.*
 

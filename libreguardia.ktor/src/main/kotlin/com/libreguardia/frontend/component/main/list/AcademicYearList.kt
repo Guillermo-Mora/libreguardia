@@ -1,10 +1,9 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.list
 
 import com.libreguardia.dto.module.AcademicYearResponseDTO
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
-import java.util.*
 
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.academicYearList(

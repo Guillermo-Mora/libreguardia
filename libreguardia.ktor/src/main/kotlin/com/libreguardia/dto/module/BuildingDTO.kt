@@ -2,8 +2,8 @@ package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.BuildingEntity
 import com.libreguardia.dto.string
-import com.libreguardia.frontend.component.main.BuildingCreateField
-import com.libreguardia.frontend.component.main.BuildingEditField
+import com.libreguardia.frontend.component.main.create.BuildingCreateField
+import com.libreguardia.frontend.component.main.edit.BuildingEditField
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.Parameters
 import kotlinx.serialization.Serializable

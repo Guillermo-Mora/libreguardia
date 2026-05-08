@@ -3,8 +3,8 @@ package com.libreguardia.dto.module
 import com.libreguardia.db.model.ScheduleActivityEntity
 import com.libreguardia.dto.boolean
 import com.libreguardia.dto.string
-import com.libreguardia.frontend.component.main.ScheduleActivityCreateField
-import com.libreguardia.frontend.component.main.ScheduleActivityEditField
+import com.libreguardia.frontend.component.main.create.ScheduleActivityCreateField
+import com.libreguardia.frontend.component.main.edit.ScheduleActivityEditField
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.Parameters
 import kotlinx.serialization.Serializable

@@ -4,11 +4,11 @@ import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.AcademicYearCreateDTO
-import com.libreguardia.dto.module.AcademicYearEditDTO
 import com.libreguardia.dto.module.toAcademicYearCreateDTO
 import com.libreguardia.dto.module.toAcademicYearEditDTO
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.academicYearCreate
+import com.libreguardia.frontend.component.main.edit.academicYearEdit
+import com.libreguardia.frontend.component.main.list.academicYearList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.util.UUIDSerializer

@@ -1,4 +1,4 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.edit
 
 import com.libreguardia.dto.module.AcademicYearEditDTO
 import com.libreguardia.frontend.component.*

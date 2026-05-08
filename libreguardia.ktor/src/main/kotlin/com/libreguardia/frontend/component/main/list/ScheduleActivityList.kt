@@ -1,4 +1,4 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.list
 
 import com.libreguardia.dto.module.ScheduleActivityResponseDTO
 import io.ktor.htmx.html.hx

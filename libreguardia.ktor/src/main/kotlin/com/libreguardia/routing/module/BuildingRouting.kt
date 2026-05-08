@@ -4,12 +4,12 @@ import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.BuildingCreateDTO
-import com.libreguardia.dto.module.BuildingEditDTO
 import com.libreguardia.dto.module.toBuildingCreateDTO
 import com.libreguardia.dto.module.toBuildingEditDTO
 import com.libreguardia.exception.BuildingNotFoundException
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.buildingCreate
+import com.libreguardia.frontend.component.main.edit.buildingEdit
+import com.libreguardia.frontend.component.main.list.buildingList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.BuildingService
 import com.libreguardia.util.UUIDSerializer

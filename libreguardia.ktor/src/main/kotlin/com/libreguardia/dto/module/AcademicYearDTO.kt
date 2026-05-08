@@ -2,8 +2,8 @@ package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.AcademicYearEntity
 import com.libreguardia.dto.string
-import com.libreguardia.frontend.component.main.AcademicYearCreateField
-import com.libreguardia.frontend.component.main.AcademicYearEditField
+import com.libreguardia.frontend.component.main.create.AcademicYearCreateField
+import com.libreguardia.frontend.component.main.edit.AcademicYearEditField
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.Parameters
 import kotlinx.datetime.LocalDate
