@@ -36,7 +36,7 @@ fun FlowContent.userProfile(
     p { text(userProfileModel.role) }
     p { text(userProfileModel.email) }
     div {
-        id = "editable-fields"
+        this.id = "editable-fields"
         phoneNumberAndPassword(
             userPhoneNumber = userProfileModel.phoneNumber
         )

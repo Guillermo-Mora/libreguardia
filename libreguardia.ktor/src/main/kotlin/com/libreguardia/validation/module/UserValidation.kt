@@ -3,8 +3,8 @@ package com.libreguardia.validation.module
 import com.libreguardia.dto.module.UserCreateDTO
 import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.main.UserCreateField
-import com.libreguardia.frontend.component.main.UserEditField
+import com.libreguardia.frontend.component.main.create.UserCreateField
+import com.libreguardia.frontend.component.main.edit.UserEditField
 import com.libreguardia.validation.*
 
 fun UserEditDTO.validate(): MutableMap<FormField, String?> {

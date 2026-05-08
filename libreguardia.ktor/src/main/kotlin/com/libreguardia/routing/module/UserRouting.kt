@@ -11,6 +11,9 @@ import com.libreguardia.dto.module.toUserEditDTO
 import com.libreguardia.dto.module.toUserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
 import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.userCreate
+import com.libreguardia.frontend.component.main.edit.userEdit
+import com.libreguardia.frontend.component.main.list.userList
 import com.libreguardia.frontend.component.userProfileEdit
 import com.libreguardia.model.toUserEditDTO
 import com.libreguardia.routing.respondHtmlPage
@@ -229,7 +232,7 @@ fun Route.userRouting(
                     when (result) {
                         is EditUserProfileResult.Success -> {
                             div {
-                                id = "editable-fields"
+                                this.id = "editable-fields"
                                 phoneNumberAndPassword(
                                     userPhoneNumber = result.userPhoneNumber
                                 )

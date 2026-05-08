@@ -7,9 +7,8 @@ import com.libreguardia.dto.module.UserCreateDTO
 import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.dto.module.UserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
-import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.main.UserCreateField
-import com.libreguardia.frontend.component.main.UserEditField
+import com.libreguardia.frontend.component.main.create.UserCreateField
+import com.libreguardia.frontend.component.main.edit.UserEditField
 import com.libreguardia.model.UserModel
 import com.libreguardia.model.UserProfileModel
 import com.libreguardia.repository.*
@@ -90,12 +89,6 @@ class UserService (
             return@withTransaction OperationResult.Success()
         }
     }
-
-    //This helper should be in another place for general use inside services. For now in testing, it stays here.
-    fun containsErrors(
-        errors: MutableMap<FormField, String?>
-    ) = errors.any { it.value != null }
-
 
     //This is a partially clean example of how I should manage the validations in the service functions
     suspend fun editUser(

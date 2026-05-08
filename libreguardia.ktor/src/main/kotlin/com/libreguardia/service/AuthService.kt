@@ -17,7 +17,6 @@ import kotlin.time.toDuration
 
 class AuthService(
     private val bcryptVerifyer: BCrypt.Verifyer,
-    private val bcryptHasher: BCrypt.Hasher,
     private val clock: Clock.System,
     private val userRepository: UserRepository,
     private val sessionRepository: SessionRepository
@@ -58,22 +57,6 @@ class AuthService(
             userUuid = userSessionModel.userUuid,
             userRole = userSessionModel.userRole
         )
-        /*
-        return withTransaction {
-            val sessionEntity = sessionRepository.getSessionEntityWithUserLoaded(uuid = userSession.uuid)
-                ?: return@withTransaction null
-            if (
-                sessionEntity.expiresAt <= clock.now() ||
-                !sessionEntity.user.isEnabled ||
-                sessionEntity.user.isDeleted
-            ) return@withTransaction null
-            UserPrincipal(
-                userUuid = sessionEntity.user.id.value,
-                userRole = sessionEntity.user.role
-            )
-        }
-
-         */
     }
 
     suspend fun saveSession(

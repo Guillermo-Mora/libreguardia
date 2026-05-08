@@ -53,7 +53,7 @@ fun Route.validationRouting() {
                 val error = validationFun(field, required)
                 call.respondHtmlFragment {
                     span {
-                        id = contentId
+                        this.id = contentId
                         error?.let { text(it) }
                     }
                 }

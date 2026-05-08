@@ -4,14 +4,23 @@ import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.exception.UserNotFoundException
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.dto.module.toProfessionalFamilyCreateDTO
+import com.libreguardia.dto.module.toProfessionalFamilyEditDTO
+import com.libreguardia.frontend.component.main.create.professionalFamilyCreate
+import com.libreguardia.frontend.component.main.edit.professionalFamilyEdit
+import com.libreguardia.frontend.component.main.list.professionalFamilyList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.validation.OperationResult
+import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
 import io.ktor.server.auth.*
+import io.ktor.server.html.respondHtmlFragment
+import io.ktor.server.plugins.NotFoundException
+import io.ktor.server.request.receiveParameters
 import io.ktor.server.resources.*
+import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable
 
@@ -32,9 +41,9 @@ fun Route.professionalFamilyRouting(
 ) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
-            /*
+
             get<ProfessionalFamilyAPI.UUID> { professionalFamily ->
-                val role = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
                 val uuid = professionalFamily.uuid
                 val professionalFamilyEdit = professionalFamilyService.getThis(
                     uuid = uuid
@@ -43,17 +52,15 @@ fun Route.professionalFamilyRouting(
                     role = role,
                     content = {
                         professionalFamilyEdit(
-                            professionalFamily = professionalFamilyEdit,
-                            userUuid = uuid,
+                            dto = professionalFamilyEdit,
+                            uuid = uuid,
                         )
                     }
                 )
             }
 
-             */
-
             get<ProfessionalFamilyAPI> {
-                val role = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
                 val professionalFamilies = professionalFamilyService.getAll()
                 respondHtmlPage(
                     role = role,
@@ -64,70 +71,84 @@ fun Route.professionalFamilyRouting(
                     }
                 )
             }
-            /*
+
             get<ProfessionalFamilyAPI.New> {
-                val role = call.principal<UserPrincipal>()?.userRole ?: throw UserNotFoundException()
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
                 respondHtmlPage(
                     role = role,
-                    content = { userCreate() }
+                    content = { professionalFamilyCreate() }
                 )
             }
 
             post<ProfessionalFamilyAPI> {
-                val userCreate = call.receiveParameters().toUserCreateDTO()
+                val professionalFamilyCreate = call.receiveParameters().toProfessionalFamilyCreateDTO()
                 val operationResult = professionalFamilyService.create(
-                    userCreateDTO = userCreate
+                    professionalFamilyCreateDTO = professionalFamilyCreate
                 )
                 when (operationResult) {
                     is OperationResult.Error -> {
                         call.respondHtmlFragment {
-                            userCreate(
-                                user = userCreate,
+                            professionalFamilyCreate(
+                                dto = professionalFamilyCreate,
                                 errors = operationResult.errors
                             )
                         }
                     }
 
                     is OperationResult.Success -> {
-                        call.response.headers.append("HX-Redirect", "/user")
+                        //This works, however the redirection page should be decided by the page, not by this endpoint.
+                        // The best solution would be to add a String field in the Success class, to represent the
+                        // path to go if the operation is successfully completed, that can be nullable, In case it
+                        // has to stay in the same path.
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/professional-family","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
                     }
                 }
             }
 
-            patch<ProfessionalFamilyAPI.UUID> { user ->
-                val userEdit = call.receiveParameters().toUserEditDTO()
+
+            patch<ProfessionalFamilyAPI.UUID> { professionalFamily ->
+                val professionalFamilyEdit = call.receiveParameters().toProfessionalFamilyEditDTO()
                 val operationResult = professionalFamilyService.editThis(
-                    userUuid = user.uuid,
-                    userEditDTO = userEdit
+                    uuid = professionalFamily.uuid,
+                    professionalFamilyEditDTO = professionalFamilyEdit
                 )
                 when (operationResult) {
                     is OperationResult.Error -> {
                         call.respondHtmlFragment {
-                            userEdit(
-                                user = userEdit,
+                            professionalFamilyEdit(
+                                dto = professionalFamilyEdit,
                                 errors = operationResult.errors,
-                                userUuid = user.uuid
+                                uuid = professionalFamily.uuid
                             )
                         }
                     }
 
                     is OperationResult.Success -> {
-                        //I would prefer to only return the htmx fragment and replace it, but I don't
-                        // know if that could be convenient in this case.
-                        call.response.headers.append("HX-Redirect", "/user")
+                        //This way I can return the content from another endpoint without issues and without having
+                        // to reload the full page again
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/professional-family","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
                     }
                 }
             }
 
             delete<ProfessionalFamilyAPI.UUID> { professionalFamily ->
-                professionalFamily.deleteThis(
+                professionalFamilyService.deleteThis(
                     uuid = professionalFamily.uuid
                 )
-                call.response.headers.append("HX-Redirect", "/user")
+                call.response.headers.append(
+                    "HX-Location",
+                    """{"path":"/professional-family","target":"#main-content"}"""
+                )
                 call.respond(HttpStatusCode.NoContent)
             }
-
-             */
         }
     }
 }

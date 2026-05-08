@@ -23,7 +23,7 @@ fun FlowContent.userProfileEdit(
     newPasswordError: String? = null
 ) {
     div {
-        id = "editable-fields"
+        this.id = "editable-fields"
         form {
             attributes.hx {
                 patch = "/user/profile"
@@ -84,7 +84,7 @@ fun FlowContent.phoneNumberField(
     error: String? = null
 ) {
     div {
-        id = "phone-number"
+        this.id = "phone-number"
         input {
             attributes.hx {
                 post = "/validation/phone-number"
@@ -96,7 +96,7 @@ fun FlowContent.phoneNumberField(
             value = phoneNumber
             type = InputType.tel
             name = "phoneNumber"
-            id = "phoneNumber"
+            this.id = "phoneNumber"
             placeholder = "Phone number"
             required = true
         }
@@ -111,12 +111,12 @@ fun FlowContent.currentPasswordField(
     error: String? = null
 ) {
     div {
-        id = "current-password"
+        this.id = "current-password"
         input {
             value = currentPassword
             type = InputType.password
             name = "currentPassword"
-            id = "currentPassword"
+            this.id = "currentPassword"
             placeholder = "Current password"
         }
         if (error != null)
@@ -130,7 +130,7 @@ fun FlowContent.newPasswordField(
     error: String? = null
 ) {
     div {
-        id = "new-password"
+        this.id = "new-password"
         input {
             attributes.hx {
                 post = "/validation/new-password"
@@ -142,7 +142,7 @@ fun FlowContent.newPasswordField(
             value = newPassword
             type = InputType.password
             name = "newPassword"
-            id = "newPassword"
+            this.id = "newPassword"
             placeholder = "New password"
         }
         if (error != null)

@@ -1,60 +1,161 @@
 package com.libreguardia.routing.module
 
 import com.libreguardia.config.AUTH_SESSION
+import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
-import com.libreguardia.dto.module.GroupCreateDTO
-import com.libreguardia.dto.module.GroupEditDTO
+import com.libreguardia.dto.module.toGroupCreateDTO
+import com.libreguardia.dto.module.toGroupEditDTO
+import com.libreguardia.frontend.component.main.create.courseCreate
+import com.libreguardia.frontend.component.main.create.groupCreate
+import com.libreguardia.frontend.component.main.edit.courseEdit
+import com.libreguardia.frontend.component.main.edit.groupEdit
+import com.libreguardia.frontend.component.main.list.groupList
+import com.libreguardia.routing.respondHtmlPage
+import com.libreguardia.service.CourseService
 import com.libreguardia.service.GroupService
 import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.validation.OperationResult
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
-import io.ktor.server.auth.authenticate
-import io.ktor.server.request.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import io.ktor.server.resources.get
-import io.ktor.server.resources.post
-import io.ktor.server.resources.patch
-import io.ktor.server.resources.delete
+import io.ktor.server.auth.*
+import io.ktor.server.html.respondHtmlFragment
+import io.ktor.server.plugins.NotFoundException
+import io.ktor.server.request.receiveParameters
+import io.ktor.server.resources.*
+import io.ktor.server.response.respond
+import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable
-import java.util.UUID
 
-@Serializable
-@Resource("/api/group")
+@Resource("/group")
 class GroupAPI {
-    @Serializable
+    @Resource("new")
+    class New(val parent: GroupAPI = GroupAPI())
+
     @Resource("{uuid}")
-    class ByUUID(
-        val parent: GroupAPI,
-        @Serializable(with = UUIDSerializer::class) val uuid: UUID
-    ) {
-        @Resource("toggle-enabled")
-        class ToggleEnabled(val parent: ByUUID)
-    }
+    class UUID(
+        val parent: GroupAPI = GroupAPI(),
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    )
 }
 
-fun Route.groupRouting(service: GroupService) {
+fun Route.groupRouting(
+    groupService: GroupService,
+    courseService: CourseService,
+) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
+
+            get<GroupAPI.UUID> { group ->
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val uuid = group.uuid
+                val groupEdit = groupService.getThis(
+                    uuid = uuid
+                ).toGroupEditDTO()
+                val courses = courseService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        groupEdit(
+                            dto = groupEdit,
+                            uuid = uuid,
+                            courses = courses,
+                        )
+                    }
+                )
+            }
+
             get<GroupAPI> {
-                call.respond(service.getAll())
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val groups = groupService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        groupList(
+                            groups = groups
+                        )
+                    }
+                )
             }
+
+            get<GroupAPI.New> {
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val courses = courseService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        groupCreate(
+                            courses = courses,
+                        )
+                    }
+                )
+            }
+
             post<GroupAPI> {
-                val dto = call.receive<GroupCreateDTO>()
-                service.create(dto)
-                call.respond(HttpStatusCode.Created)
+                val groupCreate = call.receiveParameters().toGroupCreateDTO()
+                val operationResult = groupService.create(
+                    groupCreateDTO = groupCreate
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        val courses = courseService.getAll()
+                        call.respondHtmlFragment {
+                            groupCreate(
+                                dto = groupCreate,
+                                errors = operationResult.errors,
+                                courses = courses
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/group","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
             }
-            get<GroupAPI.ByUUID> {
-                call.respond(service.getByUUID(it.uuid))
+
+
+            patch<GroupAPI.UUID> { group ->
+                val groupEdit = call.receiveParameters().toGroupEditDTO()
+                val operationResult = groupService.editThis(
+                    uuid = group.uuid,
+                    groupEditDTO = groupEdit
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        val courses = courseService.getAll()
+                        call.respondHtmlFragment {
+                            groupEdit(
+                                dto = groupEdit,
+                                errors = operationResult.errors,
+                                courses = courses,
+                                uuid = group.uuid
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/group","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
             }
-            patch<GroupAPI.ByUUID> {
-                val dto = call.receive<GroupEditDTO>()
-                service.update(it.uuid, dto)
-                call.respond(HttpStatusCode.OK)
-            }
-            delete<GroupAPI.ByUUID> {
-                service.delete(it.uuid)
+
+            delete<GroupAPI.UUID> { course ->
+                courseService.deleteThis(
+                    uuid = course.uuid
+                )
+                call.response.headers.append(
+                    "HX-Location",
+                    """{"path":"/group","target":"#main-content"}"""
+                )
                 call.respond(HttpStatusCode.NoContent)
             }
         }

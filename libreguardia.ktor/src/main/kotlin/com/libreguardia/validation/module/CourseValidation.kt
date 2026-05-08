@@ -2,19 +2,22 @@ package com.libreguardia.validation.module
 
 import com.libreguardia.dto.module.CourseCreateDTO
 import com.libreguardia.dto.module.CourseEditDTO
-import com.libreguardia.validation.validateResult
-import com.libreguardia.validation.validateString
-import io.ktor.server.plugins.requestvalidation.*
+import com.libreguardia.frontend.component.FormField
+import com.libreguardia.frontend.component.main.create.CourseCreateField
+import com.libreguardia.frontend.component.main.edit.CourseEditField
+import com.libreguardia.validation.validateRequired
 
-fun RequestValidationConfig.courseValidation() {
-    validate<CourseCreateDTO> {
-        val errors = mutableListOf<String>()
-        validateString(it.name)?.let { error -> errors.add(error) }
-        return@validate validateResult(errors)
-    }
-    validate<CourseEditDTO> {
-        val errors = mutableListOf<String>()
-        it.name?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
-        return@validate validateResult(errors)
-    }
+
+fun CourseEditDTO.validate(): MutableMap<FormField, String?> {
+    val errors = mutableMapOf<FormField, String?>()
+    errors[CourseEditField.NAME] = validateRequired(this.name)
+    errors[CourseEditField.PROFESSIONAL_FAMILY] = validateRequired(this.professionalFamilyId.toString())
+    return errors
+}
+
+fun CourseCreateDTO.validate():  MutableMap<FormField, String?> {
+    val errors = mutableMapOf<FormField, String?>()
+    errors[CourseCreateField.NAME] = validateRequired(this.name)
+    errors[CourseCreateField.PROFESSIONAL_FAMILY] = validateRequired(this.professionalFamilyId.toString())
+    return errors
 }

@@ -83,9 +83,10 @@ CREATE TABLE course (
 
 CREATE TABLE group_tbl (
                            id UUID PRIMARY KEY,
-                           code VARCHAR(50) NOT NULL UNIQUE,
+                           code VARCHAR(50) NOT NULL,
                            points_multiplier DECIMAL(2,1) NOT NULL DEFAULT 1,
-                           course_id UUID NOT NULL REFERENCES course(id) ON DELETE RESTRICT ON UPDATE RESTRICT
+                           course_id UUID NOT NULL REFERENCES course(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                           CONSTRAINT uq_group UNIQUE (code, course_id)
 );
 
 CREATE TABLE schedule (

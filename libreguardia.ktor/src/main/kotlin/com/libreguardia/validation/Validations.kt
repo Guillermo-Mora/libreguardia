@@ -2,7 +2,8 @@ package com.libreguardia.validation
 
 import com.libreguardia.db.Role
 import io.ktor.server.plugins.requestvalidation.*
-import kotlinx.datetime.LocalDate
+import java.math.BigDecimal
+import kotlin.text.toBigDecimal
 
 private const val CONTINUE: String = "__continue__"
 fun validateResult(errors: List<String>): ValidationResult =
@@ -55,10 +56,20 @@ fun validateRole(
     if (Role.entries.firstOrNull { it.name == field } == null) return "Invalid role"
     return null
 }
-fun validateRefreshToken(field: String) : String? =
-    if (field.length != 32) "Invalid refresh token" else null
-fun validateDecimal(field: Double): String? =
-    if (field !in 0.0..9.9) "Invalid decimal value (must be between 0.0 and 9.9)" else null
+
+fun validateDifficulty(
+    field: String?,
+    required: Boolean
+): String? {
+    validateRequired(field, required = required).let { if (it != CONTINUE) return it }
+    val notNullField = field.toString()
+    runCatching { notNullField.toBigDecimal() }
+        .getOrElse { return "Difficulty must be a decimal number between 0.0 - 2.0" }
+    val bigDecimal = notNullField.toBigDecimal()
+    if (bigDecimal !in BigDecimal(0.0)..BigDecimal(2.0)) return "Difficulty must be between 0.0 - 2.0"
+    if (bigDecimal.scale() > 1) return "Maximum 1 decimal allowed"
+    return null
+}
 fun validateAcademicYearDates(startDate: kotlinx.datetime.LocalDate, endDate: kotlinx.datetime.LocalDate): String? =
     if (startDate > endDate) "Start date must be before end date" else null
 

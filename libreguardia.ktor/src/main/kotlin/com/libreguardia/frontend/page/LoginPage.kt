@@ -39,13 +39,13 @@ fun HTML.loginPage() {
                         }
                         type = InputType.email
                         name = "email"
-                        id = "email"
+                        this.id = "email"
                         placeholder = "Input your email"
                         required = true
                     }
                 }
                 div("input-div") {
-                    id = "password-div"
+                    this.id = "password-div"
                     label {
                         htmlFor = "password"
                         text("Password")
@@ -56,7 +56,7 @@ fun HTML.loginPage() {
                         }
                         type = InputType.password
                         name = "password"
-                        id = "password"
+                        this.id = "password"
                         placeholder = "Input your password"
                         required = true
                     }

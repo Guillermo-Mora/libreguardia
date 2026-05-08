@@ -3,8 +3,8 @@ package com.libreguardia.dto.module
 import com.libreguardia.dto.boolean
 import com.libreguardia.dto.enum
 import com.libreguardia.dto.string
-import com.libreguardia.frontend.component.main.UserCreateField
-import com.libreguardia.frontend.component.main.UserEditField
+import com.libreguardia.frontend.component.main.create.UserCreateField
+import com.libreguardia.frontend.component.main.edit.UserEditField
 import io.ktor.http.*
 
 data class UserCreateDTO(

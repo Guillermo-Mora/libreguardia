@@ -1,4 +1,4 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.list
 
 import com.libreguardia.model.UserModel
 import io.ktor.htmx.html.hx

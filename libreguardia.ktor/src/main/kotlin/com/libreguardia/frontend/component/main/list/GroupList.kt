@@ -1,23 +1,18 @@
-package com.libreguardia.frontend.component.main
+package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.model.ProfessionalFamilyModel
+import com.libreguardia.model.GroupModel
 import io.ktor.htmx.html.*
 import io.ktor.utils.io.*
-import kotlinx.html.FlowContent
-import kotlinx.html.button
-import kotlinx.html.table
-import kotlinx.html.td
-import kotlinx.html.th
-import kotlinx.html.tr
+import kotlinx.html.*
 
 @OptIn(ExperimentalKtorApi::class)
-fun FlowContent.professionalFamilyList(
-    professionalFamilies: List<ProfessionalFamilyModel>
+fun FlowContent.groupList(
+    groups: List<GroupModel>
 ) {
 
     button {
         attributes.hx {
-            get = "/professional-family/new"
+            get = "/group/new"
             replaceUrl = "true"
             pushUrl = "true"
             target = "#main-content"
@@ -28,16 +23,20 @@ fun FlowContent.professionalFamilyList(
     table("schedule-table") {
         tr {
             th {
-                text("Name")
+                text("Group")
+            }
+            th {
+                text("Difficulty")
             }
         }
-        for (professionalFamily in professionalFamilies)
+        for (group in groups)
             tr {
-                td("td-filled") { text(professionalFamily.name) }
+                td("td-filled") { text("${group.courseName}-${group.code}") }
+                td("td-filled") { text(group.pointsMultiplier) }
                 td {
                     button {
                         attributes.hx {
-                            get = "/professional-family/${professionalFamily.id}"
+                            get = "/group/${group.id}"
                             replaceUrl = "true"
                             pushUrl = "true"
                             target = "#main-content"
