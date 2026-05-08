@@ -15,6 +15,9 @@ import java.util.UUID
 class ZoneRepository {
     fun getAll(): List<ZoneResponseDTO> = ZoneEntity.all().map { it.toResponseDTO() }
 
+    fun getByUUID(uuid: UUID): ZoneResponseDTO? =
+        ZoneEntity.findById(uuid)?.toResponseDTO()
+
     fun save(dto: ZoneCreateDTO) {
         ZoneTable.insert {
             it[name] = dto.name

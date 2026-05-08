@@ -2,8 +2,10 @@ package com.libreguardia.validation.module
 
 import com.libreguardia.dto.module.ZoneCreateDTO
 import com.libreguardia.dto.module.ZoneEditDTO
-import com.libreguardia.validation.validateResult
-import com.libreguardia.validation.validateString
+import com.libreguardia.frontend.component.FormField
+import com.libreguardia.frontend.component.main.ZoneCreateField
+import com.libreguardia.frontend.component.main.ZoneEditField
+import com.libreguardia.validation.*
 import io.ktor.server.plugins.requestvalidation.*
 
 fun RequestValidationConfig.zoneValidation() {
@@ -17,4 +19,16 @@ fun RequestValidationConfig.zoneValidation() {
         it.name?.let { field -> validateString(field) }?.let { error -> errors.add(error) }
         return@validate validateResult(errors)
     }
+}
+
+fun ZoneCreateDTO.validate(): MutableMap<FormField, String?> {
+    val errors = mutableMapOf<FormField, String?>()
+    errors[ZoneCreateField.NAME] = validateRequired(this.name)
+    return errors
+}
+
+fun ZoneEditDTO.validate(): MutableMap<FormField, String?> {
+    val errors = mutableMapOf<FormField, String?>()
+    errors[ZoneEditField.NAME] = validateRequired(this.name)
+    return errors
 }
