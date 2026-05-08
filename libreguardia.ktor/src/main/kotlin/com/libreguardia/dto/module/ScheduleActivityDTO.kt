@@ -1,7 +1,12 @@
 package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.ScheduleActivityEntity
+import com.libreguardia.dto.boolean
+import com.libreguardia.dto.string
+import com.libreguardia.frontend.component.main.ScheduleActivityCreateField
+import com.libreguardia.frontend.component.main.ScheduleActivityEditField
 import com.libreguardia.util.UUIDSerializer
+import io.ktor.http.Parameters
 import kotlinx.serialization.Serializable
 import java.util.UUID
 
@@ -30,4 +35,22 @@ fun ScheduleActivityEntity.toResponseDTO() = ScheduleActivityResponseDTO(
     name = name,
     generatesService = generatesService
 )
+
+fun Parameters.toScheduleActivityCreateDTO() =
+    ScheduleActivityCreateDTO(
+        name = string(ScheduleActivityCreateField.NAME),
+        generatesService = boolean(ScheduleActivityCreateField.GENERATES_SERVICE)
+    )
+
+fun Parameters.toScheduleActivityEditDTO() =
+    ScheduleActivityEditDTO(
+        name = string(ScheduleActivityEditField.NAME).takeIf { it.isNotBlank() },
+        generatesService = boolean(ScheduleActivityEditField.GENERATES_SERVICE)
+    )
+
+fun ScheduleActivityResponseDTO.toScheduleActivityEditDTO() =
+    ScheduleActivityEditDTO(
+        name = this.name,
+        generatesService = this.generatesService
+    )
 
