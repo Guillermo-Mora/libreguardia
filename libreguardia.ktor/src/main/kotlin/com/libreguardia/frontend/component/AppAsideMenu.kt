@@ -98,7 +98,7 @@ private val asideMenuOptions = listOf(
     ),
     MenuOption(
         name = "Activities",
-        path = "/todo",
+        path = "/schedule-activity",
         roles = setOf(Role.ADMIN)
     ),
     MenuOption(
