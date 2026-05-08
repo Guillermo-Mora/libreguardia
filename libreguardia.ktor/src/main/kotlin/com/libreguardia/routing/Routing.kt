@@ -9,6 +9,7 @@ import com.libreguardia.routing.module.entryRouting
 import com.libreguardia.routing.module.scheduleActivityRouting
 import com.libreguardia.routing.module.placeTypeRouting
 import com.libreguardia.routing.module.groupRouting
+import com.libreguardia.routing.module.placeRouting
 import com.libreguardia.routing.module.professionalFamilyRouting
 import com.libreguardia.routing.module.userRouting
 import com.libreguardia.routing.module.zoneRouting
@@ -20,6 +21,7 @@ import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.BuildingService
 import com.libreguardia.service.GroupService
 import com.libreguardia.service.CourseService
+import com.libreguardia.service.PlaceService
 import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import com.libreguardia.service.ZoneService
@@ -38,7 +40,8 @@ fun Application.configureRouting(
     zoneService: ZoneService,
     courseService: CourseService,
     userService: UserService,
-    professionalFamilyService: ProfessionalFamilyService
+    professionalFamilyService: ProfessionalFamilyService,
+    placeService: PlaceService
 ) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     install(Resources)
@@ -64,6 +67,12 @@ fun Application.configureRouting(
             groupService = groupService,
             courseService = courseService
         )
+        placeRouting(
+            placeService = placeService,
+            buildingService = buildingService,
+            zoneService = zoneService,
+            placeTypeService = placeTypeService
+        )
         zoneRouting(
             service = zoneService
         )
@@ -76,6 +85,12 @@ fun Application.configureRouting(
         courseRouting(
             courseService = courseService,
             professionalFamilyService = professionalFamilyService
+        )
+        placeRouting(
+            placeService = placeService,
+            buildingService = buildingService,
+            zoneService = zoneService,
+            placeTypeService = placeTypeService
         )
         staticResources(
             remotePath = "/static",

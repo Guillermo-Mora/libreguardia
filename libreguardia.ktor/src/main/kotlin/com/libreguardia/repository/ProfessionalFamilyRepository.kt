@@ -24,7 +24,7 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 
-class ProfessionalFamilyRepository {
+class ProfessionalFamilyRepository : BaseRepository<ProfessionalFamilyTable>(ProfessionalFamilyTable) {
     fun getAll(): List<ProfessionalFamilyModel> =
         ProfessionalFamilyEntity
             .all()
@@ -65,12 +65,6 @@ class ProfessionalFamilyRepository {
                 it[name] = professionalFamilyEditDTO.name
             } == 1
 
-    fun deleteThis(
-        uuid: UUID
-    ) =
-        ProfessionalFamilyTable
-            .deleteWhere { ProfessionalFamilyTable.id eq uuid } == 1
-
     fun save(
         professionalFamilyCreateDTO: ProfessionalFamilyCreateDTO
     ) {
@@ -78,13 +72,4 @@ class ProfessionalFamilyRepository {
             it[ProfessionalFamilyTable.name] = professionalFamilyCreateDTO.name
         }
     }
-
-    fun exists(
-        uuid: UUID
-    ): Boolean =
-        ProfessionalFamilyTable
-            .select(ProfessionalFamilyTable.id)
-            .where { ProfessionalFamilyTable.id eq uuid }
-            .limit(1)
-            .count().toInt() >= 1
 }

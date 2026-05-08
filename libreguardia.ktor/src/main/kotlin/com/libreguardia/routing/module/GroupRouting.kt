@@ -6,9 +6,7 @@ import com.libreguardia.config.authorized
 import com.libreguardia.db.Role
 import com.libreguardia.dto.module.toGroupCreateDTO
 import com.libreguardia.dto.module.toGroupEditDTO
-import com.libreguardia.frontend.component.main.create.courseCreate
 import com.libreguardia.frontend.component.main.create.groupCreate
-import com.libreguardia.frontend.component.main.edit.courseEdit
 import com.libreguardia.frontend.component.main.edit.groupEdit
 import com.libreguardia.frontend.component.main.list.groupList
 import com.libreguardia.routing.respondHtmlPage
@@ -16,14 +14,14 @@ import com.libreguardia.service.CourseService
 import com.libreguardia.service.GroupService
 import com.libreguardia.util.UUIDSerializer
 import com.libreguardia.validation.OperationResult
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.auth.*
-import io.ktor.server.html.respondHtmlFragment
-import io.ktor.server.plugins.NotFoundException
-import io.ktor.server.request.receiveParameters
+import io.ktor.server.html.*
+import io.ktor.server.plugins.*
+import io.ktor.server.request.*
 import io.ktor.server.resources.*
-import io.ktor.server.response.respond
+import io.ktor.server.response.*
 import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable
 

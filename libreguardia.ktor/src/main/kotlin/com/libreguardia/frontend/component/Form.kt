@@ -15,7 +15,6 @@ import kotlinx.html.label
 import kotlinx.html.option
 import kotlinx.html.select
 import kotlinx.html.span
-import java.util.UUID
 
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.customForm(
@@ -230,7 +229,7 @@ enum class OperationType {
 data class SelectOption(
     val text: String,
     val selected: Boolean = false,
-    val id: UUID? = null
+    val id: String? = null
 ) {
     val value: String = text.lowercase().replace(" ", "")
 }

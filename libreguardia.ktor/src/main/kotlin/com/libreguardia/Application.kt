@@ -36,6 +36,7 @@ fun Application.main() {
     val buildingRepository = BuildingRepository()
     val placeTypeRepository = PlaceTypeRepository()
     val professionalFamilyRepository = ProfessionalFamilyRepository()
+    val placeRepository = PlaceRepository()
 
     val bcryptVerifyer: BCrypt.Verifyer = BCrypt.verifyer()
     val bcryptHasher: BCrypt.Hasher = BCrypt.withDefaults()
@@ -83,6 +84,12 @@ fun Application.main() {
     val professionalFamilyService = ProfessionalFamilyService(
         professionalFamilyRepository = professionalFamilyRepository
     )
+    val placeService = PlaceService(
+        placeRepository = placeRepository,
+        buildingRepository = buildingRepository,
+        zoneRepository = zoneRepository,
+        placeTypeRepository = placeTypeRepository
+    )
 
     configureDatabase(
         url = dbUrl,
@@ -113,6 +120,7 @@ fun Application.main() {
         userService = userService,
         zoneService = zoneService,
         placeTypeService = placeTypeService,
-        professionalFamilyService = professionalFamilyService
+        professionalFamilyService = professionalFamilyService,
+        placeService = placeService
     )
 }

@@ -38,7 +38,7 @@ private val asideMenuOptions = listOf(
     // where you can select group of users that can do it, etc. To implement in the future.
     MenuOption(
         name = "Settings",
-        path = "/todo",
+        path = "/settings",
         roles = setOf(Role.ADMIN)
     ),
     //
@@ -56,12 +56,12 @@ private val asideMenuOptions = listOf(
     //
     MenuOption(
         name = "Absences",
-        path = "/todo",
+        path = "/absence",
         roles = setOf(Role.ADMIN)
     ),
     MenuOption(
         name = "Services",
-        path = "/todo",
+        path = "/service",
         roles = setOf(Role.ADMIN)
     ),
     //
@@ -93,23 +93,23 @@ private val asideMenuOptions = listOf(
     ),
     MenuOption(
         name = "Place types",
-        path = "/todo",
+        path = "/place-type",
         roles = setOf(Role.ADMIN)
     ),
     MenuOption(
         name = "Activities",
-        path = "/todo",
+        path = "/schedule-activity",
         roles = setOf(Role.ADMIN)
     ),
     MenuOption(
         name = "Places",
-        path = "/todo",
+        path = "/place",
         roles = setOf(Role.ADMIN)
     ),
     //
     MenuOption(
         name = "Schedule Templates",
-        path = "/todo",
+        path = "/schedule-template",
         roles = setOf(Role.ADMIN)
     ),
 )

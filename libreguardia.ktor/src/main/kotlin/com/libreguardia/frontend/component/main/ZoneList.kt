@@ -1,13 +1,13 @@
 package com.libreguardia.frontend.component.main
 
-import com.libreguardia.dto.module.ZoneResponseDTO
+import com.libreguardia.model.ZoneModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
 
 @OptIn(ExperimentalKtorApi::class)
 fun FlowContent.zoneList(
-    zones: List<ZoneResponseDTO>
+    zones: List<ZoneModel>
 ) {
     button {
         attributes.hx {

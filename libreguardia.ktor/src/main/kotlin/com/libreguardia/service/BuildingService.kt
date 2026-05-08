@@ -5,6 +5,7 @@ import com.libreguardia.dto.module.BuildingEditDTO
 import com.libreguardia.dto.module.BuildingResponseDTO
 import com.libreguardia.exception.BuildingNotFoundException
 import com.libreguardia.frontend.component.FormField
+import com.libreguardia.model.BuildingModel
 import com.libreguardia.repository.BuildingRepository
 import com.libreguardia.util.withTransaction
 import com.libreguardia.validation.OperationResult
@@ -14,7 +15,7 @@ import java.util.UUID
 class BuildingService(
     private val repository: BuildingRepository
 ) {
-    suspend fun getAll(): List<BuildingResponseDTO> = withTransaction { repository.getAll() }
+    suspend fun getAll(): List<BuildingModel> = withTransaction { repository.getAll() }
 
     suspend fun getByUUID(uuid: UUID): BuildingResponseDTO =
         withTransaction { repository.getByUUID(uuid) } ?: throw BuildingNotFoundException()
@@ -39,7 +40,7 @@ class BuildingService(
 
     suspend fun delete(uuid: UUID) {
         withTransaction {
-            if (!repository.delete(uuid)) throw BuildingNotFoundException()
+            if (!repository.deleteThis(uuid)) throw BuildingNotFoundException()
         }
     }
 

@@ -12,7 +12,7 @@ import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 
-class ScheduleActivityRepository {
+class ScheduleActivityRepository : BaseRepository<ScheduleActivityTable>(ScheduleActivityTable) {
     fun getAll(): List<ScheduleActivityResponseDTO> =
         ScheduleActivityEntity.all().map { it.toResponseDTO() }
 
@@ -32,9 +32,4 @@ class ScheduleActivityRepository {
             dto.generatesService?.let { updated[generatesService] = it }
         } == 1
     }
-
-    fun delete(uuid: UUID): Boolean {
-        return ScheduleActivityTable.deleteWhere{ ScheduleActivityTable.id eq uuid } == 1
-    }
 }
-

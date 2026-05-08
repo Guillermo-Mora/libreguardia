@@ -18,7 +18,7 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
-class CourseRepository {
+class CourseRepository : BaseRepository<CourseTable>(CourseTable) {
     //Specifying eager loading for the referenced professional families, to prevent N + 1 problem
     fun getAll(): List<CourseModel> =
         CourseEntity
@@ -32,23 +32,24 @@ class CourseRepository {
             ?.load(CourseEntity::professionalFamily)
             ?.toModel()
 
-    fun save(courseCreateDTO: CourseCreateDTO) {
+    fun save(
+        courseCreateDTO: CourseCreateDTO
+    ) {
         CourseTable.insert {
             it[name] = courseCreateDTO.name
-            it[professionalFamily] = courseCreateDTO.professionalFamilyId
+            it[professionalFamily] = UUID.fromString(courseCreateDTO.professionalFamilyId)
         }
     }
 
-    fun editThis(uuid: UUID, dto: CourseEditDTO): Boolean {
+    fun editThis(
+        uuid: UUID,
+        dto: CourseEditDTO
+    ): Boolean {
         return CourseTable.update({ CourseTable.id eq uuid }) { updated ->
             updated[name] = dto.name
-            updated[professionalFamily] = dto.professionalFamilyId
+            updated[professionalFamily] = UUID.fromString(dto.professionalFamilyId)
         } == 1
     }
-
-    fun deleteThis(uuid: UUID) =
-        CourseTable
-            .deleteWhere { CourseTable.id eq uuid } == 1
 
     fun isNameTaken(
         uuid: UUID,
@@ -66,15 +67,6 @@ class CourseRepository {
         CourseTable
             .select(CourseTable.name)
             .where { CourseTable.name eq name }
-            .limit(1)
-            .count().toInt() >= 1
-
-    fun exists(
-        uuid: UUID
-    ): Boolean =
-        CourseTable
-            .select(CourseTable.id)
-            .where { CourseTable.id eq uuid }
             .limit(1)
             .count().toInt() >= 1
 }

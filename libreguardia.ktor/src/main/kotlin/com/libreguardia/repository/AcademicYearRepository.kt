@@ -12,7 +12,7 @@ import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.UUID
 
-class AcademicYearRepository {
+class AcademicYearRepository : BaseRepository<AcademicYearTable>(AcademicYearTable) {
     fun getAll(): List<AcademicYearResponseDTO> = AcademicYearEntity.all().map { it.toResponseDTO() }
 
     fun getByUUID(uuid: UUID): AcademicYearResponseDTO? =
@@ -32,9 +32,5 @@ class AcademicYearRepository {
             dto.startDate?.let { updated[startDate] = it }
             dto.endDate?.let { updated[endDate] = it }
         } == 1
-    }
-
-    fun delete(uuid: UUID): Boolean {
-        return AcademicYearTable.deleteWhere { AcademicYearTable.id eq uuid } == 1
     }
 }
