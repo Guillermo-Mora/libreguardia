@@ -29,7 +29,7 @@ class CourseService(
         courseCreateDTO: CourseCreateDTO
     ): OperationResult {
         val errors = courseCreateDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (courseRepository.isNameTaken(
                     name = courseCreateDTO.name
@@ -39,7 +39,7 @@ class CourseService(
                     uuid = UUID.fromString(courseCreateDTO.professionalFamilyId)
                 )
             ) errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             courseRepository.save(
                 courseCreateDTO = courseCreateDTO
             )
@@ -52,7 +52,7 @@ class CourseService(
         courseEditDTO: CourseEditDTO
     ): OperationResult {
         val errors = courseEditDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (courseRepository.isNameTaken(
                     uuid = uuid,
@@ -61,7 +61,7 @@ class CourseService(
             ) errors[CourseEditField.NAME] = "Name already taken"
             if (!professionalFamilyRepository.exists(UUID.fromString(courseEditDTO.professionalFamilyId)))
                 errors[CourseCreateField.PROFESSIONAL_FAMILY] = "This professional family doesn't exists"
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
 
             if (!courseRepository.editThis(
                     uuid = uuid,

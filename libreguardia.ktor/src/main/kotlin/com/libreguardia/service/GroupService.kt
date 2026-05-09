@@ -32,7 +32,7 @@ class GroupService(
         groupCreateDTO: GroupCreateDTO
     ): OperationResult {
         val errors = groupCreateDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (groupRepository.exists(
                     code = groupCreateDTO.code,
@@ -44,7 +44,7 @@ class GroupService(
                     uuid = UUID.fromString(groupCreateDTO.courseId)
                 )
             ) errors[GroupCreateField.COURSE] = "This course doesn't exists"
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             groupRepository.save(
                 dto = groupCreateDTO
             )
@@ -57,7 +57,7 @@ class GroupService(
         groupEditDTO: GroupEditDTO
     ): OperationResult {
         val errors = groupEditDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (groupRepository.exists(
                     uuid = uuid,
@@ -70,7 +70,7 @@ class GroupService(
                     uuid = UUID.fromString(groupEditDTO.courseId)
                 )
             ) errors[GroupEditField.COURSE] = "This course doesn't exists"
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             if (!groupRepository.updateThis(
                     uuid = uuid,
                     groupEditDTO = groupEditDTO

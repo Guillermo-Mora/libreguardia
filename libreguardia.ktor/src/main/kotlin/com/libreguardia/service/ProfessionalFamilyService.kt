@@ -30,7 +30,7 @@ class ProfessionalFamilyService(
         professionalFamilyEditDTO: ProfessionalFamilyEditDTO
     ): OperationResult {
         val errors = professionalFamilyEditDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (professionalFamilyRepository.isNameTaken(
                     uuid = uuid,
@@ -39,7 +39,7 @@ class ProfessionalFamilyService(
             ) {
                 errors[ProfessionalFamilyEditField.NAME] = "Email already taken"
             }
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             if (!professionalFamilyRepository.editThis(
                     uuid = uuid,
                     professionalFamilyEditDTO = professionalFamilyEditDTO
@@ -59,7 +59,7 @@ class ProfessionalFamilyService(
         professionalFamilyCreateDTO: ProfessionalFamilyCreateDTO
     ): OperationResult {
         val errors = professionalFamilyCreateDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (professionalFamilyRepository.isNameTaken(
                     name = professionalFamilyCreateDTO.name
@@ -67,7 +67,7 @@ class ProfessionalFamilyService(
             ) {
                 errors[ProfessionalFamilyCreateField.NAME] = "Name already taken"
             }
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             professionalFamilyRepository.save(
                 professionalFamilyCreateDTO = professionalFamilyCreateDTO
             )

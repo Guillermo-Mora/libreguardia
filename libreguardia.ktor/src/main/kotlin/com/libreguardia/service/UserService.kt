@@ -68,7 +68,7 @@ class UserService (
         userCreateDTO: UserCreateDTO
     ): OperationResult {
         val errors = userCreateDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         return withTransaction {
             if (userRepository.isEmailTaken(
                     email = userCreateDTO.email
@@ -76,7 +76,7 @@ class UserService (
             ) {
                 errors[UserCreateField.EMAIL] = "Email already taken"
             }
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
 
             val hashedPassword = bcryptHasher.hashToString(
                 BCRYPT_HASH_COST,
@@ -98,7 +98,7 @@ class UserService (
 
         //Each field format validations
         val errors = userEditDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         //
 
         return withTransaction {
@@ -111,7 +111,7 @@ class UserService (
                 errors[UserEditField.EMAIL] = "Email already taken"
             }
             //Return the business logic errors if they exist
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             //
 
             //Desired operation to perform (there are no errors at this point)
