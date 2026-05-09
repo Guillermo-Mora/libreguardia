@@ -16,9 +16,6 @@ object ScheduleActivityTable: UUIDTable(
     val generatesService = bool(
         name = "generates_service"
     )
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
 }
 
 class ScheduleActivityEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -26,5 +23,4 @@ class ScheduleActivityEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var name by ScheduleActivityTable.name
     var generatesService by ScheduleActivityTable.generatesService
-    var isEnabled by ScheduleActivityTable.isEnabled
 }

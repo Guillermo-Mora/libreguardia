@@ -4,14 +4,11 @@ import com.libreguardia.db.WeekDay
 import com.libreguardia.db.model.PlaceEntity
 import com.libreguardia.db.model.ScheduleEntity
 import com.libreguardia.db.model.UserEntity
-import com.libreguardia.dto.UserEditDTO
+import com.libreguardia.dto.module.UserEditDTO
 import com.libreguardia.repository.UserRepository
-import com.libreguardia.util.UUIDSerializer
-import kotlinx.serialization.Serializable
 import java.util.UUID
 
 data class UserModel(
-    @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val name: String,
     val surname: String,
@@ -24,7 +21,6 @@ data class UserModel(
 
 fun UserModel.toUserEditDTO(): UserEditDTO =
     UserEditDTO(
-        id = this.id,
         name = this.name,
         surname = this.surname,
         email = this.email,
@@ -34,17 +30,16 @@ fun UserModel.toUserEditDTO(): UserEditDTO =
         role = this.role
     )
 
-fun UserRepository.entityToModel(
-    entity: UserEntity
-) = UserModel(
-    id = entity.id.value,
-    name = entity.name,
-    surname = entity.surname,
-    email = entity.email,
-    phoneNumber = entity.phoneNumber,
-    isEnabled = entity.isEnabled,
-    isDeleted = entity.isDeleted,
-    role = entity.role.toString()
+fun UserEntity.toModel()
+= UserModel(
+    id = this.id.value,
+    name = this.name,
+    surname = this.surname,
+    email = this.email,
+    phoneNumber = this.phoneNumber,
+    isEnabled = this.isEnabled,
+    isDeleted = this.isDeleted,
+    role = this.role.toString()
 )
 
 data class UserProfileModel(
@@ -79,7 +74,7 @@ private fun scheduleEntityToModel(
 
 private fun placeEntityToModel(
     placeEntity: PlaceEntity
-) = PlaceModel(
+) = PlaceScheduleModel(
     fullName = "${placeEntity.placeType.name} ${placeEntity.name}",
     building = placeEntity.building?.name,
     floor = placeEntity.floor

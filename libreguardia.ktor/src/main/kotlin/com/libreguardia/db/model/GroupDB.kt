@@ -6,7 +6,7 @@ import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.dao.java.UUIDEntity
 import org.jetbrains.exposed.v1.dao.java.UUIDEntityClass
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 object GroupTable: UUIDTable(
     name = "group_tbl"
@@ -14,21 +14,31 @@ object GroupTable: UUIDTable(
     val code = varchar(
         name = "code",
         length = 50
-    ).uniqueIndex()
+    )
     val pointsMultiplier = decimal(
         name = "points_multiplier",
         precision = 2,
         scale = 1
     ).default(BigDecimal.ONE)
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
     val course = reference(
         name = "course_id",
         foreign = CourseTable,
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
+    val academicYear = reference(
+        name = "academic_year_id",
+        foreign = AcademicYearTable,
+        onDelete = ReferenceOption.RESTRICT,
+        onUpdate = ReferenceOption.RESTRICT
+    )
+
+    init {
+        uniqueIndex(
+            customIndexName = "uq_group",
+            code, course
+        )
+    }
 }
 
 class GroupEntity(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -36,6 +46,6 @@ class GroupEntity(id: EntityID<UUID>) : UUIDEntity(id) {
 
     var code by GroupTable.code
     var pointsMultiplier by GroupTable.pointsMultiplier
-    var isEnabled by GroupTable.isEnabled
     var course by CourseEntity referencedOn GroupTable.course
+    var academicYear by AcademicYearEntity referencedOn GroupTable.academicYear
 }

@@ -1,17 +1,19 @@
 package com.libreguardia.routing
 
 
-import com.libreguardia.routing.modules.academicYearRouting
-import com.libreguardia.routing.modules.authRouting
-import com.libreguardia.routing.modules.buildingRouting
-import com.libreguardia.routing.modules.courseRouting
-import com.libreguardia.routing.modules.entryRouting
-import com.libreguardia.routing.modules.scheduleActivityRouting
-import com.libreguardia.routing.modules.placeTypeRouting
-import com.libreguardia.routing.modules.groupRouting
-import com.libreguardia.routing.modules.userRouting
-import com.libreguardia.routing.modules.zoneRouting
-import com.libreguardia.routing.modules.validationRouting
+import com.libreguardia.routing.module.academicYearRouting
+import com.libreguardia.routing.module.authRouting
+import com.libreguardia.routing.module.buildingRouting
+import com.libreguardia.routing.module.courseRouting
+import com.libreguardia.routing.module.entryRouting
+import com.libreguardia.routing.module.scheduleActivityRouting
+import com.libreguardia.routing.module.placeTypeRouting
+import com.libreguardia.routing.module.groupRouting
+import com.libreguardia.routing.module.placeRouting
+import com.libreguardia.routing.module.professionalFamilyRouting
+import com.libreguardia.routing.module.userRouting
+import com.libreguardia.routing.module.zoneRouting
+import com.libreguardia.routing.module.validationRouting
 import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.AuthService
 import com.libreguardia.service.ScheduleActivityService
@@ -19,6 +21,8 @@ import com.libreguardia.service.PlaceTypeService
 import com.libreguardia.service.BuildingService
 import com.libreguardia.service.GroupService
 import com.libreguardia.service.CourseService
+import com.libreguardia.service.PlaceService
+import com.libreguardia.service.ProfessionalFamilyService
 import com.libreguardia.service.UserService
 import com.libreguardia.service.ZoneService
 import io.ktor.server.application.*
@@ -36,6 +40,8 @@ fun Application.configureRouting(
     zoneService: ZoneService,
     courseService: CourseService,
     userService: UserService,
+    professionalFamilyService: ProfessionalFamilyService,
+    placeService: PlaceService
 ) {
     //Unified routes for pages and for obtaining content (get, post, put, patch)
     install(Resources)
@@ -48,13 +54,48 @@ fun Application.configureRouting(
         userRouting(
             userService = userService
         )
-        academicYearRouting(service = academicYearService)
-        scheduleActivityRouting(service = scheduleActivityService)
-        groupRouting(service = groupService)
-        zoneRouting(service = zoneService)
-        buildingRouting(service = buildingService)
-        placeTypeRouting(service = placeTypeService)
-        courseRouting(service = courseService)
-        staticResources("/static", "static")
+        professionalFamilyRouting(
+            professionalFamilyService = professionalFamilyService
+        )
+        academicYearRouting(
+            service = academicYearService
+        )
+        scheduleActivityRouting(
+            service = scheduleActivityService
+        )
+        groupRouting(
+            groupService = groupService,
+            courseService = courseService,
+            academicYearService = academicYearService
+        )
+        placeRouting(
+            placeService = placeService,
+            buildingService = buildingService,
+            zoneService = zoneService,
+            placeTypeService = placeTypeService
+        )
+        zoneRouting(
+            service = zoneService
+        )
+        buildingRouting(
+            service = buildingService
+        )
+        placeTypeRouting(
+            service = placeTypeService
+        )
+        courseRouting(
+            courseService = courseService,
+            professionalFamilyService = professionalFamilyService
+        )
+        placeRouting(
+            placeService = placeService,
+            buildingService = buildingService,
+            zoneService = zoneService,
+            placeTypeService = placeTypeService
+        )
+        staticResources(
+            remotePath = "/static",
+            basePackage = "static"
+        )
     }
 }

@@ -13,15 +13,11 @@ object BuildingTable: UUIDTable(
         name = "name",
         length = 50
     ).uniqueIndex()
-    val isEnabled = bool(
-        name = "is_enabled"
-    ).default(true)
 }
 
 class BuildingEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<BuildingEntity>(BuildingTable)
 
     var name by BuildingTable.name
-    var isEnabled by BuildingTable.isEnabled
     val places by PlaceEntity optionalReferrersOn PlaceTable.building
 }

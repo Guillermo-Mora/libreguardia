@@ -68,14 +68,16 @@ With schedule templates, we could create a template for these teachers' weekly s
 This will be fully editable, meaning there are no limitations when creating or using schedule templates. You could create a user schedule loading a template, but then delete some of the time slots from that user's schedule, without affecting the base template or facing limitations.
 
 *This is the base idea behind how Libreguardia would work. As you can read, its simple. We want to focus on making something simple and easy to use rather than adding a lot of functionalities that would result in more time spent from the final user inside this app.*
+### Current database
+![Libreguardia's databse schema](assets/DB_ER_Diagram.png)
 ## Current feature goals
 *Work in progress*
 - [✓] Password-protected login access with cookie session.
 - [✓] Role and session protected resources and actions.
-- [ ] Own user profile visualization with some editable fields.
+- [✓] Own user profile visualization with some editable fields.
 - [ ] Schedule templates creation, edition and usage, for admins.
 - [ ] Users registration and edit with their schedule, for admins.
-- [ ] Registries creation, edition and deletion, for admins (Users, Places, Zones, Buildings, Activities, Courses, Groups, etc.).
+- [✓] Registries creation, edition and deletion, for admins (Users, Places, Zones, Buildings, Activities, Courses, Groups, etc.).
 - [ ] Own absences registration and cancellation.
 - [ ] Responsive visualization of the application (Phones, tablets, computers, etc.)
 - [ ] Automatic generation of services from user absences.

@@ -4,17 +4,18 @@ import com.libreguardia.db.Role
 import com.libreguardia.db.model.GroupEntity
 import com.libreguardia.db.model.PlaceEntity
 import com.libreguardia.db.model.ScheduleEntity
-import com.libreguardia.db.model.ScheduleTable
 import com.libreguardia.db.model.UserEntity
 import com.libreguardia.db.model.UserTable
-import com.libreguardia.dto.*
-import com.libreguardia.exception.UserNotFoundException
+import com.libreguardia.dto.module.UserCreateDTO
+import com.libreguardia.dto.module.UserEditDTO
+import com.libreguardia.dto.module.UserEditProfileDTO
 import com.libreguardia.model.UserModel
 import com.libreguardia.model.UserProfileModel
-import com.libreguardia.model.entityToModel
 import com.libreguardia.model.entityToProfileModel
-import org.jetbrains.exposed.v1.core.JoinType
+import com.libreguardia.model.toModel
+import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.neq
 import org.jetbrains.exposed.v1.dao.load
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
@@ -22,21 +23,23 @@ import org.jetbrains.exposed.v1.jdbc.select
 import org.jetbrains.exposed.v1.jdbc.update
 import java.util.*
 
-class UserRepository {
+class UserRepository : BaseRepository<UserTable>(UserTable) {
     fun getAll(): List<UserModel> =
         UserEntity
             .find { UserTable.isDeleted eq false }
-            .map(::entityToModel)
+            .map(UserEntity::toModel)
 
     fun getAllEnabled(): List<UserModel> =
         UserEntity
             .find { UserTable.isEnabled eq true }
-            .map(::entityToModel)
+            .map(UserEntity::toModel)
 
     fun getByUUID(
         uuid: UUID
     ): UserModel? {
-        return UserEntity.findById(uuid)?.let { entityToModel(it) }
+        return UserEntity
+            .findById(uuid)
+            ?.toModel()
     }
 
     fun getProfileByUUID(
@@ -73,7 +76,6 @@ class UserRepository {
         userCreateDTO: UserCreateDTO,
         hashedPassword: String
     ) {
-        //I don't think this is a good way to do it. I will rework it in the future.
         UserTable.insert {
             it[name] = userCreateDTO.name
             it[surname] = userCreateDTO.surname
@@ -91,13 +93,13 @@ class UserRepository {
         hashedPassword: String?
     ): Boolean {
         return UserTable.update({ UserTable.id eq userUUID }) { userUpdated ->
-            userEditDTO.name?.let { userUpdated[name] = it }
-            userEditDTO.surname?.let { userUpdated[surname] = it }
-            userEditDTO.email?.let { userUpdated[email] = it }
-            userEditDTO.phoneNumber?.let { userUpdated[phoneNumber] = it }
+            userUpdated[name] = userEditDTO.name
+            userUpdated[surname] = userEditDTO.surname
+            userUpdated[email] = userEditDTO.email
+            userUpdated[phoneNumber] = userEditDTO.phoneNumber
             hashedPassword?.let { userUpdated[password] = it }
-            userEditDTO.isEnabled?.let { userUpdated[isEnabled] = it }
-            userEditDTO.role?.let { userUpdated[role] = Role.valueOf(it) }
+            userUpdated[isEnabled] = userEditDTO.isEnabled
+            userUpdated[role] = Role.valueOf(userEditDTO.role)
         } == 1
     }
 
@@ -167,4 +169,23 @@ class UserRepository {
             .limit(1)
             .map { it[UserTable.phoneNumber] }
             .firstOrNull()
+
+    fun isEmailTaken(
+        uuid: UUID,
+        email: String
+    ): Boolean =
+        UserTable
+            .select(UserTable.email)
+            .where { UserTable.id neq uuid and (UserTable.email eq email) }
+            .limit(1)
+            .count().toInt() >= 1
+
+    fun isEmailTaken(
+        email: String
+    ): Boolean =
+        UserTable
+            .select(UserTable.email)
+            .where { UserTable.email eq email }
+            .limit(1)
+            .count().toInt() >= 1
 }

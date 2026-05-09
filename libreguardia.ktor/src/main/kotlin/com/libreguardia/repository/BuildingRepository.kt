@@ -2,19 +2,23 @@ package com.libreguardia.repository
 
 import com.libreguardia.db.model.BuildingEntity
 import com.libreguardia.db.model.BuildingTable
-import com.libreguardia.dto.BuildingCreateDTO
-import com.libreguardia.dto.BuildingEditDTO
-import com.libreguardia.dto.BuildingResponseDTO
-import com.libreguardia.dto.toResponseDTO
+import com.libreguardia.dto.module.BuildingCreateDTO
+import com.libreguardia.dto.module.BuildingEditDTO
+import com.libreguardia.dto.module.BuildingResponseDTO
+import com.libreguardia.dto.module.toResponseDTO
+import com.libreguardia.model.BuildingModel
+import com.libreguardia.model.toModel
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update
+import java.util.UUID
 
-class BuildingRepository {
-    fun getAll(): List<BuildingResponseDTO> =
-        BuildingEntity.all().map { it.toResponseDTO() }
+class BuildingRepository : BaseRepository<BuildingTable>(BuildingTable) {
+    fun getAll(): List<BuildingModel> =
+        BuildingEntity.all().map { it.toModel() }
 
-    fun getByUUID(uuid: java.util.UUID): BuildingResponseDTO? =
+    fun getByUUID(uuid: UUID): BuildingResponseDTO? =
         BuildingEntity.findById(uuid)?.toResponseDTO()
 
     fun save(dto: BuildingCreateDTO) {
@@ -23,22 +27,9 @@ class BuildingRepository {
         }
     }
 
-    fun update(uuid: java.util.UUID, dto: BuildingEditDTO): Boolean {
+    fun update(uuid: UUID, dto: BuildingEditDTO): Boolean {
         return BuildingTable.update({ BuildingTable.id eq uuid }) { updated ->
             dto.name?.let { updated[name] = it }
-            dto.isEnabled?.let { updated[isEnabled] = it }
-        } == 1
-    }
-
-    fun delete(uuid: java.util.UUID): Boolean {
-        return BuildingTable.update({ BuildingTable.id eq uuid }) {
-            it[isEnabled] = false
-        } == 1
-    }
-
-    fun toggleEnabled(uuid: java.util.UUID, enabled: Boolean): Boolean {
-        return BuildingTable.update({ BuildingTable.id eq uuid }) {
-            it[isEnabled] = enabled
         } == 1
     }
 }

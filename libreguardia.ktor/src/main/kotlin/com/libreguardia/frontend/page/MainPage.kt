@@ -20,7 +20,7 @@ fun HTML.mainPage(
         appHeader()
         appAsideMenu(role = role)
         main {
-            id = "main-content"
+            this.id = "main-content"
             mainContent()
         }
         htmxScript()

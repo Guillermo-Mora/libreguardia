@@ -2,17 +2,19 @@ package com.libreguardia.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.BCRYPT_HASH_COST
-import com.libreguardia.dto.EditUserProfileResult
-import com.libreguardia.dto.UserCreateDTO
-import com.libreguardia.dto.UserEditDTO
-import com.libreguardia.dto.UserEditProfileDTO
-import com.libreguardia.dto.validate
+import com.libreguardia.dto.module.EditUserProfileResult
+import com.libreguardia.dto.module.UserCreateDTO
+import com.libreguardia.dto.module.UserEditDTO
+import com.libreguardia.dto.module.UserEditProfileDTO
 import com.libreguardia.exception.UserNotFoundException
+import com.libreguardia.frontend.component.main.create.UserCreateField
+import com.libreguardia.frontend.component.main.edit.UserEditField
 import com.libreguardia.model.UserModel
 import com.libreguardia.model.UserProfileModel
 import com.libreguardia.repository.*
 import com.libreguardia.util.withTransaction
 import com.libreguardia.validation.OperationResult
+import com.libreguardia.validation.module.validate
 import com.libreguardia.validation.validateNewPassword
 import com.libreguardia.validation.validatePhoneNumber
 import kotlinx.datetime.LocalDateTime
@@ -61,58 +63,82 @@ class UserService (
     // as the log shows there's no N+1 problem, but still too much queries in my opinion :(
     //userRepository.getProfileByUUID(userUuid) ?: throw UserNotFoundException() }
 
+
     suspend fun createUser(
         userCreateDTO: UserCreateDTO
     ): OperationResult {
-        val errors: List<String?> = userCreateDTO.validate()
-        if (errors.any { it != null }) return OperationResult.Error(errors)
-        val hashedPassword = bcryptHasher.hashToString(
-            BCRYPT_HASH_COST,
-            userCreateDTO.password.toCharArray()
-        )
-        withTransaction {
+        val errors = userCreateDTO.validate()
+        if (containsErrors(errors)) return OperationResult.Error(errors)
+        return withTransaction {
+            if (userRepository.isEmailTaken(
+                    email = userCreateDTO.email
+                )
+            ) {
+                errors[UserCreateField.EMAIL] = "Email already taken"
+            }
+            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+
+            val hashedPassword = bcryptHasher.hashToString(
+                BCRYPT_HASH_COST,
+                userCreateDTO.password.toCharArray()
+            )
             userRepository.save(
                 userCreateDTO = userCreateDTO,
                 hashedPassword = hashedPassword
             )
+            return@withTransaction OperationResult.Success()
         }
-        return OperationResult.Success()
     }
 
+    //This is a partially clean example of how I should manage the validations in the service functions
     suspend fun editUser(
         userUuid: UUID,
         userEditDTO: UserEditDTO
     ): OperationResult {
-        val errors: List<String?> = userEditDTO.validate()
-        if (errors.any { it != null }) return OperationResult.Error(errors)
-        val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val hashedPassword = if (!userEditDTO.password.isNullOrBlank()) {
-            bcryptHasher.hashToString(
-                BCRYPT_HASH_COST,
-                userEditDTO.password.toCharArray()
-            )
-        } else null
-        userEditDTO.isEnabled == false || userEditDTO.role != null
-        withTransaction {
-            //It would be better to only get the role, using Exposed DSL, but for now it stays like this.
-            val user = userRepository.getEntity(uuid = userUuid)
-            val shouldCloseSessions = hashedPassword != null || userEditDTO.role != user?.role.toString()
+
+        //Each field format validations
+        val errors = userEditDTO.validate()
+        if (containsErrors(errors)) return OperationResult.Error(errors)
+        //
+
+        return withTransaction {
+            //Business logic related fields validation
+            if (userRepository.isEmailTaken(
+                    uuid = userUuid,
+                    email = userEditDTO.email
+                )
+            ) {
+                errors[UserEditField.EMAIL] = "Email already taken"
+            }
+            //Return the business logic errors if they exist
+            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
             //
+
+            //Desired operation to perform (there are no errors at this point)
+            val user = userRepository.getEntity(uuid = userUuid) ?: throw UserNotFoundException()
+            val dateTimeNow: LocalDateTime = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            val hashedPassword = if (userEditDTO.password.isNotBlank()) {
+                bcryptHasher.hashToString(
+                    BCRYPT_HASH_COST,
+                    userEditDTO.password.toCharArray()
+                )
+            } else null
+            val shouldCloseSessions = hashedPassword != null || userEditDTO.role != user.role.toString()
             if (!userRepository.editByUUID(
                     userUUID = userUuid,
                     userEditDTO = userEditDTO,
                     hashedPassword = hashedPassword
                 )
             ) throw UserNotFoundException()
-            if (userEditDTO.isEnabled == false) {
+            if (!userEditDTO.isEnabled) {
                 serviceRepository.setNullAssignedServicesToUserUUIDAfterNow(
                     userUUID = userUuid,
                     dateTimeNow = dateTimeNow
                 )
             }
             if (shouldCloseSessions) sessionRepository.deleteSessionsFromUser(userUuid = userUuid)
+            return@withTransaction OperationResult.Success()
         }
-        return OperationResult.Success()
     }
 
     suspend fun deleteUser(
