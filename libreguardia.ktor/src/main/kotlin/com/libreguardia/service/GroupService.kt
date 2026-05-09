@@ -36,7 +36,8 @@ class GroupService(
         return withTransaction {
             if (groupRepository.exists(
                     code = groupCreateDTO.code,
-                    courseId = UUID.fromString(groupCreateDTO.courseId)
+                    courseId = UUID.fromString(groupCreateDTO.courseId),
+                    academicYearId = UUID.fromString(groupCreateDTO.academicYearId)
                 )
             ) errors[GroupCreateField.CODE] = "This group already exists"
             if (!courseRepository.exists(
@@ -61,7 +62,8 @@ class GroupService(
             if (groupRepository.exists(
                     uuid = uuid,
                     code = groupEditDTO.code,
-                    courseId = UUID.fromString(groupEditDTO.courseId)
+                    courseId = UUID.fromString(groupEditDTO.courseId),
+                    academicYearId = UUID.fromString(groupEditDTO.academicYearId)
                 )
             ) errors[GroupEditField.CODE] = "This group already exists"
             if (!courseRepository.exists(
@@ -78,7 +80,7 @@ class GroupService(
         }
     }
 
-    suspend fun delete(
+    suspend fun deleteThis(
         uuid: UUID
     ) {
         withTransaction {

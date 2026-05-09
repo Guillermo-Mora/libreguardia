@@ -3,6 +3,7 @@ package com.libreguardia.frontend.component.main.create
 import com.libreguardia.dto.module.GroupCreateDTO
 import com.libreguardia.frontend.component.*
 import com.libreguardia.frontend.component.main.edit.GroupEditField
+import com.libreguardia.model.AcademicYearModel
 import com.libreguardia.model.CourseModel
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
@@ -10,11 +11,13 @@ import kotlinx.html.InputType
 enum class GroupCreateField(override val key: String) : FormField {
     CODE("code"),
     COURSE("course"),
-    POINTS_MULTIPLIER("points_multiplier")
+    ACADEMIC_YEAR("academic_year"),
+    POINTS_MULTIPLIER("points_multiplier");
 }
 fun FlowContent.groupCreate(
     dto: GroupCreateDTO = GroupCreateDTO(),
     courses: List<CourseModel>,
+    academicYears: List<AcademicYearModel>,
     errors: Map<FormField, String?>? = null,
 ) {
     customForm(
@@ -24,6 +27,18 @@ fun FlowContent.groupCreate(
         operationPath = "/group",
         errors = errors,
         formFields = mapOf(
+            GroupEditField.ACADEMIC_YEAR to FormFieldData(
+                text = "academic year",
+                required = true,
+                selectOptions =
+                    academicYears.map { academicYear ->
+                        SelectOption(
+                            text = academicYear.name,
+                            id = academicYear.id,
+                            selected = academicYear.id == dto.academicYearId
+                        )
+                    }
+            ),
             GroupCreateField.CODE to FormFieldData(
                 text = "code",
                 value = dto.code,

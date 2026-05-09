@@ -9,7 +9,9 @@ data class GroupModel(
     val code: String,
     val pointsMultiplier: String,
     val courseId: String,
-    val courseName: String
+    val courseName: String,
+    val academicYearId: String,
+    val academicYearName: String
 )
 
 fun GroupEntity.toModel() =
@@ -18,5 +20,7 @@ fun GroupEntity.toModel() =
         code = this.code,
         pointsMultiplier = this.pointsMultiplier.toString(),
         courseId = this.course.id.value.toString(),
-        courseName = this.course.name
+        courseName = this.course.name,
+        academicYearId = this.academicYear.id.value.toString(),
+        academicYearName = this.academicYear.name
     )

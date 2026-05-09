@@ -28,11 +28,15 @@ fun FlowContent.groupList(
             th {
                 text("Difficulty")
             }
+            th {
+                text("Academic year")
+            }
         }
         for (group in groups)
             tr {
                 td("td-filled") { text("${group.courseName}-${group.code}") }
                 td("td-filled") { text(group.pointsMultiplier) }
+                td("td-filled") { text(group.academicYearName) }
                 td {
                     button {
                         attributes.hx {

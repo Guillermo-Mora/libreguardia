@@ -1,16 +1,12 @@
 package com.libreguardia.db.model
 
-import com.libreguardia.db.model.ScheduleTable.endTime
-import com.libreguardia.db.model.ScheduleTable.startTime
-import com.libreguardia.db.model.ScheduleTable.user
-import com.libreguardia.db.model.ScheduleTable.weekDay
 import org.jetbrains.exposed.v1.core.ReferenceOption
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.dao.java.UUIDEntity
 import org.jetbrains.exposed.v1.dao.java.UUIDEntityClass
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 object GroupTable: UUIDTable(
     name = "group_tbl"
@@ -30,6 +26,12 @@ object GroupTable: UUIDTable(
         onDelete = ReferenceOption.RESTRICT,
         onUpdate = ReferenceOption.RESTRICT
     )
+    val academicYear = reference(
+        name = "academic_year_id",
+        foreign = AcademicYearTable,
+        onDelete = ReferenceOption.RESTRICT,
+        onUpdate = ReferenceOption.RESTRICT
+    )
 
     init {
         uniqueIndex(
@@ -45,4 +47,5 @@ class GroupEntity(id: EntityID<UUID>) : UUIDEntity(id) {
     var code by GroupTable.code
     var pointsMultiplier by GroupTable.pointsMultiplier
     var course by CourseEntity referencedOn GroupTable.course
+    var academicYear by AcademicYearEntity referencedOn GroupTable.academicYear
 }

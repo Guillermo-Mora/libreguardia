@@ -129,10 +129,3 @@ fun Route.academicYearRouting(service: AcademicYearService) {
         }
     }
 }
-
-fun com.libreguardia.dto.module.AcademicYearResponseDTO.toAcademicYearEditDTO(): com.libreguardia.dto.module.AcademicYearEditDTO =
-    com.libreguardia.dto.module.AcademicYearEditDTO(
-        name = this.name,
-        startDate = this.startDate,
-        endDate = this.endDate
-    )

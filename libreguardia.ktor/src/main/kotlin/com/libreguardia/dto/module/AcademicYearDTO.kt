@@ -1,9 +1,9 @@
 package com.libreguardia.dto.module
 
-import com.libreguardia.db.model.AcademicYearEntity
 import com.libreguardia.dto.string
 import com.libreguardia.frontend.component.main.create.AcademicYearCreateField
 import com.libreguardia.frontend.component.main.edit.AcademicYearEditField
+import com.libreguardia.model.AcademicYearModel
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.Parameters
 import kotlinx.datetime.LocalDate
@@ -26,19 +26,19 @@ data class AcademicYearCreateDTO(
     val endDate: LocalDate
 )
 
-@Serializable
 data class AcademicYearEditDTO(
-    val name: String? = null,
-    val startDate: LocalDate? = null,
-    val endDate: LocalDate? = null
+    val name: String,
+    val startDate: String,
+    val endDate: String
 )
 
-fun AcademicYearEntity.toResponseDTO() = AcademicYearResponseDTO(
-    id = id.value,
-    name = name,
-    startDate = startDate,
-    endDate = endDate
-)
+fun AcademicYearModel.toAcademicYearEditDTO() =
+    AcademicYearEditDTO(
+        name = this.name,
+        startDate = this.startDate,
+        endDate = this.endDate
+    )
+
 
 fun Parameters.toAcademicYearCreateDTO() =
     AcademicYearCreateDTO(
@@ -49,7 +49,7 @@ fun Parameters.toAcademicYearCreateDTO() =
 
 fun Parameters.toAcademicYearEditDTO() =
     AcademicYearEditDTO(
-        name = string(AcademicYearEditField.NAME).takeIf { it.isNotBlank() },
-        startDate = string(AcademicYearEditField.START_DATE).takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) },
-        endDate = string(AcademicYearEditField.END_DATE).takeIf { it.isNotBlank() }?.let { LocalDate.parse(it) }
+        name = string(AcademicYearEditField.NAME),
+        startDate = string(AcademicYearEditField.START_DATE),
+        endDate = string(AcademicYearEditField.END_DATE)
     )

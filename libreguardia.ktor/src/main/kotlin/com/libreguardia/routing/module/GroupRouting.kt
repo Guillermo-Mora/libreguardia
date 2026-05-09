@@ -10,6 +10,7 @@ import com.libreguardia.frontend.component.main.create.groupCreate
 import com.libreguardia.frontend.component.main.edit.groupEdit
 import com.libreguardia.frontend.component.main.list.groupList
 import com.libreguardia.routing.respondHtmlPage
+import com.libreguardia.service.AcademicYearService
 import com.libreguardia.service.CourseService
 import com.libreguardia.service.GroupService
 import com.libreguardia.util.UUIDSerializer
@@ -40,6 +41,7 @@ class GroupAPI {
 fun Route.groupRouting(
     groupService: GroupService,
     courseService: CourseService,
+    academicYearService: AcademicYearService
 ) {
     authenticate(AUTH_SESSION) {
         authorized(Role.ADMIN) {
@@ -51,6 +53,7 @@ fun Route.groupRouting(
                     uuid = uuid
                 ).toGroupEditDTO()
                 val courses = courseService.getAll()
+                val academicYears = academicYearService.getAll()
                 respondHtmlPage(
                     role = role,
                     content = {
@@ -58,6 +61,7 @@ fun Route.groupRouting(
                             dto = groupEdit,
                             uuid = uuid,
                             courses = courses,
+                            academicYears = academicYears,
                         )
                     }
                 )
@@ -79,11 +83,13 @@ fun Route.groupRouting(
             get<GroupAPI.New> {
                 val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
                 val courses = courseService.getAll()
+                val academicYears = academicYearService.getAll()
                 respondHtmlPage(
                     role = role,
                     content = {
                         groupCreate(
                             courses = courses,
+                            academicYears = academicYears,
                         )
                     }
                 )
@@ -97,11 +103,13 @@ fun Route.groupRouting(
                 when (operationResult) {
                     is OperationResult.Error -> {
                         val courses = courseService.getAll()
+                        val academicYears = academicYearService.getAll()
                         call.respondHtmlFragment {
                             groupCreate(
                                 dto = groupCreate,
                                 errors = operationResult.errors,
-                                courses = courses
+                                courses = courses,
+                                academicYears = academicYears
                             )
                         }
                     }
@@ -126,11 +134,13 @@ fun Route.groupRouting(
                 when (operationResult) {
                     is OperationResult.Error -> {
                         val courses = courseService.getAll()
+                        val academicYears = academicYearService.getAll()
                         call.respondHtmlFragment {
                             groupEdit(
                                 dto = groupEdit,
                                 errors = operationResult.errors,
                                 courses = courses,
+                                academicYears = academicYears,
                                 uuid = group.uuid
                             )
                         }
@@ -146,9 +156,9 @@ fun Route.groupRouting(
                 }
             }
 
-            delete<GroupAPI.UUID> { course ->
-                courseService.deleteThis(
-                    uuid = course.uuid
+            delete<GroupAPI.UUID> { group ->
+                groupService.deleteThis(
+                    uuid = group.uuid
                 )
                 call.response.headers.append(
                     "HX-Location",

@@ -5,6 +5,7 @@ import com.libreguardia.dto.module.AcademicYearEditDTO
 import com.libreguardia.dto.module.AcademicYearResponseDTO
 import com.libreguardia.exception.AcademicYearNotFoundException
 import com.libreguardia.frontend.component.FormField
+import com.libreguardia.model.AcademicYearModel
 import com.libreguardia.repository.AcademicYearRepository
 import com.libreguardia.util.withTransaction
 import com.libreguardia.validation.OperationResult
@@ -14,9 +15,9 @@ import java.util.UUID
 class AcademicYearService(
     private val repository: AcademicYearRepository
 ) {
-    suspend fun getAll(): List<AcademicYearResponseDTO> = withTransaction { repository.getAll() }
+    suspend fun getAll(): List<AcademicYearModel> = withTransaction { repository.getAll() }
 
-    suspend fun getByUUID(uuid: UUID): AcademicYearResponseDTO =
+    suspend fun getByUUID(uuid: UUID): AcademicYearModel =
         withTransaction { repository.getByUUID(uuid) } ?: throw AcademicYearNotFoundException()
 
     suspend fun create(dto: AcademicYearCreateDTO): OperationResult {

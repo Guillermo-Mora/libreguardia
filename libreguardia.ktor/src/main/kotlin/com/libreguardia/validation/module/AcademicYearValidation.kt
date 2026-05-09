@@ -7,6 +7,7 @@ import com.libreguardia.frontend.component.main.create.AcademicYearCreateField
 import com.libreguardia.frontend.component.main.edit.AcademicYearEditField
 import com.libreguardia.validation.validateAcademicYearDates
 import com.libreguardia.validation.validateString
+import java.time.LocalDate
 
 fun AcademicYearCreateDTO.validate(): MutableMap<FormField, String?> {
     val errors = mutableMapOf<FormField, String?>()
@@ -19,13 +20,12 @@ fun AcademicYearCreateDTO.validate(): MutableMap<FormField, String?> {
 
 fun AcademicYearEditDTO.validate(): MutableMap<FormField, String?> {
     val errors = mutableMapOf<FormField, String?>()
-    this.name?.let { name ->
-        errors[AcademicYearEditField.NAME] = validateString(name)
-    }
-    if (this.startDate != null && this.endDate != null) {
-        validateAcademicYearDates(this.startDate, this.endDate)?.let { error ->
-            errors[AcademicYearEditField.START_DATE] = error
-        }
+    errors[AcademicYearEditField.NAME] = validateString(name)
+    validateAcademicYearDates(
+        kotlinx.datetime.LocalDate.parse(this.startDate),
+        kotlinx.datetime.LocalDate.parse(this.endDate)
+    )?.let { error ->
+        errors[AcademicYearEditField.START_DATE] = error
     }
     return errors
 }

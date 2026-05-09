@@ -65,7 +65,8 @@ fun Application.configureRouting(
         )
         groupRouting(
             groupService = groupService,
-            courseService = courseService
+            courseService = courseService,
+            academicYearService = academicYearService
         )
         placeRouting(
             placeService = placeService,

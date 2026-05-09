@@ -30,6 +30,7 @@ class GroupRepository : BaseRepository<GroupTable>(GroupTable) {
             it[code] = dto.code
             it[pointsMultiplier] = dto.pointsMultiplier.toBigDecimal()
             it[course] = UUID.fromString(dto.courseId)
+            it[academicYear] = UUID.fromString(dto.academicYearId)
         }
     }
 
@@ -41,33 +42,38 @@ class GroupRepository : BaseRepository<GroupTable>(GroupTable) {
             it[code] = groupEditDTO.code
             it[pointsMultiplier] = groupEditDTO.pointsMultiplier.toBigDecimal()
             it[course] = UUID.fromString(groupEditDTO.courseId)
+            it[academicYear] = UUID.fromString(groupEditDTO.academicYearId)
         } == 1
     }
 
     fun exists(
         uuid: UUID,
         code: String,
-        courseId: UUID
+        courseId: UUID,
+        academicYearId: UUID
     ): Boolean =
         GroupTable
             .select(GroupTable.id)
             .where {
                 GroupTable.id neq uuid and
                         (GroupTable.code eq code) and
-                        (GroupTable.course eq courseId)
+                        (GroupTable.course eq courseId) and
+                        (GroupTable.academicYear eq academicYearId)
             }
             .limit(1)
             .count().toInt() >= 1
 
     fun exists(
         code: String,
-        courseId: UUID
+        courseId: UUID,
+        academicYearId: UUID
     ): Boolean =
         GroupTable
             .select(GroupTable.id)
             .where {
                 GroupTable.code eq code and
-                        (GroupTable.course eq courseId)
+                        (GroupTable.course eq courseId) and
+                        (GroupTable.academicYear eq academicYearId)
             }
             .limit(1)
             .count() >= 1

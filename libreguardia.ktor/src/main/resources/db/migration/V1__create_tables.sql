@@ -86,7 +86,8 @@ CREATE TABLE group_tbl (
                            code VARCHAR(50) NOT NULL,
                            points_multiplier DECIMAL(2,1) NOT NULL DEFAULT 1,
                            course_id UUID NOT NULL REFERENCES course(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
-                           CONSTRAINT uq_group UNIQUE (code, course_id)
+                           academic_year_id UUID NOT NULL REFERENCES academic_year(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
+                           CONSTRAINT uq_group UNIQUE (code, course_id, academic_year_id)
 );
 
 CREATE TABLE schedule (
