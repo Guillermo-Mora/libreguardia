@@ -9,53 +9,55 @@ import kotlinx.html.*
 fun FlowContent.userList(
     users: List<UserModel>
 ) {
-    button {
-        attributes.hx {
-            get = "/user/new"
-            replaceUrl = "true"
-            pushUrl = "true"
-            target = "#main-content"
-            swap = "innerHTML"
-        }
-        text("New")
-    }
-    table("schedule-table") {
-        tr {
-            th {
-                text("User")
-            }
-            th {
-                text("Email")
-            }
-            th {
-                text("Phone number")
-            }
-            th {
-                text("Role")
-            }
-            th {
-                text("Enabled")
+    div("table-container") {
+        div("table-header") {
+            h2("table-title") { text("Users") }
+            button {
+                attributes["class"] = "btn btn-primary btn-sm"
+                attributes.hx {
+                    get = "/user/new"
+                    replaceUrl = "true"
+                    pushUrl = "true"
+                    target = "#main-content"
+                    swap = "innerHTML"
+                }
+                text("+ New")
             }
         }
-        for (user in users)
-            tr {
-                td("td-filled") { text("${user.name} ${user.surname}") }
-                td("td-filled") { text(user.email) }
-                td("td-filled") { text(user.phoneNumber) }
-                td("td-filled") { text(user.role) }
-                td("td-filled") { text(if (user.isEnabled) "Yes" else "No") }
-                td {
-                    button {
-                        attributes.hx {
-                            get = "/user/${user.id}"
-                            replaceUrl = "true"
-                            pushUrl = "true"
-                            target = "#main-content"
-                            swap = "innerHTML"
-                        }
-                        text("Edit")
-                    }
+        table("schedule-table") {
+            thead {
+                tr {
+                    th { text("User") }
+                    th { text("Email") }
+                    th { text("Phone number") }
+                    th { text("Role") }
+                    th { text("Enabled") }
+                    th { text("") }
                 }
             }
+            tbody {
+                for (user in users)
+                    tr {
+                        td("td-filled") { text("${user.name} ${user.surname}") }
+                        td { text(user.email) }
+                        td { text(user.phoneNumber) }
+                        td { text(user.role) }
+                        td { text(if (user.isEnabled) "Yes" else "No") }
+                        td("table-actions") {
+                            button {
+                                attributes["class"] = "btn btn-ghost btn-sm"
+                                attributes.hx {
+                                    get = "/user/${user.id}"
+                                    replaceUrl = "true"
+                                    pushUrl = "true"
+                                    target = "#main-content"
+                                    swap = "innerHTML"
+                                }
+                                text("Edit")
+                            }
+                        }
+                    }
+            }
+        }
     }
 }
