@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.page
 
-import com.libreguardia.frontend.component.*
+import com.libreguardia.frontend.component.htmxScript
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
@@ -13,9 +13,12 @@ fun HTML.loginPage() {
         meta { name = "viewport"; content = "width=device-width, initial-scale=1.0" }
         link { rel = "stylesheet"; href = "/static/frontend/css/style.css" }
     }
-    body {
-        main("login-main")
-        {
+    body("login-body") {
+        div("login-card") {
+            div("login-header") {
+                h1("login-logo") { text("LibreGuardia") }
+                p("login-subtitle") { text("Sign in to your account") }
+            }
             form(classes = "login-form") {
                 attributes.hx {
                     post = "/auth/login"
@@ -23,49 +26,44 @@ fun HTML.loginPage() {
                     swap = "outerHTML"
                     validate = true
                 }
-                div {
-                    h2 {
-                        text("Login")
-                    }
-                }
-                div("input-div") {
+                div("form-field") {
                     label {
                         htmlFor = "email"
                         text("Email")
                     }
                     input {
-                        attributes.hx {
-                            validate = true
-                        }
+                        attributes.hx { validate = true }
                         type = InputType.email
                         name = "email"
                         this.id = "email"
-                        placeholder = "Input your email"
+                        placeholder = "you@example.com"
                         required = true
                     }
                 }
-                div("input-div") {
+                div("form-field") {
                     this.id = "password-div"
                     label {
                         htmlFor = "password"
                         text("Password")
                     }
                     input {
-                        attributes.hx {
-                            validate = true
-                        }
+                        attributes.hx { validate = true }
                         type = InputType.password
                         name = "password"
                         this.id = "password"
-                        placeholder = "Input your password"
+                        placeholder = "Enter your password"
                         required = true
                     }
-                    div("error-div") {}
+                    div("form-error") {}
                 }
                 button {
+                    attributes["class"] = "btn btn-primary btn-lg btn-full"
                     type = ButtonType.submit
-                    text("Login")
+                    text("Sign in")
                 }
+            }
+            p("login-footer") {
+                text("LibreGuardia v1.0")
             }
         }
         htmxScript()
