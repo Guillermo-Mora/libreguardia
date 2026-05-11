@@ -25,6 +25,12 @@ fun FlowContent.userProfileEdit(
     div {
         this.id = "editable-fields"
         form("form-card") {
+            attributes.hx {
+                patch = "/user/profile"
+                target = "#editable-fields"
+                swap = "outerHTML"
+                validate = true
+            }
             div("form-card-header") {
                 p("form-card-title") { text("Edit profile") }
             }
