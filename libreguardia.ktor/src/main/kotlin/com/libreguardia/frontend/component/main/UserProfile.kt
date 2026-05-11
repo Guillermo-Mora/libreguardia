@@ -10,9 +10,9 @@ import kotlinx.html.br
 import kotlinx.html.button
 import kotlinx.html.caption
 import kotlinx.html.div
+import kotlinx.html.h2
 import kotlinx.html.id
 import kotlinx.html.p
-import kotlinx.html.script
 import kotlinx.html.small
 import kotlinx.html.table
 import kotlinx.html.td
@@ -32,82 +32,95 @@ fun FlowContent.userProfile(
         userProfileModel.schedules.saturday.size,
         userProfileModel.schedules.sunday.size,
     )
-    p { text(userProfileModel.fullName) }
-    p { text(userProfileModel.role) }
-    p { text(userProfileModel.email) }
-    div {
-        this.id = "editable-fields"
-        phoneNumberAndPassword(
-            userPhoneNumber = userProfileModel.phoneNumber
-        )
+    div("profile-card") {
+        div("profile-header") {
+            div("profile-avatar") {
+                text(userProfileModel.fullName.take(2).uppercase())
+            }
+            div("profile-info") {
+                h2("profile-name") { text(userProfileModel.fullName) }
+                p("profile-role") { text(userProfileModel.role) }
+                p("profile-email") { text(userProfileModel.email) }
+            }
+        }
+        div("profile-details") {
+            div {
+                this.id = "editable-fields"
+                phoneNumberAndPassword(
+                    userPhoneNumber = userProfileModel.phoneNumber
+                )
+            }
+        }
     }
-    br
     if (mostSchedulesInADay > 0) {
-        table("schedule-table")
-        {
-            caption {
-                text("Your schedule")
+        br
+        div("table-container") {
+            div("table-header") {
+                h2("table-title") { text("Your schedule") }
             }
-            tr {
-                th { text("MO") }
-                th { text("TU") }
-                th { text("WE") }
-                th { text("TH") }
-                th { text("FR") }
-                th { text("SA") }
-                th { text("SU") }
-            }
-            for (index in 0 until mostSchedulesInADay) {
+            table("schedule-table") {
                 tr {
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.monday,
-                        index = index
-                    )
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.tuesday,
-                        index = index
-                    )
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.wednesday,
-                        index = index
-                    )
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.thursday,
-                        index = index
-                    )
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.friday,
-                        index = index
-                    )
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.saturday,
-                        index = index
-                    )
-                    setTd(
-                        weekDaySchedules = userProfileModel.schedules.sunday,
-                        index = index
-                    )
+                    th { text("MO") }
+                    th { text("TU") }
+                    th { text("WE") }
+                    th { text("TH") }
+                    th { text("FR") }
+                    th { text("SA") }
+                    th { text("SU") }
+                }
+                for (index in 0 until mostSchedulesInADay) {
+                    tr {
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.monday,
+                            index = index
+                        )
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.tuesday,
+                            index = index
+                        )
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.wednesday,
+                            index = index
+                        )
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.thursday,
+                            index = index
+                        )
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.friday,
+                            index = index
+                        )
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.saturday,
+                            index = index
+                        )
+                        setTd(
+                            weekDaySchedules = userProfileModel.schedules.sunday,
+                            index = index
+                        )
+                    }
                 }
             }
         }
     }
     br
-    button {
-        attributes.hx {
-            trigger = "click"
-            post = "/auth/logout"
+    div("form-actions") {
+        button {
+            attributes["class"] = "btn btn-ghost"
+            attributes.hx {
+                trigger = "click"
+                post = "/auth/logout"
+            }
+            text("Logout")
         }
-        text("Logout")
-    }
-    button {
-        attributes.hx {
-            trigger = "click"
-            post = "/auth/logout-all-devices"
+        button {
+            attributes["class"] = "btn btn-danger"
+            attributes.hx {
+                trigger = "click"
+                post = "/auth/logout-all-devices"
+            }
+            text("Logout all devices")
         }
-        text("Logout all devices")
-    }
-    script {
-        src = ""
     }
 }
 
@@ -145,9 +158,18 @@ private fun TR.setTd(
 fun FlowContent.phoneNumberAndPassword(
     userPhoneNumber: String
 ) {
-    p { text(userPhoneNumber) }
-    p { text("Password: ********") }
+    div("profile-detail-row") {
+        div("profile-detail-item") {
+            p("profile-detail-label") { text("Phone") }
+            p("profile-detail-value") { text(userPhoneNumber) }
+        }
+        div("profile-detail-item") {
+            p("profile-detail-label") { text("Password") }
+            p("profile-detail-value") { text("********") }
+        }
+    }
     button {
+        attributes["class"] = "btn btn-primary btn-sm"
         attributes.hx {
             trigger = "click"
             get = "/user/profile/edit"

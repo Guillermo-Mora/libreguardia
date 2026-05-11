@@ -518,3 +518,184 @@ input, select, textarea {
 .form-actions .btn-danger {
   margin-left: auto;
 }
+
+/* ═══════════════════════════════════════
+   PROFILE PAGE
+   ═══════════════════════════════════════ */
+
+.profile-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  padding: 32px;
+  max-width: 640px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.profile-role {
+  font-size: 0.8125rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-email {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.profile-details {
+  border-top: 1px solid var(--border-light);
+  padding-top: 24px;
+}
+
+.profile-detail-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.profile-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profile-detail-value {
+  font-size: 0.9375rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════ */
+
+.dashboard-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.dashboard-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  padding: 32px;
+}
+
+.dashboard-card-accent {
+  border-left: 4px solid var(--accent);
+}
+
+.dashboard-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboard-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.dashboard-card-subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.dashboard-card-text {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════
+   ERROR PAGE
+   ═══════════════════════════════════════ */
+
+.error-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 16px;
+}
+
+.error-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 480px;
+  padding: 48px 40px;
+  text-align: center;
+}
+
+.error-code {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--error);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.error-message {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  margin-bottom: 32px;
+  line-height: 1.7;
+}
