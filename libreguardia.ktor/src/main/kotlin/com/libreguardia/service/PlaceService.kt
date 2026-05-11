@@ -39,7 +39,7 @@ class PlaceService(
         // so it has to be validated before converting to the desired data types.
         val errors = placeCreateDTO.validate()
         //If there are format errors, we return the errors.
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         //Now that the data (Strings) doesn't have format errors, we convert it to the model, with the
         // data types we want.
         val placeDML = placeCreateDTO.toModel()
@@ -64,7 +64,7 @@ class PlaceService(
                 )
             ) errors[PlaceCreateField.PLACE_TYPE] = "This place type doesn't exists"
             //If errors occurred during the business logic validations, we return the errors.
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             //At this point, all the data has been validated and its correct, so we persist it.
             placeRepository.save(
                 model = placeDML
@@ -79,7 +79,7 @@ class PlaceService(
         placeEditDTO: PlaceEditDTO
     ): OperationResult {
         val errors = placeEditDTO.validate()
-        if (containsErrors(errors)) return OperationResult.Error(errors)
+        if (errors.containsErrors()) return OperationResult.Error(errors)
         val placeDML = placeEditDTO.toModel()
         return withTransaction {
             if (placeRepository.isNameTaken(
@@ -101,7 +101,7 @@ class PlaceService(
                     uuid = placeDML.placeTypeId
                 )
             ) errors[PlaceEditField.PLACE_TYPE] = "This place type doesn't exists"
-            if (containsErrors(errors)) return@withTransaction OperationResult.Error(errors)
+            if (errors.containsErrors()) return@withTransaction OperationResult.Error(errors)
             if (!placeRepository.updateThis(
                     uuid = uuid,
                     model = placeDML

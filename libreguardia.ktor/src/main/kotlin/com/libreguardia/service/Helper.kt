@@ -2,6 +2,4 @@ package com.libreguardia.service
 
 import com.libreguardia.frontend.component.FormField
 
-fun containsErrors(
-    errors: MutableMap<FormField, String?>
-) = errors.any { it.value != null }
+fun MutableMap<FormField, String?>.containsErrors() = this.any { it.value != null }

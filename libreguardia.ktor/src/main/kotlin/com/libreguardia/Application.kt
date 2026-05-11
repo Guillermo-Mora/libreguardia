@@ -68,7 +68,7 @@ fun Application.main() {
         repository = buildingRepository
     )
     val placeTypeService = PlaceTypeService(
-        placeTypeRepository = placeTypeRepository
+        repository = placeTypeRepository
     )
     val zoneService = ZoneService(
         repository = zoneRepository

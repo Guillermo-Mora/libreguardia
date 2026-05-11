@@ -18,8 +18,10 @@ import com.libreguardia.frontend.component.userProfileEdit
 import com.libreguardia.model.toUserEditDTO
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.UserService
+import com.libreguardia.service.containsErrors
 import com.libreguardia.util.UUIDSerializer
 import com.libreguardia.validation.OperationResult
+import com.libreguardia.validation.module.validate
 import io.ktor.http.*
 import io.ktor.resources.*
 import io.ktor.server.auth.*
@@ -141,8 +143,11 @@ fun Route.userRouting(
                 }
             }
 
+
             patch<UserAPI.UUID> { user ->
                 val userEdit = call.receiveParameters().toUserEditDTO()
+                //val errors = userEdit.validate()
+                //if (errors.containsErrors())
                 val operationResult = userService.editUser(
                     userUuid = user.uuid,
                     userEditDTO = userEdit

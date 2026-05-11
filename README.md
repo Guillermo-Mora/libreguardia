@@ -196,7 +196,8 @@ In Libreguardia, the frontend is diretly built in the backend and sent to the br
 - Make sure PostgreSQL is running.
 - Clone the "develop" branch from this repository.
 - In the cloned project, open the folder "libreguardia.ktor" with IntelliJ IDEA.
-- Run the project from the "Application.kt" file for the first time and the PostgreSQL tables will be created automatically.
+- Run the project from the "Application.kt" file for the first time, and the PostgreSQL tables and demo data will be created automatically thanks to the Flyway DB migration scripts. The passwords for all demo data users are: 123456789
+- On your browser, go to http://localhost:8080 to test the app.
 - Open PgAdmin in case you need it for modifying the database, testig, doing queries, etc.
 ### Adding features
 - In your cloned repository, create a new branch with this format: "feature/feature-to-be-added"
