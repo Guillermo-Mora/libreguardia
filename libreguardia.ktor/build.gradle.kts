@@ -26,6 +26,12 @@ tasks.withType<ProcessResources> {
     duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
+tasks.shadowJar {
+    mergeServiceFiles{
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+}
+
 kotlin {
     jvmToolchain(21)
 }
