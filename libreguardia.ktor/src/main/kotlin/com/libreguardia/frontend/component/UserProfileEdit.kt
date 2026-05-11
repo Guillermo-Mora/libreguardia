@@ -24,14 +24,11 @@ fun FlowContent.userProfileEdit(
 ) {
     div {
         this.id = "editable-fields"
-        form {
-            attributes.hx {
-                patch = "/user/profile"
-                target = "#editable-fields"
-                swap = "outerHTML"
-                validate = true
+        form("form-card") {
+            div("form-card-header") {
+                p("form-card-title") { text("Edit profile") }
             }
-            div {
+            div("form-field") {
                 label {
                     htmlFor = "phoneNumber"
                     text("Phone number")
@@ -41,7 +38,7 @@ fun FlowContent.userProfileEdit(
                     error = phoneNumberError
                 )
             }
-            div {
+            div("form-field") {
                 label {
                     htmlFor = "currentPassword"
                     text("Current password")
@@ -51,7 +48,7 @@ fun FlowContent.userProfileEdit(
                     error = currentPasswordError
                 )
             }
-            div {
+            div("form-field") {
                 label {
                     htmlFor = "newPassword"
                     text("New password")
@@ -61,18 +58,22 @@ fun FlowContent.userProfileEdit(
                     error = newPasswordError
                 )
             }
-            button {
-                type = ButtonType.submit
-                text("Save")
-            }
-            button {
-                attributes.hx {
-                    trigger = "click"
-                    get = "/user/profile/phone-number"
-                    target = "#editable-fields"
-                    swap = "innerHTML"
+            div("form-actions") {
+                button {
+                    attributes["class"] = "btn btn-primary"
+                    type = ButtonType.submit
+                    text("Save")
                 }
-                text("Cancel")
+                button {
+                    attributes["class"] = "btn btn-ghost"
+                    attributes.hx {
+                        trigger = "click"
+                        get = "/user/profile/phone-number"
+                        target = "#editable-fields"
+                        swap = "innerHTML"
+                    }
+                    text("Cancel")
+                }
             }
         }
     }
@@ -101,7 +102,9 @@ fun FlowContent.phoneNumberField(
             required = true
         }
         if (error != null)
-            p { text(error) }
+            p("form-error") { text(error) }
+        else
+            div("form-error") {}
     }
 }
 
@@ -120,7 +123,9 @@ fun FlowContent.currentPasswordField(
             placeholder = "Current password"
         }
         if (error != null)
-            p { text(error) }
+            p("form-error") { text(error) }
+        else
+            div("form-error") {}
     }
 }
 
@@ -146,6 +151,8 @@ fun FlowContent.newPasswordField(
             placeholder = "New password"
         }
         if (error != null)
-            p { text(error) }
+            p("form-error") { text(error) }
+        else
+            div("form-error") {}
     }
 }
