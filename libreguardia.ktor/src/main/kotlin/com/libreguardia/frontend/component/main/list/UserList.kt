@@ -42,7 +42,13 @@ fun FlowContent.userList(
                         td { text(user.email) }
                         td { text(user.phoneNumber) }
                         td { text(user.role) }
-                        td { text(if (user.isEnabled) "Yes" else "No") }
+
+                        td {
+                            span(if (user.isEnabled) "status-yes" else "status-no") {
+                                text(if (user.isEnabled) "Yes" else "No")
+                            }
+                        }
+
                         td("table-actions") {
                             button {
                                 attributes["class"] = "btn btn-ghost btn-sm"

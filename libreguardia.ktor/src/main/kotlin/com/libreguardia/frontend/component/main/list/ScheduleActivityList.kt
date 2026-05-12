@@ -36,7 +36,13 @@ fun FlowContent.scheduleActivityList(
                 for (activity in activities)
                     tr {
                         td("td-filled") { text(activity.name) }
-                        td { text(if (activity.generatesService) "Yes" else "No") }
+
+                        td {
+                            span(if (activity.generatesService) "status-yes" else "status-no") {
+                                text(if (activity.generatesService) "Yes" else "No")
+                            }
+                        }
+
                         td("table-actions") {
                             button {
                                 attributes["class"] = "btn btn-ghost btn-sm"
