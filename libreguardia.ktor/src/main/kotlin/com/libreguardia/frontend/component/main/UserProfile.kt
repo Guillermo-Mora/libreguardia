@@ -58,7 +58,7 @@ fun FlowContent.userProfile(
             div("table-header") {
                 h2("table-title") { text("Your schedule") }
             }
-            table("schedule-table") {
+            table("calendar-table") {
                 tr {
                     th { text("MO") }
                     th { text("TU") }

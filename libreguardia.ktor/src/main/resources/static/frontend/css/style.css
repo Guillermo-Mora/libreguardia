@@ -563,7 +563,7 @@ input[type="range"]::-moz-range-track {
 }
 
 /* ═══════════════════════════════════════
-   TABLES (HOVER NEGRITA Y DISEÑO MEJORADO)
+   TABLAS NORMALES (Listas, Usuarios, etc)
    ═══════════════════════════════════════ */
 .table-container {
   background: var(--surface);
@@ -587,6 +587,7 @@ input[type="range"]::-moz-range-track {
   color: var(--text);
 }
 
+/* Restaurada la tabla plana normal */
 .schedule-table {
   width: 100%;
   border-collapse: collapse;
@@ -625,7 +626,7 @@ input[type="range"]::-moz-range-track {
   transition: all var(--transition);
 }
 
-/* HOVER: FILA DESTACADA CON NEGRITA Y FONDO AZUL CLARO */
+/* Hover limpio en listas */
 .schedule-table tbody tr:hover {
   background: var(--primary-lighter);
 }
@@ -633,6 +634,74 @@ input[type="range"]::-moz-range-track {
 .schedule-table tbody tr:hover td {
   font-weight: 600;
   color: var(--text);
+}
+
+/* ═══════════════════════════════════════
+   CALENDARIO / HORARIO DE CLASES (CARDS)
+   ═══════════════════════════════════════ */
+/* ¡Asegúrate de poner <table class="calendar-table"> en el HTML del horario! */
+.calendar-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 12px;
+  table-layout: fixed;
+}
+
+.calendar-table th {
+  background: var(--primary);
+  color: var(--text-inverse);
+  padding: 15px;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  border: none;
+}
+
+.calendar-table td {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 15px;
+  min-height: 120px;
+  box-shadow: var(--shadow-sm);
+  vertical-align: top;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.calendar-table td:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  background: var(--primary-lighter);
+  border-color: var(--primary-light);
+}
+
+/* Estilos de los textos dentro de la tarjeta del calendario */
+.calendar-table td strong,
+.calendar-table td .time {
+  display: inline-block;
+  color: var(--primary);
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  background: var(--primary-lighter);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 800;
+}
+
+.calendar-table td br + b,
+.calendar-table td .activity {
+  font-size: 0.95rem;
+  color: var(--text);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.calendar-table td .details {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
 }
 
 /* ═══════════════════════════════════════
@@ -925,4 +994,3 @@ input[type="range"]::-moz-range-track {
   margin-bottom: 32px;
   line-height: 1.7;
 }
-
