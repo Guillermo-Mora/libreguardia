@@ -32,7 +32,7 @@ fun FlowContent.dashboard(role: Role) {
             Role.ADMIN -> {
                 div("dashboard-card dashboard-card-accent") {
                     div("dashboard-card-content") {
-                        p("dashboard-card-text") { text("Full system management: users, schedules, buildings and more.") }
+                        p("dashboard-card-text") { text("Dashboard to implement.") }
                     }
                 }
             }

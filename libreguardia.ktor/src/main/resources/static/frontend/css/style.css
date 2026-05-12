@@ -1,3 +1,6 @@
+/* ═══════════════════════════════════════
+   CONFIGURACIÓN GLOBAL Y VARIABLES
+   ═══════════════════════════════════════ */
 :root {
   --primary: #1B4965;
   --primary-light: #468FAF;
@@ -29,7 +32,7 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --transition: 200ms ease;
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
@@ -70,19 +73,56 @@ a:hover {
   color: var(--primary);
 }
 
-button {
+/* ═══════════════════════════════════════
+   MODERN CHECKBOX (CORRECCIÓN CRÍTICA)
+   ═══════════════════════════════════════ */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 22px !important;
+  height: 22px !important;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
   cursor: pointer;
-  font-family: var(--font-sans);
+  position: relative;
+  transition: all var(--transition);
+  display: inline-block !important;
+  vertical-align: middle;
+  flex-shrink: 0;
 }
 
-input, select, textarea {
-  font-family: var(--font-sans);
+input[type="checkbox"]:hover {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(70, 143, 175, 0.15);
+}
+
+input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✔";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-inverse);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(70, 143, 175, 0.15);
 }
 
 /* ═══════════════════════════════════════
    APP HEADER
    ═══════════════════════════════════════ */
-
 .app-header {
   grid-area: header;
   display: flex;
@@ -140,7 +180,6 @@ input, select, textarea {
 /* ═══════════════════════════════════════
    SIDEBAR
    ═══════════════════════════════════════ */
-
 .sidebar {
   grid-area: sidebar;
   background: var(--primary);
@@ -217,7 +256,6 @@ input, select, textarea {
 /* ═══════════════════════════════════════
    MAIN CONTENT
    ═══════════════════════════════════════ */
-
 .main-content {
   grid-area: main;
   padding: 32px;
@@ -227,8 +265,12 @@ input, select, textarea {
 }
 
 /* ═══════════════════════════════════════
-   BUTTON SYSTEM
+   BUTTON SYSTEM (RELIEVE Y GRADIENTE)
    ═══════════════════════════════════════ */
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
 
 .btn {
   display: inline-flex;
@@ -241,53 +283,86 @@ input, select, textarea {
   font-weight: 600;
   line-height: 1;
   border: none;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.2);
   transition: all var(--transition);
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  position: relative;
+  top: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
-  background: var(--primary);
+  background: linear-gradient(to bottom, var(--primary-light), var(--primary));
   color: var(--text-inverse);
+  border-bottom-color: rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary:hover {
-  background: var(--primary-light);
+  top: -2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.05);
+}
+
+.btn-primary:active {
+  top: 2px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .btn-accent {
-  background: var(--accent);
+  background: linear-gradient(to bottom, var(--accent), var(--accent-hover));
   color: var(--text);
+  border-bottom-color: rgba(0, 0, 0, 0.15);
 }
 
 .btn-accent:hover {
-  background: var(--accent-hover);
+  top: -2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-accent:active {
+  top: 2px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 .btn-ghost {
   background: transparent;
   color: var(--text-muted);
   padding: 6px 12px;
+  box-shadow: none;
+  border: none;
+  border-bottom: none;
 }
 
 .btn-ghost:hover {
   background: var(--surface-hover);
   color: var(--text);
+  top: 0;
 }
 
 .btn-danger {
-  background: var(--error);
+  background: linear-gradient(to bottom, #E63946, var(--error));
   color: var(--text-inverse);
+  border-bottom-color: rgba(0, 0, 0, 0.2);
 }
 
 .btn-danger:hover {
-  background: #B22222;
+  top: -2px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-danger:active {
+  top: 2px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .btn-sm {
-  padding: 6px 14px;
+  padding: 8px 14px;
   font-size: 0.8125rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.15);
 }
 
 .btn-lg {
@@ -299,10 +374,40 @@ input, select, textarea {
   width: 100%;
 }
 
+/* Botón Edit en tablas - SIEMPRE VISIBLE COMO BOTÓN */
+.btn-edit {
+  background: transparent;
+  color: var(--primary-light);
+  border: 1.5px solid var(--primary-light);
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-bottom: none;
+  box-shadow: none;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+  top: 0;
+}
+
+.btn-edit:hover {
+  background: var(--primary-light);
+  color: var(--text-inverse);
+  top: -1px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit:active {
+  top: 0px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
 /* ═══════════════════════════════════════
    LOGIN PAGE
    ═══════════════════════════════════════ */
-
 .login-body {
   display: flex;
   align-items: center;
@@ -349,7 +454,6 @@ input, select, textarea {
 /* ═══════════════════════════════════════
    FORM FIELDS
    ═══════════════════════════════════════ */
-
 .form-field {
   display: flex;
   flex-direction: column;
@@ -366,7 +470,8 @@ input, select, textarea {
 }
 
 .form-field input,
-.form-field select {
+.form-field select,
+.form-field textarea {
   padding: 10px 14px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -401,9 +506,65 @@ input, select, textarea {
 }
 
 /* ═══════════════════════════════════════
-   TABLES
+   INPUT RANGE (BARRA DE DIFICULTAD)
    ═══════════════════════════════════════ */
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border-light);
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition);
+}
 
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  border: 3px solid var(--text-inverse);
+  box-shadow: 0 2px 6px rgba(27, 73, 101, 0.3);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 4px 12px rgba(27, 73, 101, 0.4);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  border: 3px solid var(--text-inverse);
+  box-shadow: 0 2px 6px rgba(27, 73, 101, 0.3);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 4px 12px rgba(27, 73, 101, 0.4);
+}
+
+input[type="range"]::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+/* ═══════════════════════════════════════
+   TABLES (HOVER NEGRITA Y DISEÑO MEJORADO)
+   ═══════════════════════════════════════ */
 .table-container {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -438,7 +599,7 @@ input, select, textarea {
 
 .schedule-table th {
   text-align: left;
-  padding: 12px 24px;
+  padding: 14px 24px;
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
@@ -449,10 +610,11 @@ input, select, textarea {
 }
 
 .schedule-table td {
-  padding: 14px 24px;
+  padding: 16px 24px;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-light);
   vertical-align: middle;
+  transition: all var(--transition);
 }
 
 .schedule-table tr:last-child td {
@@ -460,13 +622,90 @@ input, select, textarea {
 }
 
 .schedule-table tbody tr {
-  transition: background var(--transition);
+  transition: all var(--transition);
 }
 
+/* HOVER: FILA DESTACADA CON NEGRITA Y FONDO AZUL CLARO */
 .schedule-table tbody tr:hover {
-  background: var(--surface-hover);
+  background: var(--primary-lighter);
 }
 
+.schedule-table tbody tr:hover td {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ═══════════════════════════════════════
+   ESTADOS YES/NO - BADGES ELEGANTES
+   ═══════════════════════════════════════ */
+.status-yes {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #EAF9F1;
+  color: var(--success);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.875rem;
+}
+
+.status-yes::before {
+  content: "✔";
+}
+
+.status-no {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #FDE8E8;
+  color: var(--error);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.875rem;
+}
+
+.status-no::before {
+  content: "✖";
+}
+
+/* ═══════════════════════════════════════
+   BARRA DE DIFICULTAD
+   ═══════════════════════════════════════ */
+.difficulty-meter {
+  width: 100%;
+  max-width: 120px;
+  height: 10px;
+  background: var(--border-light);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.difficulty-bar {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.8s ease;
+}
+
+.diff-easy {
+  width: 30%;
+  background: var(--success);
+}
+
+.diff-medium {
+  width: 60%;
+  background: var(--warning);
+}
+
+.diff-hard {
+  width: 95%;
+  background: var(--error);
+}
+
+/* ═══════════════════════════════════════
+   COMPONENTES DE UI COMPLEMENTARIOS
+   ═══════════════════════════════════════ */
 .td-filled {
   font-weight: 500;
   color: var(--text);
@@ -478,10 +717,6 @@ input, select, textarea {
   gap: 8px;
   justify-content: flex-end;
 }
-
-/* ═══════════════════════════════════════
-   FORM CARD
-   ═══════════════════════════════════════ */
 
 .form-card {
   background: var(--surface);
@@ -519,10 +754,7 @@ input, select, textarea {
   margin-left: auto;
 }
 
-/* ═══════════════════════════════════════
-   PROFILE PAGE
-   ═══════════════════════════════════════ */
-
+/* Profile Page */
 .profile-card {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -609,10 +841,7 @@ input, select, textarea {
   font-weight: 500;
 }
 
-/* ═══════════════════════════════════════
-   DASHBOARD
-   ═══════════════════════════════════════ */
-
+/* Dashboard Grid */
 .dashboard-grid {
   display: grid;
   gap: 24px;
@@ -654,10 +883,7 @@ input, select, textarea {
   line-height: 1.7;
 }
 
-/* ═══════════════════════════════════════
-   ERROR PAGE
-   ═══════════════════════════════════════ */
-
+/* Error Page */
 .error-body {
   display: flex;
   align-items: center;
@@ -699,3 +925,4 @@ input, select, textarea {
   margin-bottom: 32px;
   line-height: 1.7;
 }
+
