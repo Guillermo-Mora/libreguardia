@@ -9,37 +9,47 @@ import kotlinx.html.*
 fun FlowContent.zoneList(
     zones: List<ZoneModel>
 ) {
-    button {
-        attributes.hx {
-            get = "/zone/new"
-            replaceUrl = "true"
-            pushUrl = "true"
-            target = "#main-content"
-            swap = "innerHTML"
-        }
-        text("New")
-    }
-    table("schedule-table") {
-        tr {
-            th {
-                text("Name")
+    div("table-container") {
+        div("table-header") {
+            h2("table-title") { text("Zones") }
+            button {
+                attributes["class"] = "btn btn-primary btn-sm"
+                attributes.hx {
+                    get = "/zone/new"
+                    replaceUrl = "true"
+                    pushUrl = "true"
+                    target = "#main-content"
+                    swap = "innerHTML"
+                }
+                text("+ New")
             }
         }
-        for (zone in zones)
-            tr {
-                td("td-filled") { text(zone.name) }
-                td {
-                    button {
-                        attributes.hx {
-                            get = "/zone/${zone.id}"
-                            replaceUrl = "true"
-                            pushUrl = "true"
-                            target = "#main-content"
-                            swap = "innerHTML"
-                        }
-                        text("Edit")
-                    }
+        table("schedule-table") {
+            thead {
+                tr {
+                    th { text("Name") }
+                    th { text("") }
                 }
             }
+            tbody {
+                for (zone in zones)
+                    tr {
+                        td("td-filled") { text(zone.name) }
+                        td("table-actions") {
+                            button {
+                                attributes["class"] = "btn btn-ghost btn-sm"
+                                attributes.hx {
+                                    get = "/zone/${zone.id}"
+                                    replaceUrl = "true"
+                                    pushUrl = "true"
+                                    target = "#main-content"
+                                    swap = "innerHTML"
+                                }
+                                text("Edit")
+                            }
+                        }
+                    }
+            }
+        }
     }
 }

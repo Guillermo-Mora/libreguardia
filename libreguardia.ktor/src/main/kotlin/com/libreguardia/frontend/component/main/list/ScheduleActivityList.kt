@@ -9,41 +9,55 @@ import kotlinx.html.*
 fun FlowContent.scheduleActivityList(
     activities: List<ScheduleActivityResponseDTO>
 ) {
-    button {
-        attributes.hx {
-            get = "/schedule-activity/new"
-            replaceUrl = "true"
-            pushUrl = "true"
-            target = "#main-content"
-            swap = "innerHTML"
-        }
-        text("New")
-    }
-    table("schedule-table") {
-        tr {
-            th {
-                text("Name")
-            }
-            th {
-                text("Generates Service")
+    div("table-container") {
+        div("table-header") {
+            h2("table-title") { text("Activities") }
+            button {
+                attributes["class"] = "btn btn-primary btn-sm"
+                attributes.hx {
+                    get = "/schedule-activity/new"
+                    replaceUrl = "true"
+                    pushUrl = "true"
+                    target = "#main-content"
+                    swap = "innerHTML"
+                }
+                text("+ New")
             }
         }
-        for (activity in activities)
-            tr {
-                td("td-filled") { text(activity.name) }
-                td("td-filled") { text(if (activity.generatesService) "Yes" else "No") }
-                td {
-                    button {
-                        attributes.hx {
-                            get = "/schedule-activity/${activity.id}"
-                            replaceUrl = "true"
-                            pushUrl = "true"
-                            target = "#main-content"
-                            swap = "innerHTML"
-                        }
-                        text("Edit")
-                    }
+        table("schedule-table") {
+            thead {
+                tr {
+                    th { text("Name") }
+                    th { text("Generates Service") }
+                    th { text("") }
                 }
             }
+            tbody {
+                for (activity in activities)
+                    tr {
+                        td("td-filled") { text(activity.name) }
+
+                        td {
+                            span(if (activity.generatesService) "status-yes" else "status-no") {
+                                text(if (activity.generatesService) "Yes" else "No")
+                            }
+                        }
+
+                        td("table-actions") {
+                            button {
+                                attributes["class"] = "btn btn-ghost btn-sm"
+                                attributes.hx {
+                                    get = "/schedule-activity/${activity.id}"
+                                    replaceUrl = "true"
+                                    pushUrl = "true"
+                                    target = "#main-content"
+                                    swap = "innerHTML"
+                                }
+                                text("Edit")
+                            }
+                        }
+                    }
+            }
+        }
     }
 }

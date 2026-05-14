@@ -9,6 +9,7 @@ import kotlinx.html.InputType
 import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.form
+import kotlinx.html.h2
 import kotlinx.html.id
 import kotlinx.html.input
 import kotlinx.html.label
@@ -28,8 +29,11 @@ fun FlowContent.customForm(
     ) {
     val formId = formName.lowercase().replace(" ", "")
     val formTarget = "#$formId"
-    div {
+    div("form-card") {
         this.id = formId
+        div("form-card-header") {
+            h2("form-card-title") { text(formName) }
+        }
         form {
             attributes.hx {
                 when (operationType) {
@@ -56,26 +60,31 @@ fun FlowContent.customForm(
                     error = errors?.get(field)
                 )
             }
-            button {
-                type = ButtonType.submit
-                text("Save")
-            }
-            button {
-                attributes.hx {
-                    trigger = "click"
-                    get = previousPagePath
-                    target = "#main-content"
-                    swap = "innerHTML"
-                }
-                text("Cancel")
-            }
-            deletePath?.let {
+            div("form-actions") {
                 button {
+                    attributes["class"] = "btn btn-primary"
+                    type = ButtonType.submit
+                    text("Save")
+                }
+                button {
+                    attributes["class"] = "btn btn-ghost"
                     attributes.hx {
                         trigger = "click"
-                        delete = deletePath
+                        get = previousPagePath
+                        target = "#main-content"
+                        swap = "innerHTML"
                     }
-                    text("Delete")
+                    text("Cancel")
+                }
+                deletePath?.let {
+                    button {
+                        attributes["class"] = "btn btn-danger"
+                        attributes.hx {
+                            trigger = "click"
+                            delete = deletePath
+                        }
+                        text("Delete")
+                    }
                 }
             }
         }
@@ -91,122 +100,77 @@ fun FlowContent.customField(
     errorId: String,
     errorTarget: String
 ) {
-    div {
+    div("form-field") {
         label {
             htmlFor = id
             text(data.labelText)
         }
-        div {
-            if (data.selectOptions != null) {
-                select {
-                    name = id
-                    required = data.required
-                    for (selectOption in data.selectOptions)
-                        option {
-                            selected = selectOption.selected
-                            value = selectOption.id?.toString() ?: selectOption.value
-                            text(selectOption.text)
-                        }
-                }
-            } else {
-                input {
-                    //I implemented this for doing live server-side validations on each field. Just to avoid
-                    // writing JS. However, I don't think it's a good practice to use this for simple data format
-                    // validations. So I'm switching to HTML5 Validation API. I will let it here in case I
-                    // need it in the future.
-                    //
-                    if (
-                        data.validationType != null &&
-                        data.triggerType != null
-                    ) {
-                        attributes.hx {
-                            //Replaced to get as it's not really a post, and this way we only send
-                            // the necessary data.
-                            get = "/validation/${errorId}/${id}/${data.required}/${data.validationType}"
-                            trigger = data.triggerType.value
-                            this.target = errorTarget
-
-                            //To only send for validation this input value.
-                            // Maybe I should consider doing this more permissive for easier
-                            // custom validations required before sending, so I can validate more fields
-                            // with a relation in a single action automatically.
-                            include = "#${id}"
-
-                            //This works to filer the data sent, but only if the request is a POST
-                            //params = data.inputId
-
-                            swap = "outerHTML"
-                            sync = "closest form:abort"
-
-                        }
+        if (data.selectOptions != null) {
+            select {
+                name = id
+                required = data.required
+                for (selectOption in data.selectOptions)
+                    option {
+                        selected = selectOption.selected
+                        value = selectOption.id ?: selectOption.value
+                        text(selectOption.text)
                     }
-                    //
-
-                    //Validations using the HTML5 Validation API
-                    //Still to be implemented live validations with HTML5 + JS. To prevent the previous
-                    // implementation that constantly threw requests to the server.
-                    //onKeyUp = "this.setCustomValidity('')"
-
-                    //Could be used for regex validations with specific patterns
-                    //pattern = "foo"
-                    //Still to implement
-                    /*
-                    onInput = """
-                        const error = document.getElementById('${errorId}')
-                        
-                        if (this.value !== 'foo') {
-                        error.textContent = 'Please enter the value foo'
-                        } else {
-                        error.textContent = ''
-                        }
-                    """.trimIndent()
+            }
+        } else {
+            input {
+                if (
+                    data.validationType != null &&
+                    data.triggerType != null
+                ) {
                     attributes.hx {
-                        validate = true
+                        get = "/validation/${errorId}/${id}/${data.required}/${data.validationType}"
+                        trigger = data.triggerType.value
+                        this.target = errorTarget
+                        include = "#${id}"
+                        swap = "outerHTML"
+                        sync = "closest form:abort"
                     }
-                     */
-
-                    if (data.inputType == InputType.range &&
-                        data.rangeConfig != null) {
-                        min = data.rangeConfig.min.toString()
-                        max = data.rangeConfig.max.toString()
-                        step = data.rangeConfig.step.toString()
-                    }
-
-                    if (
-                        data.inputType == InputType.checkBox &&
-                        data.checkedValue != null
-                    ) {
-                        checked = data.checkedValue
-                        value = "checked"
-                        required = false
-                    } else {
-                        value = data.value
-                        required = data.required
-                    }
-                    type = data.inputType
-                    name = id
-                    this.id = id
-                    placeholder = data.placeHolder
                 }
+
+                if (data.inputType == InputType.range &&
+                    data.rangeConfig != null) {
+                    min = data.rangeConfig.min.toString()
+                    max = data.rangeConfig.max.toString()
+                    step = data.rangeConfig.step.toString()
+                }
+
+                if (
+                    data.inputType == InputType.checkBox &&
+                    data.checkedValue != null
+                ) {
+                    checked = data.checkedValue
+                    value = "checked"
+                    required = false
+                } else {
+                    value = data.value
+                    required = data.required
+                }
+                type = data.inputType
+                name = id
+                this.id = id
+                placeholder = data.placeHolder
             }
-            span {
-                this.id = errorId
-                error?.let { text(it) }
-            }
+        }
+        div("form-error") {
+            this.id = errorId
+            error?.let { text(it) }
         }
     }
 }
+
 data class FormFieldData(
-    //First letter of the "text" should be lowercase
     val text: String,
-    //
     val value: String = "",
     val checkedValue: Boolean? = null,
     val required: Boolean = true,
     val inputType: InputType = InputType.text,
     val selectOptions: List<SelectOption>? = null,
     val rangeConfig: RangeConfig? = null,
-    //
     val validationType: ValidationType? = null,
     val triggerType: TriggerType? = null,
 ) {

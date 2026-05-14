@@ -9,37 +9,47 @@ import kotlinx.html.*
 fun FlowContent.placeTypeList(
     placeTypes: List<PlaceTypeModel>
 ) {
-    button {
-        attributes.hx {
-            get = "/place-type/new"
-            replaceUrl = "true"
-            pushUrl = "true"
-            target = "#main-content"
-            swap = "innerHTML"
-        }
-        text("New")
-    }
-    table("schedule-table") {
-        tr {
-            th {
-                text("Name")
+    div("table-container") {
+        div("table-header") {
+            h2("table-title") { text("Place types") }
+            button {
+                attributes["class"] = "btn btn-primary btn-sm"
+                attributes.hx {
+                    get = "/place-type/new"
+                    replaceUrl = "true"
+                    pushUrl = "true"
+                    target = "#main-content"
+                    swap = "innerHTML"
+                }
+                text("+ New")
             }
         }
-        for (placeType in placeTypes)
-            tr {
-                td("td-filled") { text(placeType.name) }
-                td {
-                    button {
-                        attributes.hx {
-                            get = "/place-type/${placeType.id}"
-                            replaceUrl = "true"
-                            pushUrl = "true"
-                            target = "#main-content"
-                            swap = "innerHTML"
-                        }
-                        text("Edit")
-                    }
+        table("schedule-table") {
+            thead {
+                tr {
+                    th { text("Name") }
+                    th { text("") }
                 }
             }
+            tbody {
+                for (placeType in placeTypes)
+                    tr {
+                        td("td-filled") { text(placeType.name) }
+                        td("table-actions") {
+                            button {
+                                attributes["class"] = "btn btn-ghost btn-sm"
+                                attributes.hx {
+                                    get = "/place-type/${placeType.id}"
+                                    replaceUrl = "true"
+                                    pushUrl = "true"
+                                    target = "#main-content"
+                                    swap = "innerHTML"
+                                }
+                                text("Edit")
+                            }
+                        }
+                    }
+            }
+        }
     }
 }
