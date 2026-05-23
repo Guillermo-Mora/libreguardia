@@ -1,6 +1,6 @@
 package com.libreguardia.module.building
 
-import com.libreguardia.config.validateRequired
+import com.libreguardia.config.validation.validateRequired
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.create.BuildingCreateField
 import com.libreguardia.frontend.component.main.edit.BuildingEditField

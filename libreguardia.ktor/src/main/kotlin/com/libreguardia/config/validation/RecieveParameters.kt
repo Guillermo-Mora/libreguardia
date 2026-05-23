@@ -1,5 +1,6 @@
-package com.libreguardia.config
+package com.libreguardia.config.validation
 
+import com.libreguardia.config.database.Role
 import com.libreguardia.frontend.component.FormField
 import io.ktor.http.*
 import io.ktor.server.plugins.*

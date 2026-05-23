@@ -1,7 +1,6 @@
 package com.libreguardia.module.professional_family
 
-import com.libreguardia.module.professional_family.ProfessionalFamilyService
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable

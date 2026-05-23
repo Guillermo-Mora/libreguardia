@@ -1,6 +1,6 @@
 package com.libreguardia.module.place_type
 
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID
 

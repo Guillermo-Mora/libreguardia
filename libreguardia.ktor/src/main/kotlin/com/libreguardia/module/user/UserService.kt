@@ -9,10 +9,10 @@ import com.libreguardia.module.schedule.ScheduleRepository
 import com.libreguardia.module.service.ServiceRepository
 import com.libreguardia.module.auth.SessionRepository
 import com.libreguardia.config.service.containsErrors
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
-import com.libreguardia.config.validateNewPassword
-import com.libreguardia.config.validatePhoneNumber
+import com.libreguardia.config.validation.validateNewPassword
+import com.libreguardia.config.validation.validatePhoneNumber
 import io.ktor.server.plugins.NotFoundException
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone

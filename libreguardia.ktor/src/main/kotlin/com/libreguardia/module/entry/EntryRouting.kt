@@ -3,8 +3,8 @@ package com.libreguardia.module.entry
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
-import com.libreguardia.config.Role
-import com.libreguardia.config.InsufficientPermissionsException
+import com.libreguardia.config.database.Role
+import com.libreguardia.config.exception.InsufficientPermissionsException
 import com.libreguardia.config.routing.respondHtmlPage
 import com.libreguardia.frontend.component.main.dashboard
 import com.libreguardia.frontend.page.loginPage

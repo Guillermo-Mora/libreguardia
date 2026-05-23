@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.page
 
-import com.libreguardia.config.ErrorCode
+import com.libreguardia.config.exception.ErrorCode
 import com.libreguardia.frontend.component.htmxScript
 import io.ktor.utils.io.*
 import kotlinx.html.*

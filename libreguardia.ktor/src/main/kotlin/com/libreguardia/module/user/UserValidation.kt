@@ -1,9 +1,9 @@
 package com.libreguardia.module.user
 
-import com.libreguardia.config.validateBlank
-import com.libreguardia.config.validateEmail
-import com.libreguardia.config.validateNewPassword
-import com.libreguardia.config.validatePhoneNumber
+import com.libreguardia.config.validation.validateBlank
+import com.libreguardia.config.validation.validateEmail
+import com.libreguardia.config.validation.validateNewPassword
+import com.libreguardia.config.validation.validatePhoneNumber
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.create.UserCreateField
 import com.libreguardia.frontend.component.main.edit.UserEditField

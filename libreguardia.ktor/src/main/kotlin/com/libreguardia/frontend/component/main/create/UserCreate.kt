@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.config.Role
+import com.libreguardia.config.database.Role
 import com.libreguardia.module.user.UserCreateDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent

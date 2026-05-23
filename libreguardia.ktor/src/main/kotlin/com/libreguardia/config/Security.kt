@@ -1,7 +1,8 @@
 package com.libreguardia.config
 
+import com.libreguardia.config.database.Role
 import com.libreguardia.module.auth.AuthService
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import io.ktor.htmx.html.hx
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.*

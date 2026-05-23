@@ -3,8 +3,8 @@ package com.libreguardia.module.academic_year
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.create.AcademicYearCreateField
 import com.libreguardia.frontend.component.main.edit.AcademicYearEditField
-import com.libreguardia.config.validateAcademicYearDates
-import com.libreguardia.config.validateBlank
+import com.libreguardia.config.validation.validateAcademicYearDates
+import com.libreguardia.config.validation.validateBlank
 
 fun AcademicYearCreateDTO.validate(): MutableMap<FormField, String?> {
     val errors = mutableMapOf<FormField, String?>()

@@ -6,7 +6,7 @@ import com.libreguardia.module.building.BuildingRepository
 import com.libreguardia.module.place_type.PlaceTypeRepository
 import com.libreguardia.module.zone.ZoneRepository
 import com.libreguardia.config.service.containsErrors
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import io.ktor.server.plugins.NotFoundException
 import java.util.UUID

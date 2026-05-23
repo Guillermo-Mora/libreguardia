@@ -1,8 +1,7 @@
 package com.libreguardia.module.course
 
-import com.libreguardia.module.course.CourseService
 import com.libreguardia.module.professional_family.ProfessionalFamilyService
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable

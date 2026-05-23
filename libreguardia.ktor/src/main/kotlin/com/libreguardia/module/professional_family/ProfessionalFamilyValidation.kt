@@ -3,7 +3,7 @@ package com.libreguardia.module.professional_family
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.create.ProfessionalFamilyCreateField
 import com.libreguardia.frontend.component.main.edit.ProfessionalFamilyEditField
-import com.libreguardia.config.validateRequired
+import com.libreguardia.config.validation.validateRequired
 
 fun ProfessionalFamilyEditDTO.validate(): MutableMap<FormField, String?> {
     val errors = mutableMapOf<FormField, String?>()

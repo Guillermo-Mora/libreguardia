@@ -1,4 +1,4 @@
-package com.libreguardia.config
+package com.libreguardia.config.exception
 
 class RoleNotFoundException : RuntimeException()
 class UserNotFoundException : RuntimeException()

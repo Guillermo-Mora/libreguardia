@@ -4,7 +4,7 @@ import com.libreguardia.frontend.component.main.create.CourseCreateField
 import com.libreguardia.frontend.component.main.edit.CourseEditField
 import com.libreguardia.module.professional_family.ProfessionalFamilyRepository
 import com.libreguardia.config.service.containsErrors
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import io.ktor.server.plugins.NotFoundException
 import java.util.UUID

@@ -3,7 +3,7 @@ package com.libreguardia.module.professional_family
 import com.libreguardia.frontend.component.main.create.ProfessionalFamilyCreateField
 import com.libreguardia.frontend.component.main.edit.ProfessionalFamilyEditField
 import com.libreguardia.config.service.containsErrors
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import io.ktor.server.plugins.NotFoundException
 import java.util.UUID

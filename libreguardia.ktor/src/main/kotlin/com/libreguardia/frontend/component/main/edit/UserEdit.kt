@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.config.Role
+import com.libreguardia.config.database.Role
 import com.libreguardia.module.user.UserEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent

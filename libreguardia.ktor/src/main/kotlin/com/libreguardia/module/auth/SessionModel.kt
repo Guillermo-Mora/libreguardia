@@ -1,6 +1,6 @@
 package com.libreguardia.module.auth
 
-import com.libreguardia.config.Role
+import com.libreguardia.config.database.Role
 import java.util.*
 import kotlin.time.Instant
 

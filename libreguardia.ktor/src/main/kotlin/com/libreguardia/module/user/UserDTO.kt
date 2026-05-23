@@ -1,8 +1,8 @@
 package com.libreguardia.module.user
 
-import com.libreguardia.config.Role
-import com.libreguardia.config.get
-import com.libreguardia.config.getOrNull
+import com.libreguardia.config.database.Role
+import com.libreguardia.config.validation.get
+import com.libreguardia.config.validation.getOrNull
 import com.libreguardia.frontend.component.main.create.UserCreateField
 import com.libreguardia.frontend.component.main.edit.UserEditField
 import io.ktor.http.*

@@ -1,8 +1,8 @@
 package com.libreguardia.module.building
 
-import com.libreguardia.config.BuildingNotFoundException
+import com.libreguardia.config.exception.BuildingNotFoundException
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import java.util.UUID
 

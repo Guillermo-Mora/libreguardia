@@ -1,8 +1,8 @@
 package com.libreguardia.module.place_type
 
-import com.libreguardia.config.PlaceTypeNotFoundException
+import com.libreguardia.config.exception.PlaceTypeNotFoundException
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import java.util.UUID
 

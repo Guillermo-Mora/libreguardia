@@ -3,13 +3,13 @@ package com.libreguardia.module.academic_year
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
-import com.libreguardia.config.Role
+import com.libreguardia.config.database.Role
 import com.libreguardia.frontend.component.main.create.academicYearCreate
 import com.libreguardia.frontend.component.main.edit.academicYearEdit
 import com.libreguardia.frontend.component.main.list.academicYearList
 import com.libreguardia.config.routing.replaceMainContent
 import com.libreguardia.config.routing.respondHtmlPage
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import com.libreguardia.config.service.OperationResult
 import io.ktor.http.*
 import io.ktor.resources.*

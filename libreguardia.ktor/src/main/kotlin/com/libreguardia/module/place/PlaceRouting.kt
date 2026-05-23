@@ -1,10 +1,9 @@
 package com.libreguardia.module.place
 
 import com.libreguardia.module.building.BuildingService
-import com.libreguardia.module.place.PlaceService
 import com.libreguardia.module.place_type.PlaceTypeService
 import com.libreguardia.module.zone.ZoneService
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable

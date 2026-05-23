@@ -1,8 +1,8 @@
 package com.libreguardia.module.zone
 
-import com.libreguardia.config.ZoneNotFoundException
+import com.libreguardia.config.exception.ZoneNotFoundException
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import java.util.UUID
 

@@ -1,6 +1,5 @@
 package com.libreguardia.frontend.component
 
-import com.libreguardia.validation.ValidationType
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.ButtonType
@@ -110,38 +109,6 @@ fun FlowContent.customField(
                 }
             } else {
                 input {
-                    //I implemented this for doing live server-side validations on each field. Just to avoid
-                    // writing JS. However, I don't think it's a good practice to use this for simple data format
-                    // validations. So I'm switching to HTML5 Validation API. I will let it here in case I
-                    // need it in the future.
-                    //
-                    if (
-                        data.validationType != null &&
-                        data.triggerType != null
-                    ) {
-                        attributes.hx {
-                            //Replaced to get as it's not really a post, and this way we only send
-                            // the necessary data.
-                            get = "/validation/${errorId}/${id}/${data.required}/${data.validationType}"
-                            trigger = data.triggerType.value
-                            this.target = errorTarget
-
-                            //To only send for validation this input value.
-                            // Maybe I should consider doing this more permissive for easier
-                            // custom validations required before sending, so I can validate more fields
-                            // with a relation in a single action automatically.
-                            include = "#${id}"
-
-                            //This works to filer the data sent, but only if the request is a POST
-                            //params = data.inputId
-
-                            swap = "outerHTML"
-                            sync = "closest form:abort"
-
-                        }
-                    }
-                    //
-
                     //Validations using the HTML5 Validation API
                     //Still to be implemented live validations with HTML5 + JS. To prevent the previous
                     // implementation that constantly threw requests to the server.
@@ -207,17 +174,12 @@ data class FormFieldData(
     val selectOptions: List<SelectOption>? = null,
     val rangeConfig: RangeConfig? = null,
     //
-    val validationType: ValidationType? = null,
-    val triggerType: TriggerType? = null,
 ) {
     val value: String = recievedValue?.toString() ?: ""
     val labelText: String = text.replaceFirstChar { it.uppercase() }
     val placeHolder: String = "Input $text"
 }
 
-enum class TriggerType(val value: String) {
-    OnChange("input changed delay:600ms")
-}
 
 enum class OperationType {
     Get,

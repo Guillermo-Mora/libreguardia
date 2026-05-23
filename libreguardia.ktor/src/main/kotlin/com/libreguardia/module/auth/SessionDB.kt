@@ -11,7 +11,7 @@ import org.jetbrains.exposed.v1.datetime.timestamp
 import java.util.UUID
 
 object SessionTable: UUIDTable(
-    name = "auth"
+    name = "session"
 ) {
     val expiresAt = timestamp(
         name = "expires_at",

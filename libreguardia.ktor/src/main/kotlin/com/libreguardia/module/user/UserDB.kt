@@ -1,6 +1,6 @@
 package com.libreguardia.module.user
 
-import com.libreguardia.config.Role
+import com.libreguardia.config.database.Role
 import com.libreguardia.module.absence.AbsenceEntity
 import com.libreguardia.module.absence.AbsenceTable
 import com.libreguardia.module.schedule.ScheduleEntity

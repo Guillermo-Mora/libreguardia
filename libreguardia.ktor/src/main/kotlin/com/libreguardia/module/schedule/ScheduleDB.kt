@@ -1,6 +1,6 @@
 package com.libreguardia.module.schedule
 
-import com.libreguardia.config.WeekDay
+import com.libreguardia.config.database.WeekDay
 import com.libreguardia.module.user.UserEntity
 import com.libreguardia.module.user.UserTable
 import com.libreguardia.module.group.GroupEntity

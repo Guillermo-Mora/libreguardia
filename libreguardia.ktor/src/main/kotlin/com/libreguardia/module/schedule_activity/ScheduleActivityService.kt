@@ -1,8 +1,8 @@
 package com.libreguardia.module.schedule_activity
 
-import com.libreguardia.config.ScheduleActivityNotFoundException
+import com.libreguardia.config.exception.ScheduleActivityNotFoundException
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.util.withTransaction
+import com.libreguardia.config.util.withTransaction
 import com.libreguardia.config.service.OperationResult
 import java.util.UUID
 

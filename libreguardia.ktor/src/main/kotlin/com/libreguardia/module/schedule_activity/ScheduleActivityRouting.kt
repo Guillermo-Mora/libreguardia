@@ -1,7 +1,6 @@
 package com.libreguardia.module.schedule_activity
 
-import com.libreguardia.module.schedule_activity.ScheduleActivityService
-import com.libreguardia.util.UUIDSerializer
+import com.libreguardia.config.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable

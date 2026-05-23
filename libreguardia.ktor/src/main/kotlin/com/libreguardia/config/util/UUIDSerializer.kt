@@ -1,4 +1,4 @@
-package com.libreguardia.util
+package com.libreguardia.config.util
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind

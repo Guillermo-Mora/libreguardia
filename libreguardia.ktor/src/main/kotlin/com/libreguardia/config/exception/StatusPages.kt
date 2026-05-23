@@ -1,4 +1,4 @@
-package com.libreguardia.config
+package com.libreguardia.config.exception
 
 import com.libreguardia.frontend.page.errorPage
 import io.ktor.http.*

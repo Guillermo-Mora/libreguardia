@@ -1,5 +1,7 @@
 package com.libreguardia.config
 
+import com.libreguardia.config.database.Role
+import com.libreguardia.config.exception.InsufficientPermissionsException
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
@@ -24,5 +26,4 @@ fun Route.authorized(
 ) {
     install(RoleBasedAuthorizationPlugin) { roles = hasAnyRole.toSet() }
     build()
-
 }
