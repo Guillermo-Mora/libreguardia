@@ -1,6 +1,6 @@
 package com.libreguardia.module.schedule_activity
 
-import com.libreguardia.config.util.UUIDSerializer
+import com.libreguardia.module.shared.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import java.util.UUID
 

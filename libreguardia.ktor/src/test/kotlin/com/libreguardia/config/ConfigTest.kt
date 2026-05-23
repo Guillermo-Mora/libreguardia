@@ -1,7 +1,6 @@
 package com.libreguardia.config
 
 import com.libreguardia.Testing
-import com.libreguardia.config.database.configureDatabase
 import com.libreguardia.module.absence.AbsenceTable
 import com.libreguardia.module.academic_year.AcademicYearTable
 import com.libreguardia.module.app_settings.AppSettingsTable

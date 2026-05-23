@@ -3,8 +3,8 @@ package com.libreguardia.module.course
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.create.CourseCreateField
 import com.libreguardia.frontend.component.main.edit.CourseEditField
-import com.libreguardia.config.validation.validateRequired
-import com.libreguardia.config.validation.validateUuid
+import com.libreguardia.module.shared.validation.validateRequired
+import com.libreguardia.module.shared.validation.validateUuid
 
 
 fun CourseEditDTO.validate(): MutableMap<FormField, String?> {

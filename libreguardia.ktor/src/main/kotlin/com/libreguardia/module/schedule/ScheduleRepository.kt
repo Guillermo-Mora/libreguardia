@@ -7,7 +7,7 @@ import com.libreguardia.module.group.GroupTable
 import com.libreguardia.module.place.PlaceTable
 import com.libreguardia.module.place_type.PlaceTypeTable
 import com.libreguardia.module.schedule_activity.ScheduleActivityTable
-import com.libreguardia.config.repository.BaseRepository
+import com.libreguardia.module.shared.repository.BaseRepository
 import org.jetbrains.exposed.v1.core.Concat
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.eq

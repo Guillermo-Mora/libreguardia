@@ -3,13 +3,13 @@ package com.libreguardia.module.building
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
-import com.libreguardia.config.database.Role
+import com.libreguardia.module.shared.database.Role
 import com.libreguardia.frontend.component.main.create.buildingCreate
 import com.libreguardia.frontend.component.main.edit.buildingEdit
 import com.libreguardia.frontend.component.main.list.buildingList
-import com.libreguardia.config.routing.respondHtmlPage
-import com.libreguardia.config.util.UUIDSerializer
-import com.libreguardia.config.service.OperationResult
+import com.libreguardia.module.shared.routing.respondHtmlPage
+import com.libreguardia.module.shared.util.UUIDSerializer
+import com.libreguardia.module.shared.service.OperationResult
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
 import io.ktor.server.auth.*

@@ -4,7 +4,7 @@ import com.libreguardia.frontend.component.main.create.AcademicYearCreateField
 import com.libreguardia.frontend.component.main.edit.AcademicYearEditField
 import io.ktor.http.*
 import kotlinx.datetime.LocalDate
-import com.libreguardia.config.validation.get
+import com.libreguardia.module.shared.validation.get
 
 data class AcademicYearCreateDTO(
     val name: String,

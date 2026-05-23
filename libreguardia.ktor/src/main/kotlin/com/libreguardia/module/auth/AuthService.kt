@@ -2,11 +2,11 @@ package com.libreguardia.module.auth
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.COOKIE_DURATION
-import com.libreguardia.config.exception.InvalidCredentialsException
+import com.libreguardia.module.shared.exception.InvalidCredentialsException
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.UserSession
 import com.libreguardia.module.user.UserRepository
-import com.libreguardia.config.util.withTransaction
+import com.libreguardia.module.shared.database.withTransaction
 import io.ktor.server.auth.UserPasswordCredential
 import org.jetbrains.exposed.v1.core.StdOutSqlLogger
 import java.util.UUID

@@ -1,4 +1,4 @@
-package com.libreguardia.config.util
+package com.libreguardia.module.shared.database
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

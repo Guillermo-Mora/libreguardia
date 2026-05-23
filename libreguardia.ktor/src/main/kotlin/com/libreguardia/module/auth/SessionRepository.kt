@@ -1,7 +1,7 @@
 package com.libreguardia.module.auth
 
 import com.libreguardia.module.user.UserTable
-import com.libreguardia.config.repository.BaseRepository
+import com.libreguardia.module.shared.repository.BaseRepository
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq

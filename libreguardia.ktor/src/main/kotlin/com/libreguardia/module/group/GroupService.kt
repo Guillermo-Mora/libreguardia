@@ -1,12 +1,12 @@
 package com.libreguardia.module.group
 
-import com.libreguardia.config.exception.GroupNotFoundException
+import com.libreguardia.module.shared.exception.GroupNotFoundException
 import com.libreguardia.frontend.component.main.create.GroupCreateField
 import com.libreguardia.frontend.component.main.edit.GroupEditField
 import com.libreguardia.module.course.CourseRepository
-import com.libreguardia.config.service.containsErrors
-import com.libreguardia.config.util.withTransaction
-import com.libreguardia.config.service.OperationResult
+import com.libreguardia.module.shared.service.containsErrors
+import com.libreguardia.module.shared.database.withTransaction
+import com.libreguardia.module.shared.service.OperationResult
 import java.util.UUID
 
 class GroupService(

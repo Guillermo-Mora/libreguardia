@@ -3,7 +3,7 @@ package com.libreguardia.module.zone
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.ZoneCreateField
 import com.libreguardia.frontend.component.main.ZoneEditField
-import com.libreguardia.config.validation.validateRequired
+import com.libreguardia.module.shared.validation.validateRequired
 
 fun ZoneCreateDTO.validate(): MutableMap<FormField, String?> {
     val errors = mutableMapOf<FormField, String?>()

@@ -3,9 +3,9 @@ package com.libreguardia.module.entry
 import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.authorized
-import com.libreguardia.config.database.Role
-import com.libreguardia.config.exception.InsufficientPermissionsException
-import com.libreguardia.config.routing.respondHtmlPage
+import com.libreguardia.module.shared.database.Role
+import com.libreguardia.module.shared.exception.InsufficientPermissionsException
+import com.libreguardia.module.shared.routing.respondHtmlPage
 import com.libreguardia.frontend.component.main.dashboard
 import com.libreguardia.frontend.page.loginPage
 import io.ktor.server.auth.authenticate

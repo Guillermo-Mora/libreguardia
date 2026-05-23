@@ -1,6 +1,6 @@
 package com.libreguardia.module.place_type
 
-import com.libreguardia.config.repository.BaseRepository
+import com.libreguardia.module.shared.repository.BaseRepository
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.update

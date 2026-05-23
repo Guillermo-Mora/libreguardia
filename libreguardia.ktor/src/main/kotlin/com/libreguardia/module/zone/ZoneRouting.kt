@@ -1,6 +1,6 @@
 package com.libreguardia.module.zone
 
-import com.libreguardia.config.util.UUIDSerializer
+import com.libreguardia.module.shared.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable

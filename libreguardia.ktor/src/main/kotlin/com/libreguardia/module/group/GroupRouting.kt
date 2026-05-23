@@ -2,7 +2,7 @@ package com.libreguardia.module.group
 
 import com.libreguardia.module.academic_year.AcademicYearService
 import com.libreguardia.module.course.CourseService
-import com.libreguardia.config.util.UUIDSerializer
+import com.libreguardia.module.shared.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.Route
 import kotlinx.serialization.Serializable

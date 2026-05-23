@@ -1,4 +1,4 @@
-package com.libreguardia.config.repository
+package com.libreguardia.module.shared.repository
 
 import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
 import org.jetbrains.exposed.v1.core.eq

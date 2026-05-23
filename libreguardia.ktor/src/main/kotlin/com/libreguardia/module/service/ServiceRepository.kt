@@ -1,7 +1,7 @@
 package com.libreguardia.module.service
 
 import com.libreguardia.module.absence.AbsenceTable
-import com.libreguardia.config.repository.BaseRepository
+import com.libreguardia.module.shared.repository.BaseRepository
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.v1.core.JoinType
 import org.jetbrains.exposed.v1.core.and

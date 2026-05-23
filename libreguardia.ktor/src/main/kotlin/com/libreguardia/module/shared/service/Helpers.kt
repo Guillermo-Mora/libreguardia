@@ -1,4 +1,4 @@
-package com.libreguardia.config.service
+package com.libreguardia.module.shared.service
 
 import com.libreguardia.frontend.component.FormField
 

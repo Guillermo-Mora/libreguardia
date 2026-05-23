@@ -1,6 +1,6 @@
 package com.libreguardia.module.schedule_template_slot
 
-import com.libreguardia.config.database.WeekDay
+import com.libreguardia.module.shared.database.WeekDay
 import com.libreguardia.module.group.GroupEntity
 import com.libreguardia.module.group.GroupTable
 import com.libreguardia.module.place.PlaceEntity

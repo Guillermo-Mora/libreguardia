@@ -1,4 +1,4 @@
-package com.libreguardia.config.database
+package com.libreguardia.config
 
 import io.ktor.server.application.Application
 import org.flywaydb.core.Flyway

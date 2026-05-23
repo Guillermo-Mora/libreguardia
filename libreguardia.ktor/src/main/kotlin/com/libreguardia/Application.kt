@@ -2,9 +2,9 @@ package com.libreguardia
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.*
-import com.libreguardia.config.database.configureDatabase
-import com.libreguardia.config.database.configureFlyway
-import com.libreguardia.config.exception.configureStatusPages
+import com.libreguardia.config.configureDatabase
+import com.libreguardia.config.configureFlyway
+import com.libreguardia.config.configureStatusPages
 import com.libreguardia.module.absence.AbsenceRepository
 import com.libreguardia.module.academic_year.AcademicYearRepository
 import com.libreguardia.module.academic_year.AcademicYearService
@@ -29,7 +29,7 @@ import com.libreguardia.module.user.UserRepository
 import com.libreguardia.module.user.UserService
 import com.libreguardia.module.zone.ZoneRepository
 import com.libreguardia.module.zone.ZoneService
-import com.libreguardia.config.routing.configureRouting
+import com.libreguardia.config.configureRouting
 import com.libreguardia.module.auth.AuthService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*

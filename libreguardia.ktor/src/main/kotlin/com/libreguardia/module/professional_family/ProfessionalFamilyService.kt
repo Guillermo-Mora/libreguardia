@@ -2,9 +2,9 @@ package com.libreguardia.module.professional_family
 
 import com.libreguardia.frontend.component.main.create.ProfessionalFamilyCreateField
 import com.libreguardia.frontend.component.main.edit.ProfessionalFamilyEditField
-import com.libreguardia.config.service.containsErrors
-import com.libreguardia.config.util.withTransaction
-import com.libreguardia.config.service.OperationResult
+import com.libreguardia.module.shared.service.containsErrors
+import com.libreguardia.module.shared.database.withTransaction
+import com.libreguardia.module.shared.service.OperationResult
 import io.ktor.server.plugins.NotFoundException
 import java.util.UUID
 

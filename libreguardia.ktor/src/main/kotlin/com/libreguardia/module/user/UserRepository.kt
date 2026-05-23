@@ -3,7 +3,7 @@ package com.libreguardia.module.user
 import com.libreguardia.module.group.GroupEntity
 import com.libreguardia.module.place.PlaceEntity
 import com.libreguardia.module.schedule.ScheduleEntity
-import com.libreguardia.config.repository.BaseRepository
+import com.libreguardia.module.shared.repository.BaseRepository
 import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.neq

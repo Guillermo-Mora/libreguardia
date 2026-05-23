@@ -1,5 +1,9 @@
-package com.libreguardia.config.exception
+package com.libreguardia.config
 
+import com.libreguardia.module.shared.exception.ErrorCode
+import com.libreguardia.module.shared.exception.IncorrectPasswordException
+import com.libreguardia.module.shared.exception.InsufficientPermissionsException
+import com.libreguardia.module.shared.exception.InvalidCredentialsException
 import com.libreguardia.frontend.page.errorPage
 import io.ktor.http.*
 import io.ktor.server.application.*

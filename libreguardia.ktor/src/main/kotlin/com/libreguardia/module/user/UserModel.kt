@@ -1,7 +1,7 @@
 package com.libreguardia.module.user
 
-import com.libreguardia.config.database.Role
-import com.libreguardia.config.database.WeekDay
+import com.libreguardia.module.shared.database.Role
+import com.libreguardia.module.shared.database.WeekDay
 import com.libreguardia.module.place.PlaceEntity
 import com.libreguardia.module.place.PlaceScheduleModel
 import com.libreguardia.module.schedule.ScheduleEntity

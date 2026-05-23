@@ -1,7 +1,7 @@
-package com.libreguardia.config.routing
+package com.libreguardia.module.shared.routing
 
-import com.libreguardia.config.database.Role
-import com.libreguardia.config.exception.UserNotFoundException
+import com.libreguardia.module.shared.database.Role
+import com.libreguardia.module.shared.exception.UserNotFoundException
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.frontend.page.mainPage
 import io.ktor.http.HttpStatusCode

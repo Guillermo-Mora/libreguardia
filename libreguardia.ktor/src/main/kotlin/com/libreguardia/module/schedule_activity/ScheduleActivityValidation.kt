@@ -3,7 +3,7 @@ package com.libreguardia.module.schedule_activity
 import com.libreguardia.frontend.component.FormField
 import com.libreguardia.frontend.component.main.create.ScheduleActivityCreateField
 import com.libreguardia.frontend.component.main.edit.ScheduleActivityEditField
-import com.libreguardia.config.validation.validateRequired
+import com.libreguardia.module.shared.validation.validateRequired
 
 fun ScheduleActivityCreateDTO.validate(): MutableMap<FormField, String?> {
     val errors = mutableMapOf<FormField, String?>()

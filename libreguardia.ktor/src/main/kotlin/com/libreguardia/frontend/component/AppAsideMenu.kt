@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component
 
-import com.libreguardia.config.database.Role
+import com.libreguardia.module.shared.database.Role
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.FlowContent

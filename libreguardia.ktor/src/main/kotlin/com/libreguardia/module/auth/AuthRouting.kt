@@ -5,9 +5,9 @@ import com.libreguardia.config.AUTH_SESSION
 import com.libreguardia.config.UserPrincipal
 import com.libreguardia.config.UserSession
 import com.libreguardia.config.authorized
-import com.libreguardia.config.database.Role
-import com.libreguardia.config.exception.InvalidCredentialsException
-import com.libreguardia.config.exception.UserNotFoundException
+import com.libreguardia.module.shared.database.Role
+import com.libreguardia.module.shared.exception.InvalidCredentialsException
+import com.libreguardia.module.shared.exception.UserNotFoundException
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.*
 import io.ktor.server.auth.*

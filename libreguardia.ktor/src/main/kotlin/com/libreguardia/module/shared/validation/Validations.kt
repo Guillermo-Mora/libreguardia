@@ -1,4 +1,4 @@
-package com.libreguardia.config.validation
+package com.libreguardia.module.shared.validation
 
 import kotlinx.datetime.LocalDate
 import java.math.BigDecimal

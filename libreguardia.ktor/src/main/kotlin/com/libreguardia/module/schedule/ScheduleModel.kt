@@ -1,6 +1,6 @@
 package com.libreguardia.module.schedule
 
-import com.libreguardia.config.database.WeekDay
+import com.libreguardia.module.shared.database.WeekDay
 import com.libreguardia.module.place.PlaceScheduleModel
 import kotlinx.datetime.LocalTime
 

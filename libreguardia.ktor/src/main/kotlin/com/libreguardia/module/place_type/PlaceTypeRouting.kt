@@ -1,6 +1,6 @@
 package com.libreguardia.module.place_type
 
-import com.libreguardia.config.util.UUIDSerializer
+import com.libreguardia.module.shared.util.UUIDSerializer
 import io.ktor.resources.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable

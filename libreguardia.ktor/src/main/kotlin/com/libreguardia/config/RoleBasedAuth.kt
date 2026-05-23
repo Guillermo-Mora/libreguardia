@@ -1,7 +1,7 @@
 package com.libreguardia.config
 
-import com.libreguardia.config.database.Role
-import com.libreguardia.config.exception.InsufficientPermissionsException
+import com.libreguardia.module.shared.database.Role
+import com.libreguardia.module.shared.exception.InsufficientPermissionsException
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*

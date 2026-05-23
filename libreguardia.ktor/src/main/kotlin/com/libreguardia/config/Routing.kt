@@ -1,4 +1,4 @@
-package com.libreguardia.config.routing
+package com.libreguardia.config
 
 
 import com.libreguardia.module.academic_year.academicYearRouting
