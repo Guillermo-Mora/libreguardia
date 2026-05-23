@@ -1,7 +1,6 @@
 package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.dto.module.AcademicYearResponseDTO
-import com.libreguardia.model.AcademicYearModel
+import com.libreguardia.module.academic_year.AcademicYearModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*

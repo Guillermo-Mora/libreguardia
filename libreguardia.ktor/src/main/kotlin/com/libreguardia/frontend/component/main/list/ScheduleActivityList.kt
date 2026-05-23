@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.dto.module.ScheduleActivityResponseDTO
+import com.libreguardia.module.schedule_activity.ScheduleActivityResponseDTO
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*

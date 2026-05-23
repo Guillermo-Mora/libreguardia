@@ -1,9 +1,8 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.PlaceTypeEditDTO
+import com.libreguardia.module.place_type.PlaceTypeEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.UUID
 
 enum class PlaceTypeEditField(override val key: String) : FormField {
@@ -15,6 +14,7 @@ fun FlowContent.placeTypeEdit(
     errors: Map<FormField, String?>? = null,
     placeTypeUuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-place-type",
         previousPagePath = "/place-type",
@@ -31,4 +31,6 @@ fun FlowContent.placeTypeEdit(
             ),
         ),
     )
+
+     */
 }

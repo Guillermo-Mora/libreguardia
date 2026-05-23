@@ -1,7 +1,7 @@
 package com.libreguardia.frontend.component.main
 
-import com.libreguardia.model.ScheduleModel
-import com.libreguardia.model.UserProfileModel
+import com.libreguardia.module.schedule.ScheduleModel
+import com.libreguardia.module.user.UserProfileModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.*
 import kotlinx.html.FlowContent

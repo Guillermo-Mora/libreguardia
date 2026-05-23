@@ -1,12 +1,11 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.dto.module.PlaceCreateDTO
+import com.libreguardia.module.place.PlaceCreateDTO
 import com.libreguardia.frontend.component.*
-import com.libreguardia.model.BuildingModel
-import com.libreguardia.model.PlaceTypeModel
-import com.libreguardia.model.ZoneModel
+import com.libreguardia.module.building.BuildingModel
+import com.libreguardia.module.place_type.PlaceTypeModel
+import com.libreguardia.module.zone.ZoneModel
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 
 enum class PlaceCreateField(override val key: String) : FormField {
     NAME("name"),
@@ -23,6 +22,7 @@ fun FlowContent.placeCreate(
     zones: List<ZoneModel>,
     errors: Map<FormField, String?>? = null,
 ) {
+    /*
     customForm(
         formName = "edit-place",
         previousPagePath = "/place",
@@ -85,4 +85,6 @@ fun FlowContent.placeCreate(
             ),
         ),
     )
+
+     */
 }

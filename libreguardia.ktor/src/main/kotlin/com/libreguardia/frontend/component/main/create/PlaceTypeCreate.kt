@@ -1,9 +1,8 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.dto.module.PlaceTypeCreateDTO
+import com.libreguardia.module.place_type.PlaceTypeCreateDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 
 enum class PlaceTypeCreateField(override val key: String) : FormField {
     NAME("name");
@@ -13,6 +12,7 @@ fun FlowContent.placeTypeCreate(
     placeType: PlaceTypeCreateDTO = PlaceTypeCreateDTO(name = ""),
     errors: Map<FormField, String?>? = null,
 ) {
+    /*
     customForm(
         formName = "create-place-type",
         previousPagePath = "/place-type",
@@ -28,4 +28,6 @@ fun FlowContent.placeTypeCreate(
             ),
         ),
     )
+
+     */
 }

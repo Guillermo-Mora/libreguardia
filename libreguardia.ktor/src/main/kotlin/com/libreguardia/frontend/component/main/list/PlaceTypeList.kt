@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.model.PlaceTypeModel
+import com.libreguardia.module.place_type.PlaceTypeModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*

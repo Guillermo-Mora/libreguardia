@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.dto.module.AcademicYearCreateDTO
+import com.libreguardia.module.academic_year.AcademicYearCreateDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.datetime.LocalDate
 import kotlinx.html.FlowContent
@@ -25,19 +25,19 @@ fun FlowContent.academicYearCreate(
         formFields = mapOf(
             AcademicYearCreateField.NAME to FormFieldData(
                 text = "name",
-                value = academicYear.name,
+                recievedValue = academicYear.name,
                 required = true,
                 inputType = InputType.text
             ),
             AcademicYearCreateField.START_DATE to FormFieldData(
                 text = "start date",
-                value = academicYear.startDate.toString(),
+                recievedValue = academicYear,
                 required = true,
                 inputType = InputType.date
             ),
             AcademicYearCreateField.END_DATE to FormFieldData(
                 text = "end date",
-                value = academicYear.endDate.toString(),
+                recievedValue = academicYear,
                 required = true,
                 inputType = InputType.date
             )

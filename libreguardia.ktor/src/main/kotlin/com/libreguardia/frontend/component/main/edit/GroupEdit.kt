@@ -1,11 +1,10 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.GroupEditDTO
+import com.libreguardia.module.group.GroupEditDTO
 import com.libreguardia.frontend.component.*
-import com.libreguardia.model.AcademicYearModel
-import com.libreguardia.model.CourseModel
+import com.libreguardia.module.academic_year.AcademicYearModel
+import com.libreguardia.module.course.CourseModel
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.*
 
 enum class GroupEditField(override val key: String) : FormField {
@@ -22,6 +21,7 @@ fun FlowContent.groupEdit(
     errors: Map<FormField, String?>? = null,
     uuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-group",
         previousPagePath = "/group",
@@ -73,4 +73,6 @@ fun FlowContent.groupEdit(
             ),
         ),
     )
+
+     */
 }

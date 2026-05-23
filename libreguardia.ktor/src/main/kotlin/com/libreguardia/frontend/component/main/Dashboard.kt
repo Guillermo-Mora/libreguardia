@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main
 
-import com.libreguardia.db.Role
+import com.libreguardia.config.Role
 import kotlinx.html.FlowContent
 import kotlinx.html.p
 

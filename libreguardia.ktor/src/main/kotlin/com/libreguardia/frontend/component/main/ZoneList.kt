@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main
 
-import com.libreguardia.model.ZoneModel
+import com.libreguardia.module.zone.ZoneModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*

@@ -1,14 +1,9 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.dto.module.CourseCreateDTO
+import com.libreguardia.module.course.CourseCreateDTO
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.FormFieldData
-import com.libreguardia.frontend.component.OperationType
-import com.libreguardia.frontend.component.SelectOption
-import com.libreguardia.frontend.component.customForm
-import com.libreguardia.model.ProfessionalFamilyModel
+import com.libreguardia.module.professional_family.ProfessionalFamilyModel
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 
 enum class CourseCreateField(override val key: String) : FormField {
     NAME("name"),
@@ -20,6 +15,7 @@ fun FlowContent.courseCreate(
     professionalFamilies: List<ProfessionalFamilyModel>,
     errors: Map<FormField, String?>? = null,
 ) {
+    /*
     customForm(
         formName = "edit-course",
         previousPagePath = "/course",
@@ -47,4 +43,6 @@ fun FlowContent.courseCreate(
             ),
         ),
     )
+
+     */
 }

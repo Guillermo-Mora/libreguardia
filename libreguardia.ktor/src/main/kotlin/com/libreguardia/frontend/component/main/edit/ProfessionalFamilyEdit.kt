@@ -1,12 +1,8 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.ProfessionalFamilyEditDTO
+import com.libreguardia.module.professional_family.ProfessionalFamilyEditDTO
 import com.libreguardia.frontend.component.FormField
-import com.libreguardia.frontend.component.FormFieldData
-import com.libreguardia.frontend.component.OperationType
-import com.libreguardia.frontend.component.customForm
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.*
 
 enum class ProfessionalFamilyEditField(override val key: String) : FormField {
@@ -18,6 +14,7 @@ fun FlowContent.professionalFamilyEdit(
     errors: Map<FormField, String?>? = null,
     uuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-professional-family",
         previousPagePath = "/professional-family",
@@ -34,4 +31,6 @@ fun FlowContent.professionalFamilyEdit(
             ),
         ),
     )
+
+     */
 }

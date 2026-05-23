@@ -1,9 +1,8 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.dto.module.ScheduleActivityCreateDTO
+import com.libreguardia.module.schedule_activity.ScheduleActivityCreateDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 
 enum class ScheduleActivityCreateField(override val key: String) : FormField {
     NAME("name"),
@@ -14,6 +13,7 @@ fun FlowContent.scheduleActivityCreate(
     activity: ScheduleActivityCreateDTO = ScheduleActivityCreateDTO("", false),
     errors: Map<FormField, String?>? = null,
 ) {
+    /*
     customForm(
         formName = "create-activity",
         previousPagePath = "/schedule-activity",
@@ -35,4 +35,6 @@ fun FlowContent.scheduleActivityCreate(
             )
         ),
     )
+
+     */
 }

@@ -200,7 +200,7 @@ data class FormFieldData(
     //First letter of the "text" should be lowercase
     val text: String,
     //
-    val value: String = "",
+    val recievedValue: Any? = "",
     val checkedValue: Boolean? = null,
     val required: Boolean = true,
     val inputType: InputType = InputType.text,
@@ -210,6 +210,7 @@ data class FormFieldData(
     val validationType: ValidationType? = null,
     val triggerType: TriggerType? = null,
 ) {
+    val value: String = recievedValue?.toString() ?: ""
     val labelText: String = text.replaceFirstChar { it.uppercase() }
     val placeHolder: String = "Input $text"
 }

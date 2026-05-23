@@ -1,14 +1,11 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.GroupEditDTO
-import com.libreguardia.dto.module.PlaceEditDTO
+import com.libreguardia.module.place.PlaceEditDTO
 import com.libreguardia.frontend.component.*
-import com.libreguardia.model.BuildingModel
-import com.libreguardia.model.CourseModel
-import com.libreguardia.model.PlaceTypeModel
-import com.libreguardia.model.ZoneModel
+import com.libreguardia.module.building.BuildingModel
+import com.libreguardia.module.place_type.PlaceTypeModel
+import com.libreguardia.module.zone.ZoneModel
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.*
 
 enum class PlaceEditField(override val key: String) : FormField {
@@ -27,6 +24,7 @@ fun FlowContent.placeEdit(
     errors: Map<FormField, String?>? = null,
     uuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-place",
         previousPagePath = "/place",
@@ -90,4 +88,6 @@ fun FlowContent.placeEdit(
             ),
         ),
     )
+
+     */
 }

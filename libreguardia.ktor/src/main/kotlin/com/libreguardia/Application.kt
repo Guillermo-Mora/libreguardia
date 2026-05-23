@@ -2,13 +2,35 @@ package com.libreguardia
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.libreguardia.config.*
-import com.libreguardia.db.configureDatabase
-import com.libreguardia.db.configureFlyway
-import com.libreguardia.exception.configureStatusPages
-import com.libreguardia.repository.*
-import com.libreguardia.routing.configureRouting
-import com.libreguardia.service.*
-import com.libreguardia.validation.configureRequestValidation
+import com.libreguardia.config.configureDatabase
+import com.libreguardia.config.configureFlyway
+import com.libreguardia.config.configureStatusPages
+import com.libreguardia.module.absence.AbsenceRepository
+import com.libreguardia.module.academic_year.AcademicYearRepository
+import com.libreguardia.module.academic_year.AcademicYearService
+import com.libreguardia.module.building.BuildingRepository
+import com.libreguardia.module.building.BuildingService
+import com.libreguardia.module.course.CourseRepository
+import com.libreguardia.module.course.CourseService
+import com.libreguardia.module.group.GroupRepository
+import com.libreguardia.module.group.GroupService
+import com.libreguardia.module.place.PlaceRepository
+import com.libreguardia.module.place.PlaceService
+import com.libreguardia.module.place_type.PlaceTypeRepository
+import com.libreguardia.module.place_type.PlaceTypeService
+import com.libreguardia.module.professional_family.ProfessionalFamilyRepository
+import com.libreguardia.module.professional_family.ProfessionalFamilyService
+import com.libreguardia.module.schedule.ScheduleRepository
+import com.libreguardia.module.schedule_activity.ScheduleActivityRepository
+import com.libreguardia.module.schedule_activity.ScheduleActivityService
+import com.libreguardia.module.service.ServiceRepository
+import com.libreguardia.module.auth.SessionRepository
+import com.libreguardia.module.user.UserRepository
+import com.libreguardia.module.user.UserService
+import com.libreguardia.module.zone.ZoneRepository
+import com.libreguardia.module.zone.ZoneService
+import com.libreguardia.config.routing.configureRouting
+import com.libreguardia.module.auth.AuthService
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import kotlin.time.Clock
@@ -108,7 +130,6 @@ fun Application.main() {
     configureDefaultHeaders()
     configureCompression()
     configureStatusPages()
-    configureRequestValidation()
     configureSerialization()
     configureRouting(
         authService = authService,

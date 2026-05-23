@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.AcademicYearEditDTO
+import com.libreguardia.module.academic_year.AcademicYearEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
 import kotlinx.html.InputType
@@ -27,19 +27,19 @@ fun FlowContent.academicYearEdit(
         formFields = mapOf(
             AcademicYearEditField.NAME to FormFieldData(
                 text = "name",
-                value = academicYear.name ?: "",
+                recievedValue = academicYear.name,
                 required = true,
                 inputType = InputType.text
             ),
             AcademicYearEditField.START_DATE to FormFieldData(
                 text = "start date",
-                value = academicYear.startDate?.toString() ?: "",
+                recievedValue = academicYear.startDate,
                 required = true,
                 inputType = InputType.date
             ),
             AcademicYearEditField.END_DATE to FormFieldData(
                 text = "end date",
-                value = academicYear.endDate?.toString() ?: "",
+                recievedValue = academicYear.endDate,
                 required = true,
                 inputType = InputType.date
             )

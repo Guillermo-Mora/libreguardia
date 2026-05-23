@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.model.CourseModel
+import com.libreguardia.module.course.CourseModel
 import io.ktor.htmx.html.*
 import io.ktor.utils.io.*
 import kotlinx.html.FlowContent

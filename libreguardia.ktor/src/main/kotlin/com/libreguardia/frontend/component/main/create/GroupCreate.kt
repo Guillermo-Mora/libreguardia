@@ -1,12 +1,10 @@
 package com.libreguardia.frontend.component.main.create
 
-import com.libreguardia.dto.module.GroupCreateDTO
+import com.libreguardia.module.group.GroupCreateDTO
 import com.libreguardia.frontend.component.*
-import com.libreguardia.frontend.component.main.edit.GroupEditField
-import com.libreguardia.model.AcademicYearModel
-import com.libreguardia.model.CourseModel
+import com.libreguardia.module.academic_year.AcademicYearModel
+import com.libreguardia.module.course.CourseModel
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 
 enum class GroupCreateField(override val key: String) : FormField {
     CODE("code"),
@@ -20,6 +18,7 @@ fun FlowContent.groupCreate(
     academicYears: List<AcademicYearModel>,
     errors: Map<FormField, String?>? = null,
 ) {
+    /*
     customForm(
         formName = "edit-group",
         previousPagePath = "/group",
@@ -70,4 +69,6 @@ fun FlowContent.groupCreate(
             ),
         ),
     )
+
+     */
 }

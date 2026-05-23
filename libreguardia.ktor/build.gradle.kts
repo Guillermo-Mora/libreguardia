@@ -56,7 +56,6 @@ dependencies {
     implementation(libs.ktor.server.call.logging)
     implementation(libs.logback.classic)
     implementation(libs.ktor.server.resources)
-    implementation(libs.ktor.server.request.validation)
     implementation(libs.ktor.server.html.builder)
     implementation(libs.kotlinx.html)
     implementation(libs.kotlin.css)

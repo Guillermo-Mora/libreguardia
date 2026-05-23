@@ -1,6 +1,6 @@
 package com.libreguardia.frontend.component.main.list
 
-import com.libreguardia.model.UserModel
+import com.libreguardia.module.user.UserModel
 import io.ktor.htmx.html.hx
 import io.ktor.utils.io.ExperimentalKtorApi
 import kotlinx.html.*
@@ -42,7 +42,7 @@ fun FlowContent.userList(
                 td("td-filled") { text("${user.name} ${user.surname}") }
                 td("td-filled") { text(user.email) }
                 td("td-filled") { text(user.phoneNumber) }
-                td("td-filled") { text(user.role) }
+                td("td-filled") { text(user.role.name) }
                 td("td-filled") { text(if (user.isEnabled) "Yes" else "No") }
                 td {
                     button {

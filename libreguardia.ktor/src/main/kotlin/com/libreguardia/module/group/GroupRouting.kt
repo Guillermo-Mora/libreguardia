@@ -1,0 +1,156 @@
+package com.libreguardia.module.group
+
+import com.libreguardia.module.academic_year.AcademicYearService
+import com.libreguardia.module.course.CourseService
+import com.libreguardia.module.group.GroupService
+import com.libreguardia.util.UUIDSerializer
+import io.ktor.resources.*
+import io.ktor.server.routing.Route
+import kotlinx.serialization.Serializable
+
+@Resource("/group")
+class GroupAPI {
+    @Resource("new")
+    class New(val parent: GroupAPI = GroupAPI())
+
+    @Resource("{uuid}")
+    class UUID(
+        val parent: GroupAPI = GroupAPI(),
+        @Serializable(with = UUIDSerializer::class) val uuid: java.util.UUID
+    )
+}
+
+fun Route.groupRouting(
+    groupService: GroupService,
+    courseService: CourseService,
+    academicYearService: AcademicYearService
+) {
+    /*
+    authenticate(AUTH_SESSION) {
+        authorized(Role.ADMIN) {
+
+            get<GroupAPI.UUID> { group ->
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val uuid = group.uuid
+                val groupEdit = groupService.getThis(
+                    uuid = uuid
+                ).toGroupEditDTO()
+                val courses = courseService.getAll()
+                val academicYears = academicYearService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        groupEdit(
+                            dto = groupEdit,
+                            uuid = uuid,
+                            courses = courses,
+                            academicYears = academicYears,
+                        )
+                    }
+                )
+            }
+
+            get<GroupAPI> {
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val groups = groupService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        groupList(
+                            groups = groups
+                        )
+                    }
+                )
+            }
+
+            get<GroupAPI.New> {
+                val role = call.principal<UserPrincipal>()?.userRole ?: throw NotFoundException()
+                val courses = courseService.getAll()
+                val academicYears = academicYearService.getAll()
+                respondHtmlPage(
+                    role = role,
+                    content = {
+                        groupCreate(
+                            courses = courses,
+                            academicYears = academicYears,
+                        )
+                    }
+                )
+            }
+
+            post<GroupAPI> {
+                val groupCreate = call.receiveParameters().toGroupCreateDTO()
+                val operationResult = groupService.create(
+                    groupCreateDTO = groupCreate
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        val courses = courseService.getAll()
+                        val academicYears = academicYearService.getAll()
+                        call.respondHtmlFragment {
+                            groupCreate(
+                                dto = groupCreate,
+                                errors = operationResult.errors,
+                                courses = courses,
+                                academicYears = academicYears
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/group","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
+            }
+
+
+            patch<GroupAPI.UUID> { group ->
+                val groupEdit = call.receiveParameters().toGroupEditDTO()
+                val operationResult = groupService.editThis(
+                    uuid = group.uuid,
+                    groupEditDTO = groupEdit
+                )
+                when (operationResult) {
+                    is OperationResult.Error -> {
+                        val courses = courseService.getAll()
+                        val academicYears = academicYearService.getAll()
+                        call.respondHtmlFragment {
+                            groupEdit(
+                                dto = groupEdit,
+                                errors = operationResult.errors,
+                                courses = courses,
+                                academicYears = academicYears,
+                                uuid = group.uuid
+                            )
+                        }
+                    }
+
+                    is OperationResult.Success -> {
+                        call.response.headers.append(
+                            "HX-Location",
+                            """{"path":"/group","target":"#main-content"}"""
+                        )
+                        call.respond(HttpStatusCode.OK)
+                    }
+                }
+            }
+
+            delete<GroupAPI.UUID> { group ->
+                groupService.deleteThis(
+                    uuid = group.uuid
+                )
+                call.response.headers.append(
+                    "HX-Location",
+                    """{"path":"/group","target":"#main-content"}"""
+                )
+                call.respond(HttpStatusCode.NoContent)
+            }
+        }
+    }
+
+     */
+}

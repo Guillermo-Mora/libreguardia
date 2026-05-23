@@ -1,10 +1,9 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.CourseEditDTO
+import com.libreguardia.module.course.CourseEditDTO
 import com.libreguardia.frontend.component.*
-import com.libreguardia.model.ProfessionalFamilyModel
+import com.libreguardia.module.professional_family.ProfessionalFamilyModel
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.*
 
 enum class CourseEditField(override val key: String) : FormField {
@@ -18,6 +17,7 @@ fun FlowContent.courseEdit(
     errors: Map<FormField, String?>? = null,
     uuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-course",
         previousPagePath = "/course",
@@ -46,4 +46,6 @@ fun FlowContent.courseEdit(
             ),
         ),
     )
+
+     */
 }

@@ -1,9 +1,8 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.BuildingEditDTO
+import com.libreguardia.module.building.BuildingEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.*
 
 enum class BuildingEditField(override val key: String) : FormField {
@@ -15,6 +14,7 @@ fun FlowContent.buildingEdit(
     errors: Map<FormField, String?>? = null,
     buildingUuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-building",
         previousPagePath = "/building",
@@ -31,4 +31,6 @@ fun FlowContent.buildingEdit(
             )
         ),
     )
+
+     */
 }

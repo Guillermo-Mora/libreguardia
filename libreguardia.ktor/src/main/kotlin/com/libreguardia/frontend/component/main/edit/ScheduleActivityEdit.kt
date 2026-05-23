@@ -1,9 +1,8 @@
 package com.libreguardia.frontend.component.main.edit
 
-import com.libreguardia.dto.module.ScheduleActivityEditDTO
+import com.libreguardia.module.schedule_activity.ScheduleActivityEditDTO
 import com.libreguardia.frontend.component.*
 import kotlinx.html.FlowContent
-import kotlinx.html.InputType
 import java.util.*
 
 enum class ScheduleActivityEditField(override val key: String) : FormField {
@@ -16,6 +15,7 @@ fun FlowContent.scheduleActivityEdit(
     errors: Map<FormField, String?>? = null,
     activityUuid: UUID
 ) {
+    /*
     customForm(
         formName = "edit-activity",
         previousPagePath = "/schedule-activity",
@@ -38,4 +38,6 @@ fun FlowContent.scheduleActivityEdit(
             )
         ),
     )
+
+     */
 }
