@@ -1,4 +1,3 @@
-
 :root {
   --primary: #1B4965;
   --primary-light: #468FAF;
@@ -474,7 +473,14 @@ button {
 
 .form-field input.input-error {
   border-color: var(--error);
-  box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.1);
+  box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.15);
+  background: var(--error-light);
+}
+
+.form-field input.input-error:focus {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.2);
+  background: var(--error-light);
 }
 
 .form-error {
@@ -483,6 +489,58 @@ button {
   min-height: 20px;
   margin-top: 4px;
 }
+
+/* Login error — clases generadas por Security.kt challenge */
+.input-div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.input-div label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.input-div input {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--text);
+  background: var(--surface);
+  transition: all var(--transition);
+  outline: none;
+  width: 100%;
+}
+
+.input-div input:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(70, 143, 175, 0.15);
+}
+
+.input-div-error input {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.15);
+  background: var(--error-light);
+}
+
+.input-div-error input:focus {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.2);
+  background: var(--error-light);
+}
+
+.error-div {
+  color: var(--error);
+  font-size: 0.8125rem;
+  margin-top: 4px;
+}
+
 
 input[type="range"] {
   appearance: none;
@@ -603,21 +661,20 @@ input[type="range"]::-moz-range-track {
 }
 
 .schedule-table tbody tr:hover td {
-  font-weight: 600;
   color: var(--text);
 }
 
 .calendar-table {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 12px;
+  border-spacing: 4px;
   table-layout: fixed;
 }
 
 .calendar-table th {
   background: var(--primary);
   color: var(--text-inverse);
-  padding: 15px;
+  padding: 10px;
   border-radius: var(--radius-md);
   font-weight: 800;
   text-transform: uppercase;
@@ -630,16 +687,16 @@ input[type="range"]::-moz-range-track {
   background: var(--surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  padding: 15px;
-  min-height: 120px;
+  padding: 10px;
+  min-height: 64px;
   box-shadow: var(--shadow-sm);
   vertical-align: top;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .calendar-table td:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
   background: var(--primary-lighter);
   border-color: var(--primary-light);
 }
@@ -733,8 +790,10 @@ input[type="range"]::-moz-range-track {
 }
 
 .td-filled {
-  font-weight: 500;
+  font-weight: 400;
   color: var(--text);
+  font-size: 0.75rem;
+  line-height: 1.35;
 }
 
 .table-actions {
@@ -967,6 +1026,16 @@ input[type="range"]::-moz-range-track {
   .app-header {
     padding: 0 24px;
   }
+
+  .calendar-table {
+    border-spacing: 4px;
+  }
+
+  .calendar-table th,
+  .calendar-table td {
+    padding: 8px;
+    font-size: 0.8125rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1064,6 +1133,24 @@ input[type="range"]::-moz-range-track {
     flex-direction: column;
     gap: 12px;
     align-items: flex-start;
+  }
+
+  /* Horario: scroll horizontal en móvil */
+  .table-container:has(.calendar-table) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .calendar-table {
+    min-width: 560px;
+    border-spacing: 4px;
+  }
+
+  .calendar-table th,
+  .calendar-table td {
+    padding: 8px;
+    font-size: 0.75rem;
+    min-height: 60px;
   }
 }
 
