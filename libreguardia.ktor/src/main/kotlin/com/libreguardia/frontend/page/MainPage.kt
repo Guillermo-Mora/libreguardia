@@ -19,7 +19,7 @@ fun HTML.mainPage(
     body {
         appHeader()
         appAsideMenu(role = role)
-        main {
+        main("main-content") {
             this.id = "main-content"
             mainContent()
         }

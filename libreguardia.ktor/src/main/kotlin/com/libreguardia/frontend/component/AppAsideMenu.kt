@@ -7,6 +7,9 @@ import kotlinx.html.FlowContent
 import kotlinx.html.a
 import kotlinx.html.aside
 import kotlinx.html.div
+import kotlinx.html.h1
+import kotlinx.html.nav
+import kotlinx.html.span
 
 data class MenuOption(
     val name: String,
@@ -30,30 +33,21 @@ private val asideMenuOptions = listOf(
         path = "/todo",
         roles = setOf(Role.USER, Role.ADMIN)
     ),
-    //It will be easier to start with these dedicated pages. In the future, I could mix some of them
-    // to make it easier to understand and navigate through the admin pages and the system. But for now, this
-    // will be much easier to implement.
-    //
-    //Here in settings, for example, if each user can alter his own schedule, or activate the selectable mode,
-    // where you can select group of users that can do it, etc. To implement in the future.
     MenuOption(
         name = "Settings",
         path = "/settings",
         roles = setOf(Role.ADMIN)
     ),
-    //
     MenuOption(
         name = "Academic Years",
         path = "/academic-year",
         roles = setOf(Role.ADMIN)
     ),
-    //
     MenuOption(
         name = "Users",
         path = "/user",
         roles = setOf(Role.ADMIN)
     ),
-    //
     MenuOption(
         name = "Absences",
         path = "/absence",
@@ -64,7 +58,6 @@ private val asideMenuOptions = listOf(
         path = "/service",
         roles = setOf(Role.ADMIN)
     ),
-    //
     MenuOption(
         name = "Professional families",
         path = "/professional-family",
@@ -80,7 +73,6 @@ private val asideMenuOptions = listOf(
         path = "/group",
         roles = setOf(Role.ADMIN)
     ),
-    //
     MenuOption(
         name = "Buildings",
         path = "/building",
@@ -106,7 +98,6 @@ private val asideMenuOptions = listOf(
         path = "/place",
         roles = setOf(Role.ADMIN)
     ),
-    //
     MenuOption(
         name = "Schedule Templates",
         path = "/schedule-template",
@@ -118,9 +109,14 @@ private val asideMenuOptions = listOf(
 fun FlowContent.appAsideMenu(
     role: Role
 ) {
-    aside {
-        for (option in asideMenuOptions)
-            if (role in option.roles) asideMenuOption(option)
+    aside("sidebar") {
+        div("sidebar-header") {
+            h1("sidebar-logo") { text("LibreGuardia") }
+        }
+        nav("sidebar-nav") {
+            for (option in asideMenuOptions)
+                if (role in option.roles) asideMenuOption(option)
+        }
     }
 }
 
@@ -128,8 +124,8 @@ fun FlowContent.appAsideMenu(
 fun FlowContent.asideMenuOption(
     menuOption: MenuOption
 ) {
-    div {
-        a {
+    div("sidebar-nav-item") {
+        a(classes = "sidebar-link") {
             attributes.hx {
                 get = menuOption.path
                 replaceUrl = "true"
@@ -138,7 +134,8 @@ fun FlowContent.asideMenuOption(
                 swap = "innerHTML"
             }
             href = menuOption.path
-            text(menuOption.name)
+            span("sidebar-link-icon") { +" " }
+            span("sidebar-link-text") { text(menuOption.name) }
         }
     }
 }
