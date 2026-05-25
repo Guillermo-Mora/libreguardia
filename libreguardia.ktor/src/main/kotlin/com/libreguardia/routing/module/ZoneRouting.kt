@@ -7,7 +7,9 @@ import com.libreguardia.db.Role
 import com.libreguardia.dto.module.toZoneCreateDTO
 import com.libreguardia.dto.module.toZoneEditDTO
 import com.libreguardia.exception.ZoneNotFoundException
-import com.libreguardia.frontend.component.main.*
+import com.libreguardia.frontend.component.main.create.zoneCreate
+import com.libreguardia.frontend.component.main.edit.zoneEdit
+import com.libreguardia.frontend.component.main.list.zoneList
 import com.libreguardia.routing.respondHtmlPage
 import com.libreguardia.service.ZoneService
 import com.libreguardia.util.UUIDSerializer

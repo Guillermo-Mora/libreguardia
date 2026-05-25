@@ -2,8 +2,8 @@ package com.libreguardia.dto.module
 
 import com.libreguardia.db.model.ZoneEntity
 import com.libreguardia.dto.string
-import com.libreguardia.frontend.component.main.ZoneCreateField
-import com.libreguardia.frontend.component.main.ZoneEditField
+import com.libreguardia.frontend.component.main.create.ZoneCreateField
+import com.libreguardia.frontend.component.main.edit.ZoneEditField
 import com.libreguardia.util.UUIDSerializer
 import io.ktor.http.Parameters
 import kotlinx.serialization.Serializable

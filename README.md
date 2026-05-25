@@ -6,6 +6,7 @@
 - [Technologies and Languages](#technologies-and-languages)
 - [Behind Technologies decision](#behind-technologies-decision)
 - [Setup for coding](#setup-for-coding)
+- [Build project](#build-project)
 - [Contributing](#contributing)
 
 ## About Libreguardia
@@ -206,5 +207,12 @@ In Libreguardia, the frontend is diretly built in the backend and sent to the br
 base:develop <- compare:feature/feature-to-be-added  
 The changes will be checked by the owner and a feedback will be given. If they are correct, the pull request will be merged and closed. So the develop branch will have the new changes.
 - **Important**: Never work directly on the develop or main branch. You have to always create a new one as discussed in the previous points of this section.
+## Build project
+```./gradlew buildFatJar``` Creates an executable JAR with all dependencies
+- JAR files location:  ```buildlibs/```
+- Runnig the JAR file:
+1. Make sure PostgreSQL is running. And that it has the same configuration specified in the **application.yaml** file before building the project.
+2. Check that you have Java 21 or higher: ```java -version```
+3. Run the JAR file: ```java -jar build/libs/file-name.jar```
 ## Contributing
 If you are interested in contributing to this project, let me know: guillermomora@tutamail.com
