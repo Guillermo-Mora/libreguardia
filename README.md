@@ -209,7 +209,7 @@ The changes will be checked by the owner and a feedback will be given. If they a
 - **Important**: Never work directly on the develop or main branch. You have to always create a new one as discussed in the previous points of this section.
 ## Build project
 ```./gradlew buildFatJar``` Creates an executable JAR with all dependencies
-- JAR files location:  ```buildlibs/```
+- JAR files location:  ```build/libs/```
 - Runnig the JAR file:
 1. Make sure PostgreSQL is running. And that it has the same configuration specified in the **application.yaml** file before building the project.
 2. Check that you have Java 21 or higher: ```java -version```
